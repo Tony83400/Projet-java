@@ -18,7 +18,7 @@ public class UserService {
     private List<User> users;
     private int nextId;
     private final ObjectMapper objectMapper;
-
+    
     public UserService() {
         this.objectMapper = new ObjectMapper();
         this.users = new ArrayList<>();
@@ -119,5 +119,10 @@ public class UserService {
         return users.stream()
                 .filter(user -> user.getName().equals(name))
                 .findFirst();
+    }
+
+    public List<User> GetUsers() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'GetUsers'");
     }
 }

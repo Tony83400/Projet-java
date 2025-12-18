@@ -12,7 +12,7 @@ import io.javalin.Javalin;
  */
 public class Main {
 
-    private static UserService userService = new UserService();
+    private static final UserServiceImpl userService = new UserServiceImpl();
 
     public static void main(String[] args) {
         // Créer et configurer l'application Javalin
@@ -28,7 +28,7 @@ public class Main {
 
         // Route GET /users - Récupère tous les utilisateurs
         app.get("/users", ctx -> {
-            ctx.json(userService.getAllUsers());
+            ctx.json(userService.GetUsers());
         });
 
         // Route GET /users/:id - Récupère un utilisateur par ID
@@ -37,8 +37,7 @@ public class Main {
             userService.getUserById(id)
                     .ifPresentOrElse(
                             user -> ctx.json(user),
-                            () -> ctx.status(404).result("Utilisateur non trouvé")
-                    );
+                            () -> ctx.status(404).result("Utilisateur non trouvé"));
         });
 
         // Route POST /users - Ajoute un utilisateur
