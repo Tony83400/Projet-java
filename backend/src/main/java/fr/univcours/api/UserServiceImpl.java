@@ -16,7 +16,6 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public List<User> GetUsers() {
-        System.out.println("Entrer dans getUsers");
         List<User> users = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
                 Statement stmt = conn.createStatement();
