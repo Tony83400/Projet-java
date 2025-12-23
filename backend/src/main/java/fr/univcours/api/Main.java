@@ -1,6 +1,7 @@
 package fr.univcours.api;
 
 import fr.univcours.api.controllers.UserController;
+import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.OpenApiConfiguration;
@@ -13,7 +14,8 @@ public class Main {
     public static void main(String[] args) {
 
         Javalin app = Javalin.create(config -> {
-
+            //Configuration de la Db
+            DatabaseSetup.start();
             // 1. Configuration CORS
             config.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
 
