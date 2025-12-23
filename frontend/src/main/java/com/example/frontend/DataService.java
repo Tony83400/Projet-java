@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TransferQueue;
 
 public class DataService {
 
@@ -36,5 +37,15 @@ public class DataService {
         in.close();
         String data = content.toString();
         return data;
+    }
+    public Boolean deleteUser(String URL) throws IOException{
+        URL url = new URL(URL);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("DELETE");
+        int status = con.getResponseCode();
+        if (status == 201){
+            return Boolean.TRUE;
+        }
+        return  Boolean.FALSE;
     }
 }

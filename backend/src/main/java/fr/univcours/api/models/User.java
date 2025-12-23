@@ -1,4 +1,4 @@
-package fr.univcours.api;
+package fr.univcours.api.models;
 
 /**
  * Classe représentant un utilisateur

@@ -1,4 +1,7 @@
+fr\univcours\api\controllers\UserController.class
+openapi-plugin\.index
+fr\univcours\api\services\UserService.class
+json-schemes\index
+openapi-plugin\openapi-default.json
+fr\univcours\api\models\User.class
 fr\univcours\api\Main.class
-fr\univcours\api\UserService.class
-fr\univcours\api\UserService$1.class
-fr\univcours\api\User.class

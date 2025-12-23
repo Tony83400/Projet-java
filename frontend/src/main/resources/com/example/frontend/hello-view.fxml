@@ -13,4 +13,5 @@
 
     <Label fx:id="welcomeText"/>
     <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <Button text="Supprimer l'utilisateur 1" onAction="#onDeleteButtonClick"/>
 </VBox>
