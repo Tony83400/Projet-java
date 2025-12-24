@@ -2,6 +2,7 @@ package fr.univcours.api;
 
 import fr.univcours.api.controllers.UserController;
 import fr.univcours.api.database.DatabaseSetup;
+import fr.univcours.api.models.User;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.OpenApiConfiguration;
@@ -14,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
         Javalin app = Javalin.create(config -> {
-            //Configuration de la Db
+            // Configuration de la Db
             DatabaseSetup.start();
             // 1. Configuration CORS
             config.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
@@ -42,6 +43,9 @@ public class Main {
         // Routes
         app.get("/users", UserController::getAll);
         app.delete("/users/{id}", UserController::delete);
+        app.post("/users", UserController::add);
+        app.get("/users/{id}", UserController::getById);
+        app.put("users/{id}", UserController::updateById);
 
     }
 }

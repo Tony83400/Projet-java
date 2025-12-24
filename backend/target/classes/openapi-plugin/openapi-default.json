@@ -6,6 +6,35 @@
   },
   "paths": {
     "/users": {
+      "post": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Ajouter un nouvel utilisateur",
+        "operationId": "addUser",
+        "parameters": [],
+        "requestBody": {
+          "description": "Données du nouvel utilisateur (JSON)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès"
+          },
+          "400": {
+            "description": "Données invalides"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
       "get": {
         "tags": [
           "Utilisateurs"
@@ -30,6 +59,37 @@
       }
     },
     "/users/{id}": {
+      "get": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Trouve un utilisateur par id",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027utilisateur",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Utilisateur trouvé"
+          },
+          "400": {
+            "description": "Utilisateur introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
       "delete": {
         "tags": [
           "Utilisateurs"
@@ -60,6 +120,48 @@
         },
         "deprecated": false,
         "security": []
+      },
+      "put": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Modifie un utilisateur par id",
+        "operationId": "updateUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027utilisateur",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Données du nouvel utilisateur (JSON)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur trouvé"
+          },
+          "400": {
+            "description": "Utilisateur introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
       }
     }
   },
@@ -69,24 +171,24 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "age": {
             "type": "integer",
             "format": "int32"
           },
           "name": {
             "type": "string"
           },
-          "email": {
-            "type": "string"
-          },
-          "age": {
+          "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "email": {
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "age"
+          "age",
+          "id"
         ]
       }
     }
