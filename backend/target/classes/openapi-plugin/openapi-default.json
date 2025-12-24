@@ -6,6 +6,28 @@
   },
   "paths": {
     "/users": {
+      "get": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Récupérer tous les utilisateurs",
+        "operationId": "getAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des utilisateurs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
       "post": {
         "tags": [
           "Utilisateurs"
@@ -34,31 +56,40 @@
         },
         "deprecated": false,
         "security": []
-      },
-      "get": {
+      }
+    },
+    "/users/{id}": {
+      "delete": {
         "tags": [
           "Utilisateurs"
         ],
-        "summary": "Récupérer tous les utilisateurs",
-        "operationId": "getAllUsers",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des utilisateurs",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
+        "summary": "Supprimer un utilisateur",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027utilisateur",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Utilisateur supprimé"
+          },
+          "404": {
+            "description": "Utilisateur introuvable"
           }
         },
         "deprecated": false,
         "security": []
-      }
-    },
-    "/users/{id}": {
+      },
       "get": {
         "tags": [
           "Utilisateurs"
@@ -83,38 +114,7 @@
           "201": {
             "description": "Utilisateur trouvé"
           },
-          "400": {
-            "description": "Utilisateur introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "delete": {
-        "tags": [
-          "Utilisateurs"
-        ],
-        "summary": "Supprimer un utilisateur",
-        "operationId": "deleteUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de l\u0027utilisateur",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Utilisateur supprimé"
-          },
-          "400": {
+          "404": {
             "description": "Utilisateur introuvable"
           }
         },
@@ -156,7 +156,7 @@
           "201": {
             "description": "Utilisateur trouvé"
           },
-          "400": {
+          "404": {
             "description": "Utilisateur introuvable"
           }
         },

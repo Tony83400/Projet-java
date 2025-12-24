@@ -23,17 +23,17 @@ public class UserController {
             "Utilisateurs" }, pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de l'utilisateur", required = true)
             }, responses = {
-                    @OpenApiResponse(status = "201", description = "Utilisateur supprimé"),
-                    @OpenApiResponse(status = "400", description = "Utilisateur introuvable")
+                    @OpenApiResponse(status = "204", description = "Utilisateur supprimé"),
+                    @OpenApiResponse(status = "404", description = "Utilisateur introuvable")
             })
     public static void delete(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
         boolean estSupprime = userService.deleteUser(id);
 
         if (estSupprime) {
-            ctx.status(201);
+            ctx.status(204); 
         } else {
-            ctx.status(400).json("Utilisateur introuvable");
+            ctx.status(404).json("Utilisateur introuvable");
         }
     }
 
@@ -47,8 +47,9 @@ public class UserController {
         User userRep = userService.addUser(newUser);
         if (userRep == null) {
             ctx.status(400).json("Impossible d'ajouter l'utilisateur a la base de donnée");
+        } else {
+            ctx.status(201).json(userRep);
         }
-        ctx.status(201).json(userRep);
     }
 
     @OpenApi(summary = "Trouve un utilisateur par id", operationId = "getUserById", path = "/users/{id}", methods = HttpMethod.GET, tags = {
@@ -56,15 +57,16 @@ public class UserController {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de l'utilisateur", required = true)
             }, responses = {
                     @OpenApiResponse(status = "201", description = "Utilisateur trouvé"),
-                    @OpenApiResponse(status = "400", description = "Utilisateur introuvable")
+                    @OpenApiResponse(status = "404", description = "Utilisateur introuvable")
             })
     public static void getById(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
         User rep = userService.getUserByid(id);
         if (rep == null) {
-            ctx.status(400).json("Utilisateur introuvable");
+            ctx.status(404).json("Utilisateur introuvable");
+        } else {
+            ctx.status(201).json(rep);
         }
-        ctx.status(201).json(rep);
     }
 
     @OpenApi(summary = "Modifie un utilisateur par id", operationId = "updateUserById", path = "/users/{id}", methods = HttpMethod.PUT, tags = {
@@ -72,16 +74,17 @@ public class UserController {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de l'utilisateur", required = true)
             }, requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = User.class), required = true, description = "Données du nouvel utilisateur (JSON)"), responses = {
                     @OpenApiResponse(status = "201", description = "Utilisateur trouvé"),
-                    @OpenApiResponse(status = "400", description = "Utilisateur introuvable")
+                    @OpenApiResponse(status = "404", description = "Utilisateur introuvable")
             })
     public static void updateById(Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
         int id = Integer.parseInt(ctx.pathParam("id"));
         User rep = userService.updateById(id, newUser);
         if (rep == null) {
-            ctx.status(400).json("Utilisateur introuvable");
+            ctx.status(404).json("Utilisateur introuvable");
+        } else {
+            ctx.status(201).json(rep);
         }
-        ctx.status(201).json(rep);
     }
 
 }

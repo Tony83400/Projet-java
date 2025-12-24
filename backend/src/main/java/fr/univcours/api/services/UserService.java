@@ -14,13 +14,13 @@ import java.util.List;
 public class UserService {
 
     public boolean deleteUser(int id) throws SQLException {
-        String sql = "DELETE FROM user WHERE id = ?";
+        String sql = "DELETE FROM users WHERE id = ?";
 
         try (Connection conn = DatabaseSetup.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
-            int rowsAffected = stmt.executeUpdate(sql);
+            int rowsAffected = stmt.executeUpdate();
             // Si rowsAffected > 0, c'est qu'on a bien supprimé quelqu'un
             return rowsAffected > 0;
 
