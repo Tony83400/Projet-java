@@ -43,7 +43,7 @@ public class DataService {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("DELETE");
         int status = con.getResponseCode();
-        if (status == 201){
+        if (status == 204){
             return Boolean.TRUE;
         }
         return  Boolean.FALSE;
