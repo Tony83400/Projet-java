@@ -5,13 +5,13 @@
     "version": ""
   },
   "paths": {
-    "/users": {
+    "/commandes": {
       "get": {
         "tags": [
           "Utilisateurs"
         ],
         "summary": "Récupérer tous les utilisateurs",
-        "operationId": "getAllUsers",
+        "operationId": "getAllCommandes",
         "parameters": [],
         "responses": {
           "200": {
@@ -19,7 +19,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/Commande"
                 }
               }
             }
@@ -33,14 +33,14 @@
           "Utilisateurs"
         ],
         "summary": "Ajouter un nouvel utilisateur",
-        "operationId": "addUser",
+        "operationId": "addCommande",
         "parameters": [],
         "requestBody": {
           "description": "Données du nouvel utilisateur (JSON)",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/Commande"
               }
             }
           },
@@ -58,13 +58,13 @@
         "security": []
       }
     },
-    "/users/{id}": {
+    "/commandes/{id}": {
       "delete": {
         "tags": [
           "Utilisateurs"
         ],
         "summary": "Supprimer un utilisateur",
-        "operationId": "deleteUser",
+        "operationId": "deleteCommande",
         "parameters": [
           {
             "name": "id",
@@ -95,7 +95,7 @@
           "Utilisateurs"
         ],
         "summary": "Trouve un utilisateur par id",
-        "operationId": "getUserById",
+        "operationId": "getCommandeById",
         "parameters": [
           {
             "name": "id",
@@ -126,7 +126,7 @@
           "Utilisateurs"
         ],
         "summary": "Modifie un utilisateur par id",
-        "operationId": "updateUserById",
+        "operationId": "updateCommandeById",
         "parameters": [
           {
             "name": "id",
@@ -146,7 +146,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/Commande"
               }
             }
           },
@@ -167,28 +167,37 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "Commande": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "commande_id": {
             "type": "integer",
             "format": "int32"
           },
-          "name": {
-            "type": "string"
+          "article_id": {
+            "type": "integer",
+            "format": "int32"
           },
-          "email": {
-            "type": "string"
+          "quantite_article": {
+            "type": "integer",
+            "format": "int32"
           },
-          "age": {
+          "numero_commande": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "niveau_epice": {
             "type": "integer",
             "format": "int32"
           }
         },
         "required": [
-          "id",
-          "age"
+          "commande_id",
+          "article_id",
+          "quantite_article",
+          "numero_commande",
+          "niveau_epice"
         ]
       }
     }

@@ -1,6 +1,7 @@
 package fr.univcours.api;
 
-import fr.univcours.api.controllers.UserController;
+//import fr.univcours.api.controllers.CommandeController;
+import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
@@ -21,7 +22,7 @@ public class Main {
 
             // 2. Configuration OpenAPI
             OpenApiConfiguration openApiConfig = new OpenApiConfiguration();
-            openApiConfig.getInfo().setTitle("API Users");
+            openApiConfig.getInfo().setTitle("API Commandes");
             openApiConfig.getInfo().setVersion("1.0.0");
             openApiConfig.getInfo().setDescription("Documentation de l'API");
 
@@ -40,11 +41,11 @@ public class Main {
         System.out.println("🚀 Serveur démarré sur http://localhost:7000");
 
         // Routes
-        app.get("/users", UserController::getAll);
-        app.delete("/users/{id}", UserController::delete);
-        app.post("/users", UserController::add);
-        app.get("/users/{id}", UserController::getById);
-        app.put("users/{id}", UserController::updateById);
+        app.get("/commandes", CommandeController::getAll);
+        app.delete("/commandes/{id}", CommandeController::delete);
+        app.post("/commandes", CommandeController::add);
+        app.get("/commandes/{id}", CommandeController::getById);
+        app.put("/commandes/{id}", CommandeController::updateById);
 
     }
 }
