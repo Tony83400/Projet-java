@@ -2,7 +2,6 @@ package fr.univcours.api.controllers;
 
 import io.javalin.http.Context;
 import io.javalin.openapi.*;
-import fr.univcours.api.models.User;
 import fr.univcours.api.services.UserService;
 
 import java.sql.SQLException;
