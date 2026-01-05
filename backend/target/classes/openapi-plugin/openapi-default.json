@@ -5,237 +5,64 @@
     "version": ""
   },
   "paths": {
-    "/commandes": {
+    "/categorie/{id}": {
       "get": {
         "tags": [
-          "Commandes"
+          "Categorie"
         ],
-        "summary": "Récupérer toutes les commandes",
-        "operationId": "getAllCommandes",
-        "parameters": [],
+        "summary": "Trouve un categorie par id",
+        "operationId": "getCategorieById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du categorie",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Liste des commandes",
+            "description": "Categorie trouvé",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Commande"
+                  "$ref": "#/components/schemas/Categorie"
                 }
               }
             }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "post": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Ajouter une nouvelle commande",
-        "operationId": "addCommande",
-        "parameters": [],
-        "requestBody": {
-          "description": "Données de la commande",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Commande"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Commande créée avec succès"
-          },
-          "400": {
-            "description": "Données invalides"
+          "404": {
+            "description": "Categorie introuvable"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/commandes/{id}": {
-      "delete": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Supprimer une commande",
-        "operationId": "deleteCommande",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de la commande",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Commande supprimée"
-          },
-          "404": {
-            "description": "Commande introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
+    "/categories": {
       "get": {
         "tags": [
-          "Commandes"
+          "Categorie"
         ],
-        "summary": "Trouve une commande par id",
-        "operationId": "getCommandeById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de la commande",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Commande trouvée",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Commande"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Commande introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "put": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Modifie une commande par id",
-        "operationId": "updateCommandeById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de la commande",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Données mises à jour",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Commande"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Commande mise à jour",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Commande"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Commande introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Récupérer tous les menus",
-        "operationId": "getAllMenu",
+        "summary": "Récupérer toutes les categories",
+        "operationId": "getAllCategorie",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des menus",
+            "description": "Liste des categories",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Menu"
+                  "$ref": "#/components/schemas/Categorie"
                 }
               }
             }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Trouve un menu par id",
-        "operationId": "getMenuById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du menu",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Menu trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Menu"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Menu introuvable"
           }
         },
         "deprecated": false,
@@ -245,58 +72,23 @@
   },
   "components": {
     "schemas": {
-      "Commande": {
+      "Categorie": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "commande_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "article_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantite_article": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numero_commande": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "niveau_epice": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "required": [
-          "commande_id",
-          "article_id",
-          "quantite_article",
-          "numero_commande",
-          "niveau_epice"
-        ]
-      },
-      "Menu": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "menu_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "article_id": {
+          "categorie_id": {
             "type": "integer",
             "format": "int32"
           },
           "nom": {
             "type": "string"
+          },
+          "description": {
+            "type": "string"
           }
         },
         "required": [
-          "menu_id",
-          "article_id"
+          "categorie_id"
         ]
       }
     }

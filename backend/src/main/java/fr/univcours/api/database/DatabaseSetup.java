@@ -35,7 +35,7 @@ public class DatabaseSetup {
             // --- TABLE IMAGE (Doit être créée en premier car Article et Menu l'utilisent) ---
             String sql_image = "CREATE TABLE IF NOT EXISTS `image` (" +
                     "`image_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "`url` LINESTRING NOT NULL" +
+                    "`url` VARCHAR(500) NOT NULL" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_image);
             System.out.println("✅ Table 'image' OK.");

@@ -28,7 +28,7 @@ public class MenuService {
     }
 
     public Menu getMenuByid(int id) {
-        String sql = "SELECT * FROM menu WHERE id =?";
+        String sql = "SELECT * FROM menu WHERE menu_id =?";
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setInt(1, id);
@@ -37,7 +37,7 @@ public class MenuService {
                 if (rs.next()) {
                     Menu menu = new Menu();
                     menu.setMenu_id(rs.getInt("menu_id"));
-                    menu.setArticle_id(rs.getInt("age"));
+                    menu.setArticle_id(rs.getInt("article_id"));
                     menu.setNom(rs.getString("nom"));
                     return menu;
                 }

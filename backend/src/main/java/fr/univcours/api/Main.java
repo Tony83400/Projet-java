@@ -3,6 +3,7 @@ package fr.univcours.api;
 import fr.univcours.api.controllers.MenuController;
 //import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.controllers.CommandeController;
+import fr.univcours.api.controllers.CategorieController;
 import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
@@ -44,6 +45,9 @@ public class Main {
         // Routes
         app.get("/menus", MenuController::getAllMenu);
         app.get("/menus/{id}", MenuController::getMenuById);
+
+        app.get("/categories", CategorieController::getAllCategorie);
+        app.get("/categories/{id}", CategorieController::getCategorieById);
 
         app.get("/commandes", CommandeController::getAll);
         app.post("/commandes", CommandeController::add);
