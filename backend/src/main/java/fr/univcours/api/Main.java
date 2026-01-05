@@ -1,6 +1,6 @@
 package fr.univcours.api;
 
-import fr.univcours.api.controllers.UserController;
+import fr.univcours.api.controllers.MenuController;
 import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
@@ -40,11 +40,8 @@ public class Main {
         System.out.println("🚀 Serveur démarré sur http://localhost:7000");
 
         // Routes
-        app.get("/users", UserController::getAll);
-        app.delete("/users/{id}", UserController::delete);
-        app.post("/users", UserController::add);
-        app.get("/users/{id}", UserController::getById);
-        app.put("users/{id}", UserController::updateById);
+        app.get("/users", MenuController::getAllMenu);
+        app.get("/users/{id}", MenuController::getMenuById);
 
     }
 }

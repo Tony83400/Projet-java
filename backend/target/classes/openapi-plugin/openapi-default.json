@@ -5,21 +5,21 @@
     "version": ""
   },
   "paths": {
-    "/users": {
+    "/menu": {
       "get": {
         "tags": [
-          "Utilisateurs"
+          "Menus"
         ],
-        "summary": "Récupérer tous les utilisateurs",
-        "operationId": "getAllUsers",
+        "summary": "Récupérer tous les catégories",
+        "operationId": "getAllMenu",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des utilisateurs",
+            "description": "Liste des menus",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/Menu"
                 }
               }
             }
@@ -27,80 +27,20 @@
         },
         "deprecated": false,
         "security": []
-      },
-      "post": {
-        "tags": [
-          "Utilisateurs"
-        ],
-        "summary": "Ajouter un nouvel utilisateur",
-        "operationId": "addUser",
-        "parameters": [],
-        "requestBody": {
-          "description": "Données du nouvel utilisateur (JSON)",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Utilisateur créé avec succès"
-          },
-          "400": {
-            "description": "Données invalides"
-          }
-        },
-        "deprecated": false,
-        "security": []
       }
     },
-    "/users/{id}": {
-      "delete": {
-        "tags": [
-          "Utilisateurs"
-        ],
-        "summary": "Supprimer un utilisateur",
-        "operationId": "deleteUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de l\u0027utilisateur",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Utilisateur supprimé"
-          },
-          "404": {
-            "description": "Utilisateur introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
+    "/menu/{id}": {
       "get": {
         "tags": [
-          "Utilisateurs"
+          "Menus"
         ],
-        "summary": "Trouve un utilisateur par id",
-        "operationId": "getUserById",
+        "summary": "Trouve un menu par id",
+        "operationId": "getMenuById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de l\u0027utilisateur",
+            "description": "ID du menu",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -112,52 +52,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Utilisateur trouvé"
+            "description": "Menu trouvé"
           },
           "404": {
-            "description": "Utilisateur introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "put": {
-        "tags": [
-          "Utilisateurs"
-        ],
-        "summary": "Modifie un utilisateur par id",
-        "operationId": "updateUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de l\u0027utilisateur",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Données du nouvel utilisateur (JSON)",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Utilisateur trouvé"
-          },
-          "404": {
-            "description": "Utilisateur introuvable"
+            "description": "Menu introuvable"
           }
         },
         "deprecated": false,
@@ -167,28 +65,25 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "Menu": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "menu_id": {
             "type": "integer",
             "format": "int32"
           },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "age": {
+          "article_id": {
             "type": "integer",
             "format": "int32"
+          },
+          "nom": {
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "age"
+          "menu_id",
+          "article_id"
         ]
       }
     }
