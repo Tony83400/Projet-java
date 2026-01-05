@@ -42,12 +42,13 @@ public class Main {
         System.out.println("🚀 Serveur démarré sur http://localhost:7000");
 
         // Routes
-        app.get("/users", MenuController::getAllMenu);
-        app.get("/users/{id}", MenuController::getMenuById);
+        app.get("/menus", MenuController::getAllMenu);
+        app.get("/menus/{id}", MenuController::getMenuById);
+
         app.get("/commandes", CommandeController::getAll);
-        app.delete("/commandes/{id}", CommandeController::delete);
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);
+        app.delete("/commandes/{id}", CommandeController::delete);
         app.put("/commandes/{id}", CommandeController::updateById);
 
     }
