@@ -1,7 +1,6 @@
 package fr.univcours.api.services;
 
 import fr.univcours.api.database.DatabaseSetup;
-import fr.univcours.api.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -2,7 +2,6 @@ package fr.univcours.api;
 
 import fr.univcours.api.controllers.UserController;
 import fr.univcours.api.database.DatabaseSetup;
-import fr.univcours.api.models.User;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.OpenApiConfiguration;
