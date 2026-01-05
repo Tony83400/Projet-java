@@ -1,6 +1,8 @@
 package fr.univcours.api;
 
 import fr.univcours.api.controllers.MenuController;
+//import fr.univcours.api.controllers.CommandeController;
+import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
@@ -21,7 +23,7 @@ public class Main {
 
             // 2. Configuration OpenAPI
             OpenApiConfiguration openApiConfig = new OpenApiConfiguration();
-            openApiConfig.getInfo().setTitle("API Users");
+            openApiConfig.getInfo().setTitle("API Commandes");
             openApiConfig.getInfo().setVersion("1.0.0");
             openApiConfig.getInfo().setDescription("Documentation de l'API");
 
@@ -42,6 +44,11 @@ public class Main {
         // Routes
         app.get("/users", MenuController::getAllMenu);
         app.get("/users/{id}", MenuController::getMenuById);
+        app.get("/commandes", CommandeController::getAll);
+        app.delete("/commandes/{id}", CommandeController::delete);
+        app.post("/commandes", CommandeController::add);
+        app.get("/commandes/{id}", CommandeController::getById);
+        app.put("/commandes/{id}", CommandeController::updateById);
 
     }
 }

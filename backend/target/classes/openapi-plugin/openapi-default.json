@@ -5,21 +5,21 @@
     "version": ""
   },
   "paths": {
-    "/menu": {
+    "/commandes": {
       "get": {
         "tags": [
-          "Menus"
+          "Utilisateurs"
         ],
-        "summary": "Récupérer tous les catégories",
-        "operationId": "getAllMenu",
+        "summary": "Récupérer tous les utilisateurs",
+        "operationId": "getAllCommandes",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des menus",
+            "description": "Liste des utilisateurs",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Menu"
+                  "$ref": "#/components/schemas/Commande"
                 }
               }
             }
@@ -27,20 +27,80 @@
         },
         "deprecated": false,
         "security": []
+      },
+      "post": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Ajouter un nouvel utilisateur",
+        "operationId": "addCommande",
+        "parameters": [],
+        "requestBody": {
+          "description": "Données du nouvel utilisateur (JSON)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Commande"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès"
+          },
+          "400": {
+            "description": "Données invalides"
+          }
+        },
+        "deprecated": false,
+        "security": []
       }
     },
-    "/menu/{id}": {
-      "get": {
+    "/commandes/{id}": {
+      "delete": {
         "tags": [
-          "Menus"
+          "Utilisateurs"
         ],
-        "summary": "Trouve un menu par id",
-        "operationId": "getMenuById",
+        "summary": "Supprimer un utilisateur",
+        "operationId": "deleteCommande",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID du menu",
+            "description": "ID de l\u0027utilisateur",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Utilisateur supprimé"
+          },
+          "404": {
+            "description": "Utilisateur introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
+      "get": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Trouve un utilisateur par id",
+        "operationId": "getCommandeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027utilisateur",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -52,10 +112,52 @@
         ],
         "responses": {
           "201": {
-            "description": "Menu trouvé"
+            "description": "Utilisateur trouvé"
           },
           "404": {
-            "description": "Menu introuvable"
+            "description": "Utilisateur introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
+      "put": {
+        "tags": [
+          "Utilisateurs"
+        ],
+        "summary": "Modifie un utilisateur par id",
+        "operationId": "updateCommandeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027utilisateur",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Données du nouvel utilisateur (JSON)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Commande"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur trouvé"
+          },
+          "404": {
+            "description": "Utilisateur introuvable"
           }
         },
         "deprecated": false,
@@ -65,11 +167,11 @@
   },
   "components": {
     "schemas": {
-      "Menu": {
+      "Commande": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "menu_id": {
+          "commande_id": {
             "type": "integer",
             "format": "int32"
           },
@@ -77,13 +179,25 @@
             "type": "integer",
             "format": "int32"
           },
-          "nom": {
-            "type": "string"
+          "quantite_article": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numero_commande": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "niveau_epice": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "required": [
-          "menu_id",
-          "article_id"
+          "commande_id",
+          "article_id",
+          "quantite_article",
+          "numero_commande",
+          "niveau_epice"
         ]
       }
     }

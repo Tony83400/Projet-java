@@ -45,19 +45,62 @@ public class DatabaseSetup {
         try (Connection connection = getConnection()) {
             Statement stmt = connection.createStatement();
 
-            // Création de la table users
-            String sql = "CREATE TABLE IF NOT EXISTS users (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "nom VARCHAR(100) NOT NULL, " +
-                    "email VARCHAR(100) UNIQUE NOT NULL," +
-                    "age INT NOT NULL CHECK ( age>0 )"+
-                    ")";
+            // 1. Table ARTICLE
+            String sql_article = "CREATE TABLE IF NOT EXISTS `article` (" +
+                    "`article_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`nom` VARCHAR(255) NOT NULL, " +
+                    "`prix` BIGINT NOT NULL, " +
+                    "`description` TEXT NULL" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_article);
+            System.out.println("✅ Table 'article' OK.");
 
-            stmt.execute(sql);
-            System.out.println("✅ Table 'users' vérifiée/créée avec succès.");
+            // 2. Table CATEGORIE
+            String sql_categorie = "CREATE TABLE IF NOT EXISTS `categorie` (" +
+                    "`categorie_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`nom` VARCHAR(255) NOT NULL, " +
+                    "`description` TEXT NOT NULL" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_categorie);
+            System.out.println("✅ Table 'categorie' OK.");
+
+            // 3. Table de liaison ARTICLE_CATEGORIE (Relation N-N)
+            // La clé primaire est composite (article_id + categorie_id)
+            String sql_pivot = "CREATE TABLE IF NOT EXISTS `article_categorie` (" +
+                    "`article_id` BIGINT UNSIGNED NOT NULL, " +
+                    "`categorie_id` BIGINT UNSIGNED NOT NULL, " +
+                    "PRIMARY KEY (`article_id`, `categorie_id`), " +
+                    "CONSTRAINT `fk_pivot_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE, " +
+                    "CONSTRAINT `fk_pivot_categorie` FOREIGN KEY (`categorie_id`) REFERENCES `categorie`(`categorie_id`) ON DELETE CASCADE" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_pivot);
+            System.out.println("✅ Table 'article_categorie' OK.");
+
+            // 4. Table COMMANDE (Exemple simplifié)
+            String sql_commande = "CREATE TABLE IF NOT EXISTS `commande` (" +
+                    "`commande_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`numero_commande` BIGINT NOT NULL, " +
+                    "`niveau_epices` BIGINT NOT NULL, " +
+                    "`date_creation` TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_commande);
+            System.out.println("✅ Table 'commande' OK.");
+
+            // 5. Table MENU (Exemple simplifié)
+            String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
+                    "`menu_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`nom` VARCHAR(255) NOT NULL" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_menu);
+            System.out.println("✅ Table 'menu' OK.");
+
+            // --- Note sur vos autres contraintes ---
+            // Si vous voulez lier article à commande (Relation N-N aussi souvent),
+            // il faudrait une table `commande_article` (avec commande_id, article_id, quantite).
+            // J'ai nettoyé le code pour que au moins la partie Catégorie/Article fonctionne parfaitement.
 
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la création des tables : " + e.getMessage());
+            System.err.println("❌ Erreur SQL : " + e.getMessage());
             e.printStackTrace();
         }
     }
