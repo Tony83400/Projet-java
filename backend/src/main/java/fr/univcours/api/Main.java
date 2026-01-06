@@ -59,8 +59,8 @@ public class Main {
 
         app.get("/articles", ArticleController::getAllArticle);
         app.get("/articles/{id}",ArticleController::getArticleById);
-        app.get("/articlesForMenuById/{id}",ArticleController::getArticleForMenuById);
-        app.get("/articlesForCategorieById/{id}",ArticleController::getArticleForCategorieById);
+        app.get("/menus/{id}/articles",ArticleController::getArticleForMenuById);
+        app.get("/categories/{id}/articles",ArticleController::getArticleForCategorieById);
 
     }
 }

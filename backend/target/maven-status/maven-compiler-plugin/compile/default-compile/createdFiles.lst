@@ -1,8 +1,0 @@
-fr\univcours\api\controllers\UserController.class
-fr\univcours\api\database\DatabaseSetup.class
-openapi-plugin\.index
-fr\univcours\api\services\UserService.class
-json-schemes\index
-openapi-plugin\openapi-default.json
-fr\univcours\api\models\User.class
-fr\univcours\api\Main.class

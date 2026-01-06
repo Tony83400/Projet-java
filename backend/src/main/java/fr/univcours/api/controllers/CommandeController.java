@@ -32,6 +32,7 @@ public class CommandeController {
             pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
             },
+
             responses = {
                     @OpenApiResponse(status = "204", description = "Commande supprimée"),
                     @OpenApiResponse(status = "404", description = "Commande introuvable")

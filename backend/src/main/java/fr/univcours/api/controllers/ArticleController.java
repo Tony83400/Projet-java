@@ -51,9 +51,9 @@ public class ArticleController {
     @OpenApi(
             summary = "Trouve les articles pour un menu par id",
             operationId = "getArticleForMenuById",
-            path = "/articlesForMenuById/{id}",
+            path = "/menus/{id}/articles",
             methods = HttpMethod.GET,
-            tags = {"Article"},
+            tags = {"Menus"},
             pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID du article", required = true)
             },
@@ -73,9 +73,9 @@ public class ArticleController {
     @OpenApi(
             summary = "Trouve les articles pour une categorie par id",
             operationId = "getArticleForCategorieById",
-            path = "/articlesForCategorieById/{id}",
+            path = "/categories/{id}/articles",
             methods = HttpMethod.GET,
-            tags = {"Article"},
+            tags = {"Categorie"},
             pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID du article", required = true)
             },

@@ -10,7 +10,7 @@ public class MenuController {
 
     private static final MenuService menuService = new MenuService();
 
-    // CORRECTION : path = "/menus" (doit matcher le Main.java)
+
     @OpenApi(
             summary = "Récupérer tous les menus",
             operationId = "getAllMenu",

@@ -9,12 +9,13 @@ import java.sql.SQLException;
 
 public class CategorieController {
 
+
     private static final CategorieService categorieService = new CategorieService();
 
     @OpenApi(
             summary = "Récupérer toutes les categories",
             operationId = "getAllCategorie",
-            path = "/categories", // <--- ICI C'ÉTAIT "/menu"
+            path = "/categories",
             methods = HttpMethod.GET,
             tags = {"Categorie"},
             responses = {
@@ -27,7 +28,7 @@ public class CategorieController {
     @OpenApi(
             summary = "Trouve un categorie par id",
             operationId = "getCategorieById",
-            path = "/categories/{id}", // <--- ICI C'ÉTAIT "/menu/{id}"
+            path = "/categories/{id}",
             methods = HttpMethod.GET,
             tags = {"Categorie"},
             pathParams = {
@@ -43,7 +44,7 @@ public class CategorieController {
         if (rep == null) {
             ctx.status(404).json("Categorie introuvable");
         } else {
-            ctx.status(200).json(rep); // J'ai mis 200 au lieu de 201 (201 c'est pour la création)
+            ctx.status(200).json(rep);
         }
     }
 }
