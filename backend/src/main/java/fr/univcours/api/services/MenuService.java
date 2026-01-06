@@ -19,6 +19,7 @@ public class MenuService {
                 menu.setMenu_id(rs.getInt("menu_id"));
                 menu.setArticle_id(rs.getInt("article_id"));
                 menu.setNom(rs.getString("nom"));
+                menu.setImage_url(rs.getString("image_url"));
                 menus.add(menu);
             }
         } catch (SQLException e) {
@@ -39,6 +40,8 @@ public class MenuService {
                     menu.setMenu_id(rs.getInt("menu_id"));
                     menu.setArticle_id(rs.getInt("article_id"));
                     menu.setNom(rs.getString("nom"));
+                    menu.setImage_url(rs.getString("image_url"));
+
                     return menu;
                 }
             }

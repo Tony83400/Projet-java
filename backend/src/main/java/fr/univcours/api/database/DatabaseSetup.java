@@ -32,23 +32,14 @@ public class DatabaseSetup {
         try (Connection connection = getConnection()) {
             Statement stmt = connection.createStatement();
 
-            // --- TABLE IMAGE (Doit être créée en premier car Article et Menu l'utilisent) ---
-            String sql_image = "CREATE TABLE IF NOT EXISTS `image` (" +
-                    "`image_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "`url` VARCHAR(500) NOT NULL" +
-                    ") ENGINE=InnoDB;";
-            stmt.executeUpdate(sql_image);
-            System.out.println("✅ Table 'image' OK.");
-
             // --- TABLE ARTICLE ---
             String sql_article = "CREATE TABLE IF NOT EXISTS `article` (" +
                     "`article_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
                     "`prix` BIGINT NOT NULL, " +
                     "`description` TEXT NULL, " +
-                    "`image_id` BIGINT UNSIGNED NOT NULL, " +
-                    "`stock` BIGINT NOT NULL, " + // <--- Correction 1 : Backticks ` ` au lieu de ' '
-                    "CONSTRAINT `fk_article_image` FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`) ON DELETE CASCADE" + // <--- Correction 2 : Ajout de CONSTRAINT
+                    "`image_url` TEXT NOT NULL, " +
+                    "`stock` BIGINT NOT NULL " +
                     ") ENGINE=InnoDB;";
 
             stmt.executeUpdate(sql_article);
@@ -91,10 +82,9 @@ public class DatabaseSetup {
                     "`menu_id` BIGINT UNSIGNED NOT NULL, " +
                     "`article_id` BIGINT UNSIGNED NOT NULL, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
-                    "`image_id` BIGINT UNSIGNED NOT NULL, " +
+                    "`image_url` TEXT NOT NULL, " +
                     "PRIMARY KEY (`menu_id`, `article_id`), " +
-                    "CONSTRAINT `fk_menu_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE, " +
-                    "CONSTRAINT `fk_menu_image` FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`) ON DELETE CASCADE" +
+                    "CONSTRAINT `fk_menu_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE " +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_menu);
             System.out.println("✅ Table 'menu' OK.");

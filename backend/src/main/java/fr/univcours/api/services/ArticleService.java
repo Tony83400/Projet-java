@@ -19,6 +19,7 @@ public class ArticleService {
                 article.setArticle_id(rs.getInt("article_id"));
                 article.setStock(rs.getInt("stock"));
                 article.setDescription(rs.getString("description"));
+                article.setImage_url(rs.getString("image_url"));
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -39,6 +40,7 @@ public class ArticleService {
                     article.setArticle_id(rs.getInt("article_id"));
                     article.setStock(rs.getInt("stock"));
                     article.setDescription(rs.getString("description"));
+                    article.setImage_url(rs.getString("image_url"));
                     return article;
                 }
             }
@@ -69,6 +71,7 @@ public class ArticleService {
                     article.setPrix(rs.getInt("prix"));
                     article.setDescription(rs.getString("description"));
                     article.setStock(rs.getInt("stock"));
+                    article.setImage_url(rs.getString("image_url"));
 
                     articles.add(article);
                 }
@@ -100,7 +103,7 @@ public class ArticleService {
                     article.setNom(rs.getString("nom"));
                     article.setPrix(rs.getInt("prix"));
                     article.setDescription(rs.getString("description"));
-
+                    article.setImage_url(rs.getString("image_url"));
                     article.setStock(rs.getInt("stock"));
 
                     articles.add(article);
