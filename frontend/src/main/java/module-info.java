@@ -1,6 +1,7 @@
 module com.example.frontend {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
 
     opens com.example.frontend to javafx.fxml;
