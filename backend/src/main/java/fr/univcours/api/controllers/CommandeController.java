@@ -5,6 +5,7 @@ import io.javalin.http.Context;
 import io.javalin.openapi.*;
 import fr.univcours.api.services.CommandeService;
 import java.sql.SQLException;
+import java.util.List;
 
 public class CommandeController {
 
@@ -115,4 +116,67 @@ public class CommandeController {
             ctx.status(200).json(rep);
         }
     }
+
+    @OpenApi(
+            summary = "Trouve l'id de la prochaine commande",
+            operationId = "getNextCommandeId",
+            path = "/nextCommandeId",
+            methods = HttpMethod.GET,
+            tags = {"Commandes"},
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Commande trouvée", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "404", description = "Commande introuvable")
+            })
+    public static void getNextCommandeId(Context ctx) {
+        int rep = commandeService.getNextId();
+        ctx.status(200).json(rep);
+    }
+    @OpenApi(
+            summary = "Calculer le prix total d'une commande (par numéro de commande)",
+            operationId = "getCommandeTotal",
+            path = "/commandes/{numero}/total",
+            methods = HttpMethod.GET,
+            tags = {"Commandes"},
+            pathParams = {
+                    @OpenApiParam(name = "numero", type = Integer.class, description = "Numéro de la commande (numero_commande)", required = true)
+            },
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Prix total calculé", content = @OpenApiContent(type = "number", format = "double"))
+            })
+    public static void getTotal(Context ctx) {
+        int commande_id = Integer.parseInt(ctx.pathParam("commande_id"));
+        double total = commandeService.getTotalPriceByNumero(commande_id);
+
+        // On retourne un petit objet JSON pour que ce soit propre
+        // ou simplement le chiffre ctx.json(total); selon ta préférence.
+        // Ici je renvoie un objet JSON : {"numero_commande": 100, "total": 25.5}
+        ctx.status(200).json(total);
+    }
+    // Dans CommandeController.java
+
+    @OpenApi(
+            summary = "Trouve les lignes d'une commande par numéro de ticket",
+            operationId = "getCommandeByNumero", // J'ai renommé pour la clarté
+            path = "/commandes/{numero}", // On utilise le numéro de ticket
+            methods = HttpMethod.GET,
+            tags = {"Commandes"},
+            pathParams = {
+                    @OpenApiParam(name = "numero", type = Integer.class, description = "Numéro du ticket (numero_commande)", required = true)
+            },
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Liste des articles de la commande", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "404", description = "Aucune commande trouvée")
+            })
+    public static void getByNumero(Context ctx) throws SQLException {
+        int numero = Integer.parseInt(ctx.pathParam("numero"));
+        // On appelle la nouvelle méthode qui renvoie une liste
+        List<Commande> rep = commandeService.getCommandesByNumero(numero);
+
+        if (rep.isEmpty()) {
+            ctx.status(404).json("Aucune commande trouvée pour ce numéro");
+        } else {
+            ctx.status(200).json(rep);
+        }
+    }
+
 }

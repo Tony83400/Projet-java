@@ -5,174 +5,6 @@
     "version": ""
   },
   "paths": {
-    "/articles": {
-      "get": {
-        "tags": [
-          "Article"
-        ],
-        "summary": "Récupérer toutes les articles",
-        "operationId": "getAllArticle",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des articles",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/articles/{id}": {
-      "get": {
-        "tags": [
-          "Article"
-        ],
-        "summary": "Trouve un article par id",
-        "operationId": "getArticleById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Article trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Article introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Récupérer toutes les categories",
-        "operationId": "getAllCategorie",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Categorie"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories/{id}": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Trouve un categorie par id",
-        "operationId": "getCategorieById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du categorie",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Categorie trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Categorie"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Categorie introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories/{id}/articles": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Trouve les articles pour une categorie par id",
-        "operationId": "getArticleForCategorieById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Articles trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Articles introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
     "/commandes": {
       "get": {
         "tags": [
@@ -346,104 +178,104 @@
         "security": []
       }
     },
-    "/menus": {
+    "/commandes/{numero}": {
       "get": {
         "tags": [
-          "Menus"
+          "Commandes"
         ],
-        "summary": "Récupérer tous les menus",
-        "operationId": "getAllMenu",
+        "summary": "Trouve les lignes d\u0027une commande par numéro de ticket",
+        "operationId": "getCommandeByNumero",
+        "parameters": [
+          {
+            "name": "numero",
+            "in": "path",
+            "description": "Numéro du ticket (numero_commande)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des articles de la commande",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Commande"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Aucune commande trouvée"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/commandes/{numero}/total": {
+      "get": {
+        "tags": [
+          "Commandes"
+        ],
+        "summary": "Calculer le prix total d\u0027une commande (par numéro de commande)",
+        "operationId": "getCommandeTotal",
+        "parameters": [
+          {
+            "name": "numero",
+            "in": "path",
+            "description": "Numéro de la commande (numero_commande)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prix total calculé",
+            "content": {
+              "number": {
+                "schema": {
+                  "format": "double"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/nextCommandeId": {
+      "get": {
+        "tags": [
+          "Commandes"
+        ],
+        "summary": "Trouve l\u0027id de la prochaine commande",
+        "operationId": "getNextCommandeId",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des menus",
+            "description": "Commande trouvée",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Menu"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Trouve un menu par id",
-        "operationId": "getMenuById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du menu",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Menu trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Menu"
+                  "$ref": "#/components/schemas/Commande"
                 }
               }
             }
           },
           "404": {
-            "description": "Menu introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}/articles": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Trouve les articles pour un menu par id",
-        "operationId": "getArticleForMenuById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Articles trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Articles introuvable"
+            "description": "Commande introuvable"
           }
         },
         "deprecated": false,
@@ -453,54 +285,6 @@
   },
   "components": {
     "schemas": {
-      "Article": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "article_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "description": {
-            "type": "string"
-          },
-          "prix": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "stock": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nom": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "article_id",
-          "prix",
-          "stock"
-        ]
-      },
-      "Categorie": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "categorie_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nom": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "categorie_id"
-        ]
-      },
       "Commande": {
         "type": "object",
         "additionalProperties": false,
@@ -532,27 +316,6 @@
           "quantite_article",
           "numero_commande",
           "niveau_epice"
-        ]
-      },
-      "Menu": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "menu_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "article_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nom": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "menu_id",
-          "article_id"
         ]
       }
     }

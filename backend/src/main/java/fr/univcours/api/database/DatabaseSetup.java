@@ -35,19 +35,19 @@ public class DatabaseSetup {
 
             // --- TABLE ARTICLE ---
             String sql_article = "CREATE TABLE IF NOT EXISTS `article` (" +
-                    "`article_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`article_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
                     "`prix` FLOAT NOT NULL, " +
                     "`description` TEXT NULL, " +
                     "`image_url` TEXT NOT NULL, " +
-                    "`stock` BIGINT NOT NULL " +
+                    "`stock` INTEGER NOT NULL " +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_article);
             System.out.println("✅ Table 'article' OK.");
 
             // --- TABLE CATEGORIE ---
             String sql_categorie = "CREATE TABLE IF NOT EXISTS `categorie` (" +
-                    "`categorie_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                    "`categorie_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
                     "`description` TEXT NOT NULL" +
                     ") ENGINE=InnoDB;";
@@ -56,8 +56,8 @@ public class DatabaseSetup {
 
             // --- TABLE DE LIAISON ARTICLE_CATEGORIE ---
             String sql_article_categorie = "CREATE TABLE IF NOT EXISTS `article_categorie` (" +
-                    "`article_id` BIGINT UNSIGNED NOT NULL, " +
-                    "`categorie_id` BIGINT UNSIGNED NOT NULL, " +
+                    "`article_id` INTEGER UNSIGNED NOT NULL, " +
+                    "`categorie_id` INTEGER UNSIGNED NOT NULL, " +
                     "PRIMARY KEY (`article_id`, `categorie_id`), " +
                     "CONSTRAINT `fk_pivot_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE, " +
                     "CONSTRAINT `fk_pivot_categorie` FOREIGN KEY (`categorie_id`) REFERENCES `categorie`(`categorie_id`) ON DELETE CASCADE" +
@@ -67,11 +67,12 @@ public class DatabaseSetup {
 
             // --- TABLE COMMANDE ---
             String sql_commande = "CREATE TABLE IF NOT EXISTS `commande` (" +
-                    "`commande_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "`article_id` BIGINT UNSIGNED NOT NULL, " +
-                    "`quantite_article` BIGINT NOT NULL, " +
-                    "`numero_commande` BIGINT NOT NULL, " +
-                    "`niveau_epices` BIGINT NOT NULL, " +
+                    "`commande_id` INTEGER UNSIGNED NOT NULL, " + // On enlève PRIMARY KEY ici
+                    "`article_id` INTEGER UNSIGNED NOT NULL, " +  // On enlève PRIMARY KEY ici
+                    "`quantite_article` INTEGER NOT NULL, " +
+                    "`numero_commande` INTEGER NOT NULL, " +
+                    "`niveau_epice` INTEGER NOT NULL, " +
+                    "PRIMARY KEY (`commande_id`, `article_id`), " +
                     "CONSTRAINT `fk_commande_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_commande);
@@ -79,8 +80,8 @@ public class DatabaseSetup {
 
             // --- TABLE MENU ---
             String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
-                    "`menu_id` BIGINT UNSIGNED NOT NULL, " + // Pas d'auto-increment ici, c'est l'ID du groupe menu
-                    "`article_id` BIGINT UNSIGNED NOT NULL, " +
+                    "`menu_id` INTEGER UNSIGNED NOT NULL, " + // Pas d'auto-increment ici, c'est l'ID du groupe menu
+                    "`article_id` INTEGER UNSIGNED NOT NULL, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
                     "`image_url` TEXT NOT NULL, " +
                     "PRIMARY KEY (`menu_id`, `article_id`), " +
@@ -121,7 +122,7 @@ public class DatabaseSetup {
         stmt.executeUpdate(insertCats);
 
         // 2. Insertion des ARTICLES
-        // Les prix sont en centimes (550 = 5.50€)
+
         String insertArticles = "INSERT INTO article (nom, prix, description, image_url, stock) VALUES " +
                 "('Nems au Poulet (x4)', 5.50, 'Rouleaux de printemps frits au poulet et légumes', 'url_nems.jpg', 100), " +   // ID 1
                 "('Salade de Chou', 3.50, 'Salade croquante vinaigrée', 'url_salade.jpg', 50), " +                             // ID 2

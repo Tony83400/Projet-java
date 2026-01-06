@@ -13,7 +13,7 @@ public class MenuService {
         List<Menu> menus = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM menu")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM menu GROUP BY menu_id")) {
             while (rs.next()) {
                 Menu menu = new Menu();
                 menu.setMenu_id(rs.getInt("menu_id"));

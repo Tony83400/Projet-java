@@ -16,6 +16,7 @@ public class ArticleService {
              ResultSet rs = stmt.executeQuery("SELECT * FROM article");) {
             while (rs.next()) {
                 Article article = new Article();
+                article.setNom(rs.getString("nom"));
                 article.setArticle_id(rs.getInt("article_id"));
                 article.setStock(rs.getInt("stock"));
                 article.setDescription(rs.getString("description"));
@@ -37,6 +38,7 @@ public class ArticleService {
 
                 if (rs.next()) {
                     Article article = new Article();
+                    article.setNom(rs.getString("nom"));
                     article.setArticle_id(rs.getInt("article_id"));
                     article.setStock(rs.getInt("stock"));
                     article.setDescription(rs.getString("description"));
@@ -89,7 +91,7 @@ public class ArticleService {
         // On sélectionne tous les articles qui sont liés à ce menu_id dans la table menu
         String sql = "SELECT a.* FROM article a " +
                 "JOIN menu m ON a.article_id = m.article_id " +
-                "WHERE m.menu_id = ?";
+                "WHERE m.numero_commande = ?";
 
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
