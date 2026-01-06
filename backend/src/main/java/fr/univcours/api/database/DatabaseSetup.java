@@ -47,8 +47,10 @@ public class DatabaseSetup {
                     "`prix` BIGINT NOT NULL, " +
                     "`description` TEXT NULL, " +
                     "`image_id` BIGINT UNSIGNED NOT NULL, " +
-                    "CONSTRAINT `fk_article_image` FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`) ON DELETE CASCADE" +
+                    "`stock` BIGINT NOT NULL, " + // <--- Correction 1 : Backticks ` ` au lieu de ' '
+                    "CONSTRAINT `fk_article_image` FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`) ON DELETE CASCADE" + // <--- Correction 2 : Ajout de CONSTRAINT
                     ") ENGINE=InnoDB;";
+
             stmt.executeUpdate(sql_article);
             System.out.println("✅ Table 'article' OK.");
 
@@ -86,11 +88,11 @@ public class DatabaseSetup {
 
             // --- TABLE MENU ---
             String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
-                    "`menu_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                    "`menu_id` BIGINT UNSIGNED NOT NULL, " +
                     "`article_id` BIGINT UNSIGNED NOT NULL, " +
                     "`nom` VARCHAR(255) NOT NULL, " +
                     "`image_id` BIGINT UNSIGNED NOT NULL, " +
-                    "PRIMARY KEY (`menu_id`), " +
+                    "PRIMARY KEY (`menu_id`, `article_id`), " +
                     "CONSTRAINT `fk_menu_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE, " +
                     "CONSTRAINT `fk_menu_image` FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`) ON DELETE CASCADE" +
                     ") ENGINE=InnoDB;";

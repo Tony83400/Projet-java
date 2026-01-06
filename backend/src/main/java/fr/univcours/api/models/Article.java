@@ -49,4 +49,12 @@ public class Article {
     public void setStock(int stock) {
         this.stock = stock;
     }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 }

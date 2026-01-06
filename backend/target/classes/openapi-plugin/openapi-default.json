@@ -5,18 +5,42 @@
     "version": ""
   },
   "paths": {
-    "/categorie/{id}": {
+    "/articles": {
       "get": {
         "tags": [
-          "Categorie"
+          "Article"
         ],
-        "summary": "Trouve un categorie par id",
-        "operationId": "getCategorieById",
+        "summary": "Récupérer toutes les articles",
+        "operationId": "getAllArticle",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/articles/{id}": {
+      "get": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "Trouve un article par id",
+        "operationId": "getArticleById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID du categorie",
+            "description": "ID du article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -28,41 +52,97 @@
         ],
         "responses": {
           "200": {
-            "description": "Categorie trouvé",
+            "description": "Article trouvé",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Categorie"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
           },
           "404": {
-            "description": "Categorie introuvable"
+            "description": "Article introuvable"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/categories": {
+    "/articlesForCategorieById/{id}": {
       "get": {
         "tags": [
-          "Categorie"
+          "Article"
         ],
-        "summary": "Récupérer toutes les categories",
-        "operationId": "getAllCategorie",
-        "parameters": [],
+        "summary": "Trouve les articles pour une categorie par id",
+        "operationId": "getArticleForCategorieById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du article",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Liste des categories",
+            "description": "Articles trouvé",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Categorie"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
+          },
+          "404": {
+            "description": "Articles introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/articlesForMenuById/{id}": {
+      "get": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "Trouve les articles pour un menu par id",
+        "operationId": "getArticleForMenuById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du article",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Articles trouvé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Articles introuvable"
           }
         },
         "deprecated": false,
@@ -72,23 +152,33 @@
   },
   "components": {
     "schemas": {
-      "Categorie": {
+      "Article": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "categorie_id": {
+          "article_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "prix": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stock": {
             "type": "integer",
             "format": "int32"
           },
           "nom": {
             "type": "string"
-          },
-          "description": {
-            "type": "string"
           }
         },
         "required": [
-          "categorie_id"
+          "article_id",
+          "prix",
+          "stock"
         ]
       }
     }

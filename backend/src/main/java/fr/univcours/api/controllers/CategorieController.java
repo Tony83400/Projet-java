@@ -27,7 +27,7 @@ public class CategorieController {
     @OpenApi(
             summary = "Trouve un categorie par id",
             operationId = "getCategorieById",
-            path = "/categorie/{id}", // <--- ICI C'ÉTAIT "/menu/{id}"
+            path = "/categories/{id}", // <--- ICI C'ÉTAIT "/menu/{id}"
             methods = HttpMethod.GET,
             tags = {"Categorie"},
             pathParams = {

@@ -1,5 +1,6 @@
 package fr.univcours.api;
 
+import fr.univcours.api.controllers.ArticleController;
 import fr.univcours.api.controllers.MenuController;
 //import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.controllers.CommandeController;
@@ -18,6 +19,7 @@ public class Main {
 
         Javalin app = Javalin.create(config -> {
             // Configuration de la Db
+
             DatabaseSetup.start();
             // 1. Configuration CORS
             config.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
@@ -54,6 +56,11 @@ public class Main {
         app.get("/commandes/{id}", CommandeController::getById);
         app.delete("/commandes/{id}", CommandeController::delete);
         app.put("/commandes/{id}", CommandeController::updateById);
+
+        app.get("/articles", ArticleController::getAllArticle);
+        app.get("/articles/{id}",ArticleController::getArticleById);
+        app.get("/articlesForMenuById/{id}",ArticleController::getArticleForMenuById);
+        app.get("/articlesForCategorieById/{id}",ArticleController::getArticleForCategorieById);
 
     }
 }
