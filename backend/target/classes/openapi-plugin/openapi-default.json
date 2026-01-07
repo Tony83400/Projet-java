@@ -5,207 +5,6 @@
     "version": ""
   },
   "paths": {
-    "/articles": {
-      "get": {
-        "tags": [
-          "Article"
-        ],
-        "summary": "Récupérer toutes les articles",
-        "operationId": "getAllArticle",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des articles",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/articles/{id}": {
-      "get": {
-        "tags": [
-          "Article"
-        ],
-        "summary": "Trouve un article par id",
-        "operationId": "getArticleById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Article trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Article introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/articles/{id}/categories": {
-      "get": {
-        "tags": [
-          "Article"
-        ],
-        "summary": "Récupérer les catégories d\u0027un article",
-        "operationId": "getCategoriesForArticle",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de l\u0027article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Liste des catégories de l\u0027article"
-          },
-          "404": {
-            "description": "Article introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Récupérer toutes les categories",
-        "operationId": "getAllCategorie",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Categorie"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories/{id}": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Trouve un categorie par id",
-        "operationId": "getCategorieById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du categorie",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Categorie trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Categorie"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Categorie introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories/{id}/articles": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Trouve les articles pour une categorie par id",
-        "operationId": "getArticleForCategorieById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Articles trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Articles introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
     "/commandes": {
       "get": {
         "tags": [
@@ -420,103 +219,6 @@
         "deprecated": false,
         "security": []
       }
-    },
-    "/menus": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Récupérer tous les menus",
-        "operationId": "getAllMenu",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des menus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Menu"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Trouve un menu par id",
-        "operationId": "getMenuById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du menu",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Menu trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Menu"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Menu introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}/composition": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Récupérer la composition d\u0027un menu",
-        "operationId": "getCompositionForMenu",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du menu",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Composition du menu"
-          },
-          "404": {
-            "description": "Menu introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
     }
   },
   "components": {
@@ -525,13 +227,6 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "article_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "description": {
-            "type": "string"
-          },
           "prix": {
             "type": "number",
             "format": "float"
@@ -540,48 +235,36 @@
             "type": "integer",
             "format": "int32"
           },
-          "nom": {
+          "description": {
             "type": "string"
           },
-          "image_url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "article_id",
-          "prix",
-          "stock"
-        ]
-      },
-      "Categorie": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "categorie_id": {
+          "article_id": {
             "type": "integer",
             "format": "int32"
           },
-          "nom": {
+          "image_url": {
             "type": "string"
           },
-          "description": {
+          "nom": {
             "type": "string"
           }
         },
         "required": [
-          "categorie_id"
+          "prix",
+          "stock",
+          "article_id"
         ]
       },
       "Commande": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "statut": {
+            "type": "string"
+          },
           "commande_id": {
             "type": "integer",
             "format": "int32"
-          },
-          "statut": {
-            "type": "string"
           },
           "numero_ticket": {
             "type": "integer",
@@ -597,15 +280,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "articleId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "menuId": {
             "type": "integer",
             "format": "int32"
           },
           "quantite": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "articleId": {
             "type": "integer",
             "format": "int32"
           }
@@ -618,6 +301,9 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          },
           "ligne_id": {
             "type": "integer",
             "format": "int32"
@@ -626,15 +312,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "menu": {
+            "$ref": "#/components/schemas/Menu"
+          },
           "prix_unitaire_facture": {
             "type": "number",
             "format": "float"
-          },
-          "article": {
-            "$ref": "#/components/schemas/Article"
-          },
-          "menu": {
-            "$ref": "#/components/schemas/Menu"
           }
         },
         "required": [
@@ -647,24 +330,24 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "menu_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nom": {
-            "type": "string"
-          },
           "prix": {
             "type": "number",
             "format": "float"
           },
           "image_url": {
             "type": "string"
+          },
+          "menu_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nom": {
+            "type": "string"
           }
         },
         "required": [
-          "menu_id",
-          "prix"
+          "prix",
+          "menu_id"
         ]
       }
     }
