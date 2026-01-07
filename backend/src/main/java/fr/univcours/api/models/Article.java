@@ -1,13 +1,12 @@
 package fr.univcours.api.models;
 
-import java.math.BigDecimal;
-import java.util.List;
+
 
 public class Article {
     private int article_id;
     private String nom;
     private String description;
-    private BigDecimal prix;
+    private float prix;
     private int stock;
     private String image_url;
 
@@ -15,7 +14,7 @@ public class Article {
     public Article(){
 
     }
-    public Article(int article_id, BigDecimal prix, int stock, String nom, String description, String image_url) {
+    public Article(int article_id, float prix, int stock, String nom, String description, String image_url) {
         this.article_id = article_id;
         this.prix = prix;
         this.stock = stock;
@@ -39,11 +38,11 @@ public class Article {
         this.description = description;
     }
 
-    public BigDecimal getPrix() {
+    public float getPrix() {
         return prix;
     }
 
-    public void setPrix(BigDecimal prix) {
+    public void setPrix(float prix) {
         this.prix = prix;
     }
 

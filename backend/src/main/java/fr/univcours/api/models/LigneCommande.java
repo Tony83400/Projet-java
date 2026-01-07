@@ -1,11 +1,11 @@
 package fr.univcours.api.models;
 
-import java.math.BigDecimal;
+
 
 public class LigneCommande {
     private int ligne_id;
     private int quantite;
-    private BigDecimal prix_unitaire_facture;
+    private float prix_unitaire_facture;
     private Article article; // Can be null
     private Menu menu;       // Can be null
 
@@ -28,11 +28,11 @@ public class LigneCommande {
         this.quantite = quantite;
     }
 
-    public BigDecimal getPrix_unitaire_facture() {
+    public float getPrix_unitaire_facture() {
         return prix_unitaire_facture;
     }
 
-    public void setPrix_unitaire_facture(BigDecimal prix_unitaire_facture) {
+    public void setPrix_unitaire_facture(float prix_unitaire_facture) {
         this.prix_unitaire_facture = prix_unitaire_facture;
     }
 

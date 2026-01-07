@@ -1,6 +1,4 @@
-package fr.univcours.api.models.pivots;
-
-import fr.univcours.api.models.Article;
+package fr.univcours.api.models;
 
 public class MenuArticle {
     private Article article;

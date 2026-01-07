@@ -6,7 +6,7 @@ C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\un
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\Main.java
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\services\CategorieService.java
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\models\LigneCommande.java
-C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\models\pivots\MenuArticle.java
+C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\models\MenuArticle.java
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\controllers\ArticleController.java
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\models\Commande.java
 C:\Users\antho\Documents\GitHub\Projet-java-frontend\backend\src\main\java\fr\univcours\api\models\CommandeItem.java

@@ -18,7 +18,11 @@ public class MenuService {
         Menu menu = new Menu();
         menu.setMenu_id(rs.getInt("menu_id"));
         menu.setNom(rs.getString("nom"));
-        menu.setPrix(rs.getBigDecimal("prix"));
+
+        // --- CHANGEMENT ICI : getFloat au lieu de getBigDecimal ---
+        menu.setPrix(rs.getFloat("prix"));
+        // ----------------------------------------------------------
+
         menu.setImage_url(rs.getString("image_url"));
         return menu;
     }
@@ -26,13 +30,14 @@ public class MenuService {
     public List<Map<String, Object>> findCompositionForMenu(int menuId) {
         List<Map<String, Object>> composition = new ArrayList<>();
         String sql = "SELECT a.*, mc.quantite FROM article a " +
-                     "JOIN menu_composition mc ON a.article_id = mc.article_id " +
-                     "WHERE mc.menu_id = ?";
+                "JOIN menu_composition mc ON a.article_id = mc.article_id " +
+                "WHERE mc.menu_id = ?";
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, menuId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
+                    // Note : Cela fonctionnera car vous avez déjà migré ArticleService vers float
                     Article article = articleService.mapResultSetToArticle(rs);
                     int quantite = rs.getInt("quantite");
                     Map<String, Object> compositionMap = new HashMap<>();
@@ -46,7 +51,6 @@ public class MenuService {
         }
         return composition;
     }
-
 
     public List<Menu> GetMenus() {
         List<Menu> menus = new ArrayList<>();
@@ -71,8 +75,7 @@ public class MenuService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Menu menu = mapResultSetToMenu(rs);
-                    return menu;
+                    return mapResultSetToMenu(rs);
                 }
             }
             return null;

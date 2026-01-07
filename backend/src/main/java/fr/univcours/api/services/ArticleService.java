@@ -17,7 +17,11 @@ public class ArticleService {
         article.setArticle_id(rs.getInt("article_id"));
         article.setNom(rs.getString("nom"));
         article.setDescription(rs.getString("description"));
-        article.setPrix(rs.getBigDecimal("prix"));
+
+        // --- CHANGEMENT ICI : getFloat au lieu de getBigDecimal ---
+        article.setPrix(rs.getFloat("prix"));
+        // ----------------------------------------------------------
+
         article.setImage_url(rs.getString("image_url"));
         article.setStock(rs.getInt("stock"));
         return article;
@@ -26,8 +30,8 @@ public class ArticleService {
     public List<Categorie> findCategoriesForArticle(int articleId) {
         List<Categorie> categories = new ArrayList<>();
         String sql = "SELECT c.categorie_id, c.nom, c.description FROM categorie c " +
-                     "JOIN article_categorie ac ON c.categorie_id = ac.categorie_id " +
-                     "WHERE ac.article_id = ?";
+                "JOIN article_categorie ac ON c.categorie_id = ac.categorie_id " +
+                "WHERE ac.article_id = ?";
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, articleId);
@@ -64,8 +68,7 @@ public class ArticleService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Article article = mapResultSetToArticle(rs);
-                    return article;
+                    return mapResultSetToArticle(rs);
                 }
             }
             return null;

@@ -5,7 +5,7 @@ import io.javalin.http.Context;
 import io.javalin.openapi.*;
 import fr.univcours.api.services.CommandeService;
 import java.sql.SQLException;
-
+import java.util.Collections; // Ajouté pour singletonMap
 
 import fr.univcours.api.models.CommandeItem;
 import fr.univcours.api.models.LigneCommande;
@@ -13,7 +13,6 @@ import fr.univcours.api.models.LigneCommande;
 public class CommandeController {
 
     private static final CommandeService commandeService = new CommandeService();
-
 
     @OpenApi(
             summary = "Récupérer toutes les commandes",
@@ -50,7 +49,7 @@ public class CommandeController {
             ctx.status(200).json(rep);
         }
     }
-    
+
     @OpenApi(
             summary = "Initialiser une nouvelle commande vide",
             operationId = "initCommande",
@@ -92,6 +91,7 @@ public class CommandeController {
         ctx.json(commandeService.findLignesForCommande(id));
     }
 
+    // --- C'est ici que se trouve le changement principal ---
     @OpenApi(
             summary = "Récupérer le prix total d'une commande",
             operationId = "getTotalForCommande",
@@ -102,7 +102,8 @@ public class CommandeController {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
             },
             responses = {
-                    @OpenApiResponse(status = "200", description = "Prix total de la commande", content = @OpenApiContent(from = java.math.BigDecimal.class)),
+                    // CORRECTION : from = Float.class (et non java.math.float)
+                    @OpenApiResponse(status = "200", description = "Prix total de la commande", content = @OpenApiContent(from = Float.class)),
                     @OpenApiResponse(status = "404", description = "Commande introuvable")
             })
     public static void getTotalForCommande(Context ctx) throws SQLException {
@@ -111,9 +112,14 @@ public class CommandeController {
             ctx.status(404).json("Commande introuvable");
             return;
         }
-        java.math.BigDecimal total = commandeService.calculateTotalForCommande(id);
-        ctx.json(java.util.Collections.singletonMap("total", total));
+
+        // CORRECTION : float primitif simple
+        float total = commandeService.calculateTotalForCommande(id);
+
+        // Java va automatiquement transformer le float en Float pour la map
+        ctx.json(Collections.singletonMap("total", total));
     }
+    // ------------------------------------------------------
 
     @OpenApi(
             summary = "Ajouter un article à une commande existante",

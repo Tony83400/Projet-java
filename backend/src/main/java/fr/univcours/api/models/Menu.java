@@ -1,17 +1,16 @@
 package fr.univcours.api.models;
 
-import java.math.BigDecimal;
 
 public class Menu {
     private int menu_id;
     private String nom;
-    private BigDecimal prix;
+    private float prix;
     private String image_url;
 
     public Menu() {
     }
 
-    public Menu(int menu_id, String nom, BigDecimal prix, String imageUrl) {
+    public Menu(int menu_id, String nom, float prix, String imageUrl) {
         this.menu_id = menu_id;
         this.nom = nom;
         this.prix = prix;
@@ -34,11 +33,11 @@ public class Menu {
         this.nom = nom;
     }
 
-    public BigDecimal getPrix() {
+    public float getPrix() {
         return prix;
     }
 
-    public void setPrix(BigDecimal prix) {
+    public void setPrix(float prix) {
         this.prix = prix;
     }
 

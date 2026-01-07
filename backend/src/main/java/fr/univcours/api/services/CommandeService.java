@@ -1,17 +1,20 @@
 package fr.univcours.api.services;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.univcours.api.database.DatabaseSetup;
 import fr.univcours.api.models.Article;
 import fr.univcours.api.models.Commande;
+import fr.univcours.api.models.CommandeItem;
 import fr.univcours.api.models.LigneCommande;
 import fr.univcours.api.models.Menu;
-import fr.univcours.api.models.CommandeItem;
-
-import java.math.BigDecimal;
-import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CommandeService {
 
@@ -37,7 +40,8 @@ public class CommandeService {
                     LigneCommande ligne = new LigneCommande();
                     ligne.setLigne_id(rs.getInt("ligne_id"));
                     ligne.setQuantite(rs.getInt("quantite"));
-                    ligne.setPrix_unitaire_facture(rs.getBigDecimal("prix_unitaire_facture"));
+                    // CORRECTION : Utilisation correcte de getFloat
+                    ligne.setPrix_unitaire_facture(rs.getFloat("prix_unitaire_facture"));
 
                     int articleId = rs.getInt("article_id");
                     boolean articleWasNull = rs.wasNull();
@@ -54,7 +58,7 @@ public class CommandeService {
         }
         return lignes;
     }
-    
+
     public List<Commande> GetCommandes() {
         List<Commande> commandes = new ArrayList<>();
         String sql = "SELECT * FROM commande";
@@ -78,8 +82,7 @@ public class CommandeService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Commande commande = mapResultSetToCommande(rs);
-                    return commande;
+                    return mapResultSetToCommande(rs);
                 }
             }
             return null;
@@ -120,17 +123,20 @@ public class CommandeService {
                 }
             }
         } catch (SQLException e) {
-            // No need for explicit rollback, connection close will handle it if autoCommit is false.
             throw new RuntimeException("Error creating empty commande", e);
         }
     }
 
-    public BigDecimal calculateTotalForCommande(int commandeId) throws SQLException {
+    // CORRECTION MAJEURE ICI
+    public float calculateTotalForCommande(int commandeId) throws SQLException {
         List<LigneCommande> lignes = findLignesForCommande(commandeId);
-        BigDecimal total = BigDecimal.ZERO;
+        // 1. Initialisation primitive
+        float total = 0.0f;
+
         for (LigneCommande ligne : lignes) {
-            BigDecimal ligneTotal = ligne.getPrix_unitaire_facture().multiply(new BigDecimal(ligne.getQuantite()));
-            total = total.add(ligneTotal);
+            // 2. Opérations arithmétiques standard (* et +) au lieu de .multiply() et .add()
+            float ligneTotal = ligne.getPrix_unitaire_facture() * ligne.getQuantite();
+            total += ligneTotal;
         }
         return total;
     }
@@ -138,8 +144,9 @@ public class CommandeService {
     public LigneCommande addLigneToCommande(int commandeId, CommandeItem item) throws SQLException {
         String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseSetup.getConnection()) {
-            
-            BigDecimal price;
+
+            float price;
+            // Je suppose ici que vos modèles Article et Menu renvoient maintenant des float via getPrix()
             if (item.getArticleId() != null) {
                 Article article = articleService.getArticleByid(item.getArticleId());
                 if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
@@ -155,7 +162,9 @@ public class CommandeService {
             try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne, Statement.RETURN_GENERATED_KEYS)) {
                 stmtLigne.setInt(1, commandeId);
                 stmtLigne.setInt(4, item.getQuantite());
-                stmtLigne.setBigDecimal(5, price);
+
+                // CORRECTION : setFloat (CamelCase) au lieu de setfloat
+                stmtLigne.setFloat(5, price);
 
                 if (item.getArticleId() != null) {
                     stmtLigne.setInt(2, item.getArticleId());
@@ -164,14 +173,13 @@ public class CommandeService {
                     stmtLigne.setNull(2, Types.INTEGER);
                     stmtLigne.setInt(3, item.getMenuId());
                 }
-                
+
                 int affectedRows = stmtLigne.executeUpdate();
 
                 if (affectedRows > 0) {
                     try (ResultSet generatedKeys = stmtLigne.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             int newLigneId = generatedKeys.getInt(1);
-                            // Now fetch and return the newly created LigneCommande
                             List<LigneCommande> allLignes = findLignesForCommande(commandeId);
                             return allLignes.stream().filter(l -> l.getLigne_id() == newLigneId).findFirst().orElse(null);
                         }

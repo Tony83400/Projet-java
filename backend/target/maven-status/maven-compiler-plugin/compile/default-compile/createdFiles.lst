@@ -3,7 +3,6 @@ fr\univcours\api\controllers\ArticleController.class
 openapi-plugin\.index
 fr\univcours\api\models\Commande.class
 fr\univcours\api\models\LigneCommande.class
-fr\univcours\api\models\pivots\MenuArticle.class
 fr\univcours\api\controllers\MenuController.class
 fr\univcours\api\services\CategorieService.class
 fr\univcours\api\controllers\CommandeController.class
