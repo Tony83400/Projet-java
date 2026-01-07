@@ -5,21 +5,21 @@
     "version": ""
   },
   "paths": {
-    "/users": {
+    "/articles": {
       "get": {
         "tags": [
-          "Utilisateurs"
+          "Article"
         ],
-        "summary": "Récupérer tous les utilisateurs",
-        "operationId": "getAllUsers",
+        "summary": "Récupérer toutes les articles",
+        "operationId": "getAllArticle",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des utilisateurs",
+            "description": "Liste des articles",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
@@ -27,80 +27,60 @@
         },
         "deprecated": false,
         "security": []
-      },
-      "post": {
+      }
+    },
+    "/articles/{id}": {
+      "get": {
         "tags": [
-          "Utilisateurs"
+          "Article"
         ],
-        "summary": "Ajouter un nouvel utilisateur",
-        "operationId": "addUser",
-        "parameters": [],
-        "requestBody": {
-          "description": "Données du nouvel utilisateur (JSON)",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
+        "summary": "Trouve un article par id",
+        "operationId": "getArticleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du article",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article trouvé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
               }
             }
           },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Utilisateur créé avec succès"
-          },
-          "400": {
-            "description": "Données invalides"
+          "404": {
+            "description": "Article introuvable"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/users/{id}": {
-      "delete": {
-        "tags": [
-          "Utilisateurs"
-        ],
-        "summary": "Supprimer un utilisateur",
-        "operationId": "deleteUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de l\u0027utilisateur",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Utilisateur supprimé"
-          },
-          "404": {
-            "description": "Utilisateur introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
+    "/articles/{id}/categories": {
       "get": {
         "tags": [
-          "Utilisateurs"
+          "Article"
         ],
-        "summary": "Trouve un utilisateur par id",
-        "operationId": "getUserById",
+        "summary": "Récupérer les catégories d\u0027un article",
+        "operationId": "getCategoriesForArticle",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de l\u0027utilisateur",
+            "description": "ID de l\u0027article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -111,27 +91,29 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Utilisateur trouvé"
+          "200": {
+            "description": "Liste des catégories de l\u0027article"
           },
           "404": {
-            "description": "Utilisateur introuvable"
+            "description": "Article introuvable"
           }
         },
         "deprecated": false,
         "security": []
-      },
-      "put": {
+      }
+    },
+    "/categories/{id}/articles": {
+      "get": {
         "tags": [
-          "Utilisateurs"
+          "Categorie"
         ],
-        "summary": "Modifie un utilisateur par id",
-        "operationId": "updateUserById",
+        "summary": "Trouve les articles pour une categorie par id",
+        "operationId": "getArticleForCategorieById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de l\u0027utilisateur",
+            "description": "ID du article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -141,23 +123,19 @@
             }
           }
         ],
-        "requestBody": {
-          "description": "Données du nouvel utilisateur (JSON)",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
+        "responses": {
+          "200": {
+            "description": "Articles trouvé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
               }
             }
           },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Utilisateur trouvé"
-          },
           "404": {
-            "description": "Utilisateur introuvable"
+            "description": "Articles introuvable"
           }
         },
         "deprecated": false,
@@ -167,28 +145,36 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "Article": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "prix": {
+            "type": "number",
+            "format": "float"
+          },
+          "stock": {
             "type": "integer",
             "format": "int32"
           },
-          "name": {
+          "description": {
             "type": "string"
           },
-          "email": {
-            "type": "string"
-          },
-          "age": {
+          "article_id": {
             "type": "integer",
             "format": "int32"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "age"
+          "prix",
+          "stock",
+          "article_id"
         ]
       }
     }
