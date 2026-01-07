@@ -40,13 +40,14 @@ public class Main {
             // On enregistre le plugin Swagger
             config.plugins.register(new SwaggerPlugin(swaggerConfig));
 
-        }).start(7000);
+        }).start(3000);
 
         System.out.println("🚀 Serveur démarré sur http://localhost:7000");
 
         // Routes
         app.get("/menus", MenuController::getAllMenu);
         app.get("/menus/{id}", MenuController::getMenuById);
+        app.get("/menus/{id}/composition", MenuController::getCompositionForMenu);
 
         app.get("/categories", CategorieController::getAllCategorie);
         app.get("/categories/{id}", CategorieController::getCategorieById);
@@ -54,15 +55,12 @@ public class Main {
         app.get("/commandes", CommandeController::getAll);
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);
-        app.delete("/commandes/{id}", CommandeController::delete);
-        app.put("/commandes/{id}", CommandeController::updateById);
-        app.get("/nextCommandeId",CommandeController::getNextCommandeId);
-        app.get("/commandes/{commande_id}/total", CommandeController::getTotal);
-        app.get("/commandes/{commande_id}/commandes",CommandeController::getByNumero);
+        app.get("/commandes/{id}/lignes", CommandeController::getLignesForCommande);
+        app.get("/commandes/{id}/total", CommandeController::getTotalForCommande);
 
         app.get("/articles", ArticleController::getAllArticle);
         app.get("/articles/{id}",ArticleController::getArticleById);
-        app.get("/menus/{id}/articles",ArticleController::getArticleForMenuById);
+        app.get("/articles/{id}/categories", ArticleController::getCategoriesForArticle);
         app.get("/categories/{id}/articles",ArticleController::getArticleForCategorieById);
 
     }

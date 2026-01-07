@@ -9,17 +9,21 @@ import java.util.List;
 
 public class CategorieService {
 
+    public Categorie mapResultSetToCategorie(ResultSet rs) throws SQLException {
+        Categorie categorie = new Categorie();
+        categorie.setCategorie_id(rs.getInt("categorie_id"));
+        categorie.setNom(rs.getString("nom"));
+        categorie.setDescription(rs.getString("description"));
+        return categorie;
+    }
+
     public List<Categorie> GetCategories() {
         List<Categorie> categories = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM categorie");) {
             while (rs.next()) {
-                Categorie categorie = new Categorie();
-                categorie.setCategorie_id(rs.getInt("categorie_id"));
-                categorie.setNom(rs.getString("nom"));
-                categorie.setDescription(rs.getString("description"));
-                categories.add(categorie);
+                categories.add(mapResultSetToCategorie(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -35,11 +39,7 @@ public class CategorieService {
             try (ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next()) {
-                    Categorie categorie = new Categorie();
-                    categorie.setCategorie_id(rs.getInt("categorie_id"));
-                    categorie.setNom(rs.getString("nom"));
-                    categorie.setDescription(rs.getString("description"));
-                    return categorie;
+                    return mapResultSetToCategorie(rs);
                 }
             }
             return null;

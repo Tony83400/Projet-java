@@ -48,28 +48,7 @@ public class ArticleController {
         }
     }
 
-    @OpenApi(
-            summary = "Trouve les articles pour un menu par id",
-            operationId = "getArticleForMenuById",
-            path = "/menus/{id}/articles",
-            methods = HttpMethod.GET,
-            tags = {"Menus"},
-            pathParams = {
-                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du article", required = true)
-            },
-            responses = {
-                    @OpenApiResponse(status = "200", description = "Articles trouvé", content = @OpenApiContent(from = Article.class)),
-                    @OpenApiResponse(status = "404", description = "Articles introuvable")
-            })
-    public static void getArticleForMenuById(Context ctx) throws SQLException {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        List<Article> rep = articleService.getArticlesForMenu(id);
-        if (rep == null) {
-            ctx.status(404).json("Menu introuvable");
-        } else {
-            ctx.status(200).json(rep);
-        }
-    }
+
     @OpenApi(
             summary = "Trouve les articles pour une categorie par id",
             operationId = "getArticleForCategorieById",
@@ -91,5 +70,27 @@ public class ArticleController {
         } else {
             ctx.status(200).json(rep);
         }
+    }
+
+    @OpenApi(
+            summary = "Récupérer les catégories d'un article",
+            operationId = "getCategoriesForArticle",
+            path = "/articles/{id}/categories",
+            methods = HttpMethod.GET,
+            tags = {"Article"},
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de l'article", required = true)
+            },
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Liste des catégories de l'article"),
+                    @OpenApiResponse(status = "404", description = "Article introuvable")
+            })
+    public static void getCategoriesForArticle(Context ctx) throws SQLException {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        if (articleService.getArticleByid(id) == null) {
+            ctx.status(404).json("Article introuvable");
+            return;
+        }
+        ctx.json(articleService.findCategoriesForArticle(id));
     }
 }

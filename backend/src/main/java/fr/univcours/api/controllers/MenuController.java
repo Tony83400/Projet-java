@@ -47,4 +47,26 @@ public class MenuController {
             ctx.status(200).json(rep); // J'ai mis 200 au lieu de 201 (201 c'est pour la création)
         }
     }
+
+    @OpenApi(
+            summary = "Récupérer la composition d'un menu",
+            operationId = "getCompositionForMenu",
+            path = "/menus/{id}/composition",
+            methods = HttpMethod.GET,
+            tags = {"Menus"},
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du menu", required = true)
+            },
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Composition du menu"),
+                    @OpenApiResponse(status = "404", description = "Menu introuvable")
+            })
+    public static void getCompositionForMenu(Context ctx) throws SQLException {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        if (menuService.getMenuByid(id) == null) {
+            ctx.status(404).json("Menu introuvable");
+            return;
+        }
+        ctx.json(menuService.findCompositionForMenu(id));
+    }
 }

@@ -35,60 +35,82 @@ public class DatabaseSetup {
 
             // --- TABLE ARTICLE ---
             String sql_article = "CREATE TABLE IF NOT EXISTS `article` (" +
-                    "`article_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "`nom` VARCHAR(255) NOT NULL, " +
-                    "`prix` FLOAT NOT NULL, " +
-                    "`description` TEXT NULL, " +
-                    "`image_url` TEXT NOT NULL, " +
-                    "`stock` INTEGER NOT NULL " +
+                    "`article_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "`nom` VARCHAR(255) NOT NULL," +
+                    "`description` TEXT NULL," +
+                    "`prix` DECIMAL(10, 2) NOT NULL," +
+                    "`image_url` VARCHAR(500) NOT NULL," +
+                    "`stock` INT NOT NULL DEFAULT 0" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_article);
             System.out.println("✅ Table 'article' OK.");
 
             // --- TABLE CATEGORIE ---
             String sql_categorie = "CREATE TABLE IF NOT EXISTS `categorie` (" +
-                    "`categorie_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "`nom` VARCHAR(255) NOT NULL, " +
-                    "`description` TEXT NOT NULL" +
+                    "`categorie_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "`nom` VARCHAR(255) NOT NULL," +
+                    "`description` TEXT NULL" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_categorie);
             System.out.println("✅ Table 'categorie' OK.");
 
             // --- TABLE DE LIAISON ARTICLE_CATEGORIE ---
             String sql_article_categorie = "CREATE TABLE IF NOT EXISTS `article_categorie` (" +
-                    "`article_id` INTEGER UNSIGNED NOT NULL, " +
-                    "`categorie_id` INTEGER UNSIGNED NOT NULL, " +
-                    "PRIMARY KEY (`article_id`, `categorie_id`), " +
-                    "CONSTRAINT `fk_pivot_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE, " +
-                    "CONSTRAINT `fk_pivot_categorie` FOREIGN KEY (`categorie_id`) REFERENCES `categorie`(`categorie_id`) ON DELETE CASCADE" +
+                    "`article_id` INT UNSIGNED NOT NULL," +
+                    "`categorie_id` INT UNSIGNED NOT NULL," +
+                    "PRIMARY KEY (`article_id`, `categorie_id`)," +
+                    "CONSTRAINT `fk_artcat_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE," +
+                    "CONSTRAINT `fk_artcat_categorie` FOREIGN KEY (`categorie_id`) REFERENCES `categorie`(`categorie_id`) ON DELETE CASCADE" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_article_categorie);
             System.out.println("✅ Table 'article_categorie' OK.");
 
+            // --- TABLE MENU ---
+            String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
+                    "`menu_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "`nom` VARCHAR(255) NOT NULL," +
+                    "`prix` DECIMAL(10, 2) NOT NULL," +
+                    "`image_url` VARCHAR(500) NOT NULL" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_menu);
+            System.out.println("✅ Table 'menu' OK.");
+
+            // --- TABLE COMPOSITION MENU ---
+            String sql_menu_composition = "CREATE TABLE IF NOT EXISTS `menu_composition` (" +
+                    "`menu_id` INT UNSIGNED NOT NULL," +
+                    "`article_id` INT UNSIGNED NOT NULL," +
+                    "`quantite` INT NOT NULL DEFAULT 1," +
+                    "PRIMARY KEY (`menu_id`, `article_id`)," +
+                    "CONSTRAINT `fk_menucomp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu`(`menu_id`) ON DELETE CASCADE," +
+                    "CONSTRAINT `fk_menucomp_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE" +
+                    ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_menu_composition);
+            System.out.println("✅ Table 'menu_composition' OK.");
+
             // --- TABLE COMMANDE ---
             String sql_commande = "CREATE TABLE IF NOT EXISTS `commande` (" +
-                    "`commande_id` INTEGER UNSIGNED NOT NULL, " + // On enlève PRIMARY KEY ici
-                    "`article_id` INTEGER UNSIGNED NOT NULL, " +  // On enlève PRIMARY KEY ici
-                    "`quantite_article` INTEGER NOT NULL, " +
-                    "`numero_commande` INTEGER NOT NULL, " +
-                    "`niveau_epice` INTEGER NOT NULL, " +
-                    "PRIMARY KEY (`commande_id`, `article_id`), " +
-                    "CONSTRAINT `fk_commande_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE" +
+                    "`commande_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "`statut` VARCHAR(50) DEFAULT 'EN_PREPARATION'," +
+                    "`numero_ticket` INT NOT NULL" +
                     ") ENGINE=InnoDB;";
             stmt.executeUpdate(sql_commande);
             System.out.println("✅ Table 'commande' OK.");
 
-            // --- TABLE MENU ---
-            String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
-                    "`menu_id` INTEGER UNSIGNED NOT NULL, " + // Pas d'auto-increment ici, c'est l'ID du groupe menu
-                    "`article_id` INTEGER UNSIGNED NOT NULL, " +
-                    "`nom` VARCHAR(255) NOT NULL, " +
-                    "`image_url` TEXT NOT NULL, " +
-                    "PRIMARY KEY (`menu_id`, `article_id`), " +
-                    "CONSTRAINT `fk_menu_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE CASCADE " +
+            // --- TABLE LIGNE DE COMMANDE ---
+            String sql_ligne_commande = "CREATE TABLE IF NOT EXISTS `ligne_commande` (" +
+                    "`ligne_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "`commande_id` INT UNSIGNED NOT NULL," +
+                    "`article_id` INT UNSIGNED NULL," +
+                    "`menu_id` INT UNSIGNED NULL," +
+                    "`quantite` INT NOT NULL DEFAULT 1," +
+                    "`prix_unitaire_facture` DECIMAL(10, 2) NOT NULL," +
+                    "CONSTRAINT `fk_ligne_commande` FOREIGN KEY (`commande_id`) REFERENCES `commande`(`commande_id`) ON DELETE CASCADE," +
+                    "CONSTRAINT `fk_ligne_article` FOREIGN KEY (`article_id`) REFERENCES `article`(`article_id`) ON DELETE SET NULL," +
+                    "CONSTRAINT `fk_ligne_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu`(`menu_id`) ON DELETE SET NULL," +
+                    "CONSTRAINT `chk_article_or_menu` CHECK ((`article_id` IS NOT NULL AND `menu_id` IS NULL) OR (`article_id` IS NULL AND `menu_id` IS NOT NULL))" +
                     ") ENGINE=InnoDB;";
-            stmt.executeUpdate(sql_menu);
-            System.out.println("✅ Table 'menu' OK.");
+            stmt.executeUpdate(sql_ligne_commande);
+            System.out.println("✅ Table 'ligne_commande' OK.");
 
             // 3. Insertion des données par défaut
             insertDefaultData(connection);
@@ -122,19 +144,17 @@ public class DatabaseSetup {
         stmt.executeUpdate(insertCats);
 
         // 2. Insertion des ARTICLES
-
         String insertArticles = "INSERT INTO article (nom, prix, description, image_url, stock) VALUES " +
-                "('Nems au Poulet (x4)', 5.50, 'Rouleaux de printemps frits au poulet et légumes', 'url_nems.jpg', 100), " +   // ID 1
-                "('Salade de Chou', 3.50, 'Salade croquante vinaigrée', 'url_salade.jpg', 50), " +                             // ID 2
-                "('Poulet au Curry Rouge', 12.90, 'Poulet mijoté au lait de coco et curry rouge thai', 'url_curry.jpg', 80), " + // ID 3
-                "('Bœuf aux Oignons', 13.50, 'Lamelles de bœuf sautées au wok', 'url_boeuf.jpg', 60), " +                       // ID 4
-                "('Nouilles Sautées Légumes', 11.00, 'Nouilles aux oeufs et légumes de saison', 'url_nouilles.jpg', 40), " +    // ID 5
-                "('Perles de Coco (x2)', 4.00, 'Boules de riz gluant à la vapeur, coeur soja jaune', 'url_perles.jpg', 100), " + // ID 6
-                "('Mochis Glacés Mangue', 4.50, 'Dessert japonais glacé', 'url_mochi.jpg', 120);";                              // ID 7
+                "('Nems au Poulet (x4)', 5.50, 'Rouleaux de printemps frits au poulet et légumes', 'images/articles/nems.jpg', 100), " +   // ID 1
+                "('Salade de Chou', 3.50, 'Salade croquante vinaigrée', 'images/articles/salade.jpg', 50), " +                             // ID 2
+                "('Poulet au Curry Rouge', 12.90, 'Poulet mijoté au lait de coco et curry rouge thai', 'images/articles/curry.jpg', 80), " + // ID 3
+                "('Bœuf aux Oignons', 13.50, 'Lamelles de bœuf sautées au wok', 'images/articles/boeuf.jpg', 60), " +                       // ID 4
+                "('Nouilles Sautées Légumes', 11.00, 'Nouilles aux oeufs et légumes de saison', 'images/articles/nouilles.jpg', 40), " +    // ID 5
+                "('Perles de Coco (x2)', 4.00, 'Boules de riz gluant à la vapeur, coeur soja jaune', 'images/articles/perles.jpg', 100), " + // ID 6
+                "('Mochis Glacés Mangue', 4.50, 'Dessert japonais glacé', 'images/articles/mochi.jpg', 120);";                              // ID 7
         stmt.executeUpdate(insertArticles);
 
         // 3. Insertion des LIAISONS (Article <-> Catégorie)
-        // Syntaxe : (article_id, categorie_id)
         String insertPivot = "INSERT INTO article_categorie (article_id, categorie_id) VALUES " +
                 "(1, 1), " + // Nems -> Entrée
                 "(2, 1), (2, 4), " + // Salade -> Entrée, Végétarien
@@ -146,18 +166,22 @@ public class DatabaseSetup {
         stmt.executeUpdate(insertPivot);
 
         // 4. Insertion des MENUS
-        // On crée des groupes de menus. menu_id=1 (Menu Midi), menu_id=2 (Menu Gourmand)
-        // Syntaxe : (menu_id, article_id, nom, image_url)
-        String insertMenus = "INSERT INTO menu (menu_id, article_id, nom, image_url) VALUES " +
+        String insertMenus = "INSERT INTO menu (nom, prix, image_url) VALUES " +
+                "('Menu Midi Express', 15.00, 'images/menus/menu_midi.jpg'), " +      // ID 1
+                "('Menu Gourmand', 18.50, 'images/menus/menu_gourmand.jpg');";   // ID 2
+        stmt.executeUpdate(insertMenus);
+
+        // 5. Insertion de la COMPOSITION des MENUS
+        String insertMenuComp = "INSERT INTO menu_composition (menu_id, article_id, quantite) VALUES " +
                 // Menu Midi (Nems + Nouilles)
-                "(1, 1, 'Menu Midi Express', 'url_menu_midi.jpg'), " +
-                "(1, 5, 'Menu Midi Express', 'url_menu_midi.jpg'), " +
+                "(1, 1, 1), " + // 1x Nems
+                "(1, 5, 1), " + // 1x Nouilles
 
                 // Menu Gourmand (Salade + Poulet Curry + Perles coco)
-                "(2, 2, 'Menu Gourmand', 'url_menu_gourmand.jpg'), " +
-                "(2, 3, 'Menu Gourmand', 'url_menu_gourmand.jpg'), " +
-                "(2, 6, 'Menu Gourmand', 'url_menu_gourmand.jpg');";
-        stmt.executeUpdate(insertMenus);
+                "(2, 2, 1), " + // 1x Salade
+                "(2, 3, 1), " + // 1x Poulet Curry
+                "(2, 6, 1);";   // 1x Perles de coco
+        stmt.executeUpdate(insertMenuComp);
 
         System.out.println("✅ Données par défaut insérées avec succès !");
     }

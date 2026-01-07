@@ -5,7 +5,9 @@ import io.javalin.http.Context;
 import io.javalin.openapi.*;
 import fr.univcours.api.services.CommandeService;
 import java.sql.SQLException;
-import java.util.List;
+
+
+import fr.univcours.api.models.CommandeRequest;
 
 public class CommandeController {
 
@@ -16,57 +18,12 @@ public class CommandeController {
             operationId = "getAllCommandes",
             path = "/commandes",
             methods = HttpMethod.GET,
-            tags = {"Commandes"}, // <--- Correction du tag
+            tags = {"Commandes"},
             responses = {
                     @OpenApiResponse(status = "200", description = "Liste des commandes", content = @OpenApiContent(from = Commande.class))
             })
     public static void getAll(Context ctx) {
         ctx.json(commandeService.GetCommandes());
-    }
-
-    @OpenApi(
-            summary = "Supprimer une commande",
-            operationId = "deleteCommande",
-            path = "/commandes/{id}",
-            methods = HttpMethod.DELETE,
-            tags = {"Commandes"},
-            pathParams = {
-                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
-            },
-
-            responses = {
-                    @OpenApiResponse(status = "204", description = "Commande supprimée"),
-                    @OpenApiResponse(status = "404", description = "Commande introuvable")
-            })
-    public static void delete(Context ctx) throws SQLException {
-        int id = Integer.parseInt(ctx.pathParam("id"));
-        boolean estSupprime = commandeService.deleteCommande(id);
-        if (estSupprime) {
-            ctx.status(204);
-        } else {
-            ctx.status(404).json("Commande introuvable");
-        }
-    }
-
-    @OpenApi(
-            summary = "Ajouter une nouvelle commande",
-            operationId = "addCommande",
-            path = "/commandes",
-            methods = HttpMethod.POST,
-            tags = {"Commandes"},
-            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = Commande.class), required = true, description = "Données de la commande"),
-            responses = {
-                    @OpenApiResponse(status = "201", description = "Commande créée avec succès"),
-                    @OpenApiResponse(status = "400", description = "Données invalides")
-            })
-    public static void add(Context ctx) throws SQLException {
-        Commande newCommande = ctx.bodyAsClass(Commande.class);
-        Commande commandeRep = commandeService.addCommande(newCommande);
-        if (commandeRep == null) {
-            ctx.status(400).json("Impossible d'ajouter la commande");
-        } else {
-            ctx.status(201).json(commandeRep);
-        }
     }
 
     @OpenApi(
@@ -91,92 +48,70 @@ public class CommandeController {
             ctx.status(200).json(rep);
         }
     }
+    
+    @OpenApi(
+            summary = "Ajouter une nouvelle commande",
+            operationId = "addCommande",
+            path = "/commandes",
+            methods = HttpMethod.POST,
+            tags = {"Commandes"},
+            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = CommandeRequest.class), required = true, description = "Données de la commande"),
+            responses = {
+                    @OpenApiResponse(status = "201", description = "Commande créée avec succès", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "400", description = "Données invalides")
+            })
+    public static void add(Context ctx) {
+        try {
+            CommandeRequest newCommandeRequest = ctx.bodyAsClass(CommandeRequest.class);
+            Commande commandeRep = commandeService.addCommande(newCommandeRequest);
+            ctx.status(201).json(commandeRep);
+        } catch (Exception e) {
+            ctx.status(400).json("Impossible d'ajouter la commande: " + e.getMessage());
+        }
+    }
 
     @OpenApi(
-            summary = "Modifie une commande par id",
-            operationId = "updateCommandeById",
-            path = "/commandes/{id}",
-            methods = HttpMethod.PUT,
+            summary = "Récupérer les lignes d'une commande",
+            operationId = "getLignesForCommande",
+            path = "/commandes/{id}/lignes",
+            methods = HttpMethod.GET,
             tags = {"Commandes"},
             pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
             },
-            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = Commande.class), required = true, description = "Données mises à jour"),
             responses = {
-                    @OpenApiResponse(status = "200", description = "Commande mise à jour", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "200", description = "Liste des lignes de la commande"),
                     @OpenApiResponse(status = "404", description = "Commande introuvable")
             })
-    public static void updateById(Context ctx) {
-        Commande newCommande = ctx.bodyAsClass(Commande.class);
+    public static void getLignesForCommande(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
-        Commande rep = commandeService.updateById(id, newCommande);
-        if (rep == null) {
+        if (commandeService.getCommandeByid(id) == null) {
             ctx.status(404).json("Commande introuvable");
-        } else {
-            ctx.status(200).json(rep);
+            return;
         }
+        ctx.json(commandeService.findLignesForCommande(id));
     }
 
     @OpenApi(
-            summary = "Trouve l'id de la prochaine commande",
-            operationId = "getNextCommandeId",
-            path = "/nextCommandeId",
+            summary = "Récupérer le prix total d'une commande",
+            operationId = "getTotalForCommande",
+            path = "/commandes/{id}/total",
             methods = HttpMethod.GET,
             tags = {"Commandes"},
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
+            },
             responses = {
-                    @OpenApiResponse(status = "200", description = "Commande trouvée", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "200", description = "Prix total de la commande", content = @OpenApiContent(from = java.math.BigDecimal.class)),
                     @OpenApiResponse(status = "404", description = "Commande introuvable")
             })
-    public static void getNextCommandeId(Context ctx) {
-        int rep = commandeService.getNextId();
-        ctx.status(200).json(rep);
-    }
-    @OpenApi(
-            summary = "Calculer le prix total d'une commande (par numéro de commande)",
-            operationId = "getCommandeTotal",
-            path = "/commandes/{numero}/total",
-            methods = HttpMethod.GET,
-            tags = {"Commandes"},
-            pathParams = {
-                    @OpenApiParam(name = "numero", type = Integer.class, description = "Numéro de la commande (numero_commande)", required = true)
-            },
-            responses = {
-                    @OpenApiResponse(status = "200", description = "Prix total calculé", content = @OpenApiContent(type = "number", format = "double"))
-            })
-    public static void getTotal(Context ctx) {
-        int commande_id = Integer.parseInt(ctx.pathParam("commande_id"));
-        double total = commandeService.getTotalPriceByNumero(commande_id);
-
-        // On retourne un petit objet JSON pour que ce soit propre
-        // ou simplement le chiffre ctx.json(total); selon ta préférence.
-        // Ici je renvoie un objet JSON : {"numero_commande": 100, "total": 25.5}
-        ctx.status(200).json(total);
-    }
-    // Dans CommandeController.java
-
-    @OpenApi(
-            summary = "Trouve les lignes d'une commande par numéro de ticket",
-            operationId = "getCommandeByNumero", // J'ai renommé pour la clarté
-            path = "/commandes/{numero}", // On utilise le numéro de ticket
-            methods = HttpMethod.GET,
-            tags = {"Commandes"},
-            pathParams = {
-                    @OpenApiParam(name = "numero", type = Integer.class, description = "Numéro du ticket (numero_commande)", required = true)
-            },
-            responses = {
-                    @OpenApiResponse(status = "200", description = "Liste des articles de la commande", content = @OpenApiContent(from = Commande.class)),
-                    @OpenApiResponse(status = "404", description = "Aucune commande trouvée")
-            })
-    public static void getByNumero(Context ctx) throws SQLException {
-        int numero = Integer.parseInt(ctx.pathParam("numero"));
-        // On appelle la nouvelle méthode qui renvoie une liste
-        List<Commande> rep = commandeService.getCommandesByNumero(numero);
-
-        if (rep.isEmpty()) {
-            ctx.status(404).json("Aucune commande trouvée pour ce numéro");
-        } else {
-            ctx.status(200).json(rep);
+    public static void getTotalForCommande(Context ctx) throws SQLException {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        if (commandeService.getCommandeByid(id) == null) {
+            ctx.status(404).json("Commande introuvable");
+            return;
         }
+        java.math.BigDecimal total = commandeService.calculateTotalForCommande(id);
+        ctx.json(java.util.Collections.singletonMap("total", total));
     }
-
 }

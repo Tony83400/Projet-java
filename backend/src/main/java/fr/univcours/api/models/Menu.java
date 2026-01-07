@@ -1,19 +1,21 @@
 package fr.univcours.api.models;
 
+import java.math.BigDecimal;
+
 public class Menu {
     private int menu_id;
-    private int article_id;
     private String nom;
+    private BigDecimal prix;
     private String image_url;
 
     public Menu() {
     }
 
-    public Menu(int menu_id, int article_id, String nom, String imageUrl) {
+    public Menu(int menu_id, String nom, BigDecimal prix, String imageUrl) {
         this.menu_id = menu_id;
-        this.article_id = article_id;
         this.nom = nom;
-        image_url = imageUrl;
+        this.prix = prix;
+        this.image_url = imageUrl;
     }
 
     public int getMenu_id() {
@@ -24,20 +26,20 @@ public class Menu {
         this.menu_id = menu_id;
     }
 
-    public int getArticle_id() {
-        return article_id;
-    }
-
-    public void setArticle_id(int article_id) {
-        this.article_id = article_id;
-    }
-
     public String getNom() {
         return nom;
     }
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
     }
 
     public String getImage_url() {
