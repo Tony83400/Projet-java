@@ -56,6 +56,7 @@ public class Main {
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);
         app.get("/commandes/{id}/lignes", CommandeController::getLignesForCommande);
+        app.post("/commandes/{id}/lignes", CommandeController::addLigneToCommande);
         app.get("/commandes/{id}/total", CommandeController::getTotalForCommande);
 
         app.get("/articles", ArticleController::getAllArticle);

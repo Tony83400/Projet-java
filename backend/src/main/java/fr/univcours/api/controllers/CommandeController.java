@@ -7,11 +7,13 @@ import fr.univcours.api.services.CommandeService;
 import java.sql.SQLException;
 
 
-import fr.univcours.api.models.CommandeRequest;
+import fr.univcours.api.models.CommandeItem;
+import fr.univcours.api.models.LigneCommande;
 
 public class CommandeController {
 
     private static final CommandeService commandeService = new CommandeService();
+
 
     @OpenApi(
             summary = "Récupérer toutes les commandes",
@@ -50,23 +52,21 @@ public class CommandeController {
     }
     
     @OpenApi(
-            summary = "Ajouter une nouvelle commande",
-            operationId = "addCommande",
+            summary = "Initialiser une nouvelle commande vide",
+            operationId = "initCommande",
             path = "/commandes",
             methods = HttpMethod.POST,
             tags = {"Commandes"},
-            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = CommandeRequest.class), required = true, description = "Données de la commande"),
             responses = {
-                    @OpenApiResponse(status = "201", description = "Commande créée avec succès", content = @OpenApiContent(from = Commande.class)),
-                    @OpenApiResponse(status = "400", description = "Données invalides")
+                    @OpenApiResponse(status = "201", description = "Commande initialisée avec succès", content = @OpenApiContent(from = Commande.class)),
+                    @OpenApiResponse(status = "400", description = "Erreur lors de l'initialisation")
             })
     public static void add(Context ctx) {
         try {
-            CommandeRequest newCommandeRequest = ctx.bodyAsClass(CommandeRequest.class);
-            Commande commandeRep = commandeService.addCommande(newCommandeRequest);
+            Commande commandeRep = commandeService.createEmptyCommande();
             ctx.status(201).json(commandeRep);
         } catch (Exception e) {
-            ctx.status(400).json("Impossible d'ajouter la commande: " + e.getMessage());
+            ctx.status(400).json("Impossible d'initialiser la commande: " + e.getMessage());
         }
     }
 
@@ -113,5 +113,39 @@ public class CommandeController {
         }
         java.math.BigDecimal total = commandeService.calculateTotalForCommande(id);
         ctx.json(java.util.Collections.singletonMap("total", total));
+    }
+
+    @OpenApi(
+            summary = "Ajouter un article à une commande existante",
+            operationId = "addLigneToCommande",
+            path = "/commandes/{id}/lignes",
+            methods = HttpMethod.POST,
+            tags = {"Commandes"},
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande à modifier", required = true)
+            },
+            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = CommandeItem.class), required = true, description = "Article ou menu à ajouter"),
+            responses = {
+                    @OpenApiResponse(status = "201", description = "Article ajouté avec succès", content = @OpenApiContent(from = LigneCommande.class)),
+                    @OpenApiResponse(status = "400", description = "Données invalides"),
+                    @OpenApiResponse(status = "404", description = "Commande introuvable")
+            })
+    public static void addLigneToCommande(Context ctx) {
+        try {
+            int commandeId = Integer.parseInt(ctx.pathParam("id"));
+            if (commandeService.getCommandeByid(commandeId) == null) {
+                ctx.status(404).json("Commande introuvable");
+                return;
+            }
+            CommandeItem newItem = ctx.bodyAsClass(CommandeItem.class);
+            LigneCommande nouvelleLigne = commandeService.addLigneToCommande(commandeId, newItem);
+            if (nouvelleLigne != null) {
+                ctx.status(201).json(nouvelleLigne);
+            } else {
+                ctx.status(400).json("Impossible d'ajouter l'article à la commande.");
+            }
+        } catch (Exception e) {
+            ctx.status(400).json("Impossible d'ajouter l'article: " + e.getMessage());
+        }
     }
 }

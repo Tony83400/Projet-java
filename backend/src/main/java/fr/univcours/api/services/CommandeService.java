@@ -6,7 +6,6 @@ import fr.univcours.api.models.Commande;
 import fr.univcours.api.models.LigneCommande;
 import fr.univcours.api.models.Menu;
 import fr.univcours.api.models.CommandeItem;
-import fr.univcours.api.models.CommandeRequest;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -99,18 +98,12 @@ public class CommandeService {
         }
     }
 
-    public Commande addCommande(CommandeRequest commandeRequest) {
+    public Commande createEmptyCommande() {
         String sqlCmd = "INSERT INTO commande (numero_ticket, statut) VALUES (?, ?)";
-        String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
-        Connection conn = null;
-        try {
-            conn = DatabaseSetup.getConnection();
+        try (Connection conn = DatabaseSetup.getConnection()) {
             conn.setAutoCommit(false); // Start transaction
-
             int nextTicket = getNextNumeroTicket(conn);
 
-            int commandeId;
-            // Insert commande
             try (PreparedStatement stmtCmd = conn.prepareStatement(sqlCmd, Statement.RETURN_GENERATED_KEYS)) {
                 stmtCmd.setInt(1, nextTicket);
                 stmtCmd.setString(2, "EN_PREPARATION");
@@ -118,62 +111,17 @@ public class CommandeService {
 
                 try (ResultSet generatedKeys = stmtCmd.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        commandeId = generatedKeys.getInt(1);
+                        int commandeId = generatedKeys.getInt(1);
+                        conn.commit(); // Commit transaction
+                        return getCommandeByid(commandeId);
                     } else {
                         throw new SQLException("Creating commande failed, no ID obtained.");
                     }
                 }
             }
-
-            // Insert lignes
-            for (CommandeItem item : commandeRequest.getItems()) {
-                try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne)) {
-                    stmtLigne.setInt(1, commandeId);
-                    stmtLigne.setInt(4, item.getQuantite());
-
-                    BigDecimal price;
-                    if (item.getArticleId() != null) {
-                        Article article = articleService.getArticleByid(item.getArticleId());
-                        if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
-                        price = article.getPrix();
-                        stmtLigne.setInt(2, item.getArticleId());
-                        stmtLigne.setNull(3, Types.INTEGER);
-                    } else if (item.getMenuId() != null) {
-                        Menu menu = menuService.getMenuByid(item.getMenuId());
-                        if(menu == null) throw new SQLException("Menu with id " + item.getMenuId() + " not found.");
-                        price = menu.getPrix();
-                        stmtLigne.setNull(2, Types.INTEGER);
-                        stmtLigne.setInt(3, item.getMenuId());
-                    } else {
-                        // Ni article ni menu, on ignore ou on lance une erreur
-                        continue; // simple skip
-                    }
-                    stmtLigne.setBigDecimal(5, price);
-                    stmtLigne.executeUpdate();
-                }
-            }
-
-            conn.commit(); // Commit transaction
-            return getCommandeByid(commandeId);
-
         } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback(); // Rollback on error
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Error during rollback", ex);
-                }
-            }
-            throw new RuntimeException("Error adding commande", e);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            // No need for explicit rollback, connection close will handle it if autoCommit is false.
+            throw new RuntimeException("Error creating empty commande", e);
         }
     }
 
@@ -185,5 +133,52 @@ public class CommandeService {
             total = total.add(ligneTotal);
         }
         return total;
+    }
+
+    public LigneCommande addLigneToCommande(int commandeId, CommandeItem item) throws SQLException {
+        String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            
+            BigDecimal price;
+            if (item.getArticleId() != null) {
+                Article article = articleService.getArticleByid(item.getArticleId());
+                if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
+                price = article.getPrix();
+            } else if (item.getMenuId() != null) {
+                Menu menu = menuService.getMenuByid(item.getMenuId());
+                if(menu == null) throw new SQLException("Menu with id " + item.getMenuId() + " not found.");
+                price = menu.getPrix();
+            } else {
+                throw new SQLException("Item must have either an articleId or a menuId.");
+            }
+
+            try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne, Statement.RETURN_GENERATED_KEYS)) {
+                stmtLigne.setInt(1, commandeId);
+                stmtLigne.setInt(4, item.getQuantite());
+                stmtLigne.setBigDecimal(5, price);
+
+                if (item.getArticleId() != null) {
+                    stmtLigne.setInt(2, item.getArticleId());
+                    stmtLigne.setNull(3, Types.INTEGER);
+                } else {
+                    stmtLigne.setNull(2, Types.INTEGER);
+                    stmtLigne.setInt(3, item.getMenuId());
+                }
+                
+                int affectedRows = stmtLigne.executeUpdate();
+
+                if (affectedRows > 0) {
+                    try (ResultSet generatedKeys = stmtLigne.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int newLigneId = generatedKeys.getInt(1);
+                            // Now fetch and return the newly created LigneCommande
+                            List<LigneCommande> allLignes = findLignesForCommande(commandeId);
+                            return allLignes.stream().filter(l -> l.getLigne_id() == newLigneId).findFirst().orElse(null);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

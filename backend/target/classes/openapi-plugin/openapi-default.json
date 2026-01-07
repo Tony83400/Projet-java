@@ -32,23 +32,12 @@
         "tags": [
           "Commandes"
         ],
-        "summary": "Ajouter une nouvelle commande",
-        "operationId": "addCommande",
+        "summary": "Initialiser une nouvelle commande vide",
+        "operationId": "initCommande",
         "parameters": [],
-        "requestBody": {
-          "description": "Données de la commande",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CommandeRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "201": {
-            "description": "Commande créée avec succès",
+            "description": "Commande initialisée avec succès",
             "content": {
               "application/json": {
                 "schema": {
@@ -58,7 +47,7 @@
             }
           },
           "400": {
-            "description": "Données invalides"
+            "description": "Erreur lors de l\u0027initialisation"
           }
         },
         "deprecated": false,
@@ -136,6 +125,58 @@
         },
         "deprecated": false,
         "security": []
+      },
+      "post": {
+        "tags": [
+          "Commandes"
+        ],
+        "summary": "Ajouter un article à une commande existante",
+        "operationId": "addLigneToCommande",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la commande à modifier",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Article ou menu à ajouter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandeItem"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Article ajouté avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LigneCommande"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "404": {
+            "description": "Commande introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
       }
     },
     "/commandes/{id}/total": {
@@ -181,6 +222,36 @@
   },
   "components": {
     "schemas": {
+      "Article": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "article_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "prix": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "article_id",
+          "stock"
+        ]
+      },
       "Commande": {
         "type": "object",
         "additionalProperties": false,
@@ -223,17 +294,54 @@
           "quantite"
         ]
       },
-      "CommandeRequest": {
+      "LigneCommande": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CommandeItem"
-            }
+          "ligne_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantite": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prix_unitaire_facture": {
+            "type": "string"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          },
+          "menu": {
+            "$ref": "#/components/schemas/Menu"
           }
-        }
+        },
+        "required": [
+          "ligne_id",
+          "quantite"
+        ]
+      },
+      "Menu": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "menu_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prix": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "menu_id"
+        ]
       }
     }
   }
