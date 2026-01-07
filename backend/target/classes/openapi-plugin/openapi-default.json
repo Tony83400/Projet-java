@@ -5,67 +5,42 @@
     "version": ""
   },
   "paths": {
-    "/commandes": {
+    "/articles": {
       "get": {
         "tags": [
-          "Commandes"
+          "Article"
         ],
-        "summary": "Récupérer toutes les commandes",
-        "operationId": "getAllCommandes",
+        "summary": "Récupérer toutes les articles",
+        "operationId": "getAllArticle",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des commandes",
+            "description": "Liste des articles",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Commande"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "post": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Initialiser une nouvelle commande vide",
-        "operationId": "initCommande",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Commande initialisée avec succès",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Commande"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Erreur lors de l\u0027initialisation"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/commandes/{id}": {
+    "/articles/{id}": {
       "get": {
         "tags": [
-          "Commandes"
+          "Article"
         ],
-        "summary": "Trouve une commande par id",
-        "operationId": "getCommandeById",
+        "summary": "Trouve un article par id",
+        "operationId": "getArticleById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de la commande",
+            "description": "ID du article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -77,35 +52,35 @@
         ],
         "responses": {
           "200": {
-            "description": "Commande trouvée",
+            "description": "Article trouvé",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Commande"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
           },
           "404": {
-            "description": "Commande introuvable"
+            "description": "Article introuvable"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/commandes/{id}/lignes": {
+    "/articles/{id}/categories": {
       "get": {
         "tags": [
-          "Commandes"
+          "Article"
         ],
-        "summary": "Récupérer les lignes d\u0027une commande",
-        "operationId": "getLignesForCommande",
+        "summary": "Récupérer les catégories d\u0027un article",
+        "operationId": "getCategoriesForArticle",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de la commande",
+            "description": "ID de l\u0027article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -117,80 +92,28 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des lignes de la commande"
+            "description": "Liste des catégories de l\u0027article"
           },
           "404": {
-            "description": "Commande introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "post": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Ajouter un article à une commande existante",
-        "operationId": "addLigneToCommande",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID de la commande à modifier",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Article ou menu à ajouter",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CommandeItem"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Article ajouté avec succès",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LigneCommande"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Données invalides"
-          },
-          "404": {
-            "description": "Commande introuvable"
+            "description": "Article introuvable"
           }
         },
         "deprecated": false,
         "security": []
       }
     },
-    "/commandes/{id}/total": {
+    "/categories/{id}/articles": {
       "get": {
         "tags": [
-          "Commandes"
+          "Categorie"
         ],
-        "summary": "Récupérer le prix total d\u0027une commande",
-        "operationId": "getTotalForCommande",
+        "summary": "Trouve les articles pour une categorie par id",
+        "operationId": "getArticleForCategorieById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID de la commande",
+            "description": "ID du article",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -202,18 +125,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Prix total de la commande",
+            "description": "Articles trouvé",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "number",
-                  "format": "float"
+                  "$ref": "#/components/schemas/Article"
                 }
               }
             }
           },
           "404": {
-            "description": "Commande introuvable"
+            "description": "Articles introuvable"
           }
         },
         "deprecated": false,
@@ -253,101 +175,6 @@
           "prix",
           "stock",
           "article_id"
-        ]
-      },
-      "Commande": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "statut": {
-            "type": "string"
-          },
-          "commande_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numero_ticket": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "required": [
-          "commande_id",
-          "numero_ticket"
-        ]
-      },
-      "CommandeItem": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "menuId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantite": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "articleId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "required": [
-          "quantite"
-        ]
-      },
-      "LigneCommande": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "article": {
-            "$ref": "#/components/schemas/Article"
-          },
-          "ligne_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantite": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "menu": {
-            "$ref": "#/components/schemas/Menu"
-          },
-          "prix_unitaire_facture": {
-            "type": "number",
-            "format": "float"
-          }
-        },
-        "required": [
-          "ligne_id",
-          "quantite",
-          "prix_unitaire_facture"
-        ]
-      },
-      "Menu": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "prix": {
-            "type": "number",
-            "format": "float"
-          },
-          "image_url": {
-            "type": "string"
-          },
-          "menu_id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nom": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "prix",
-          "menu_id"
         ]
       }
     }

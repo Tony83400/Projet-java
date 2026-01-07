@@ -1,31 +1,22 @@
 package fr.univcours.api.services;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.univcours.api.database.DatabaseSetup;
 import fr.univcours.api.models.Article;
 import fr.univcours.api.models.Categorie;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ArticleService {
 
     private CategorieService categorieService = new CategorieService();
 
-    public Article mapResultSetToArticle(ResultSet rs) throws SQLException {
-        Article article = new Article();
-        article.setArticle_id(rs.getInt("article_id"));
-        article.setNom(rs.getString("nom"));
-        article.setDescription(rs.getString("description"));
-
-        // --- CHANGEMENT ICI : getFloat au lieu de getBigDecimal ---
-        article.setPrix(rs.getFloat("prix"));
-        // ----------------------------------------------------------
-
-        article.setImage_url(rs.getString("image_url"));
-        article.setStock(rs.getInt("stock"));
-        return article;
-    }
+    // LA MÉTHODE mapResultSetToArticle A ÉTÉ SUPPRIMÉE POUR MODELIO
 
     public List<Categorie> findCategoriesForArticle(int articleId) {
         List<Categorie> categories = new ArrayList<>();
@@ -52,7 +43,16 @@ public class ArticleService {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM article");) {
             while (rs.next()) {
-                Article article = mapResultSetToArticle(rs);
+                // --- CODE DUPLIQUÉ (DÉBUT) ---
+                Article article = new Article();
+                article.setArticle_id(rs.getInt("article_id"));
+                article.setNom(rs.getString("nom"));
+                article.setDescription(rs.getString("description"));
+                article.setPrix(rs.getFloat("prix")); // Utilisation de Float
+                article.setImage_url(rs.getString("image_url"));
+                article.setStock(rs.getInt("stock"));
+                // --- CODE DUPLIQUÉ (FIN) ---
+                
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -68,7 +68,17 @@ public class ArticleService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToArticle(rs);
+                    // --- CODE DUPLIQUÉ (DÉBUT) ---
+                    Article article = new Article();
+                    article.setArticle_id(rs.getInt("article_id"));
+                    article.setNom(rs.getString("nom"));
+                    article.setDescription(rs.getString("description"));
+                    article.setPrix(rs.getFloat("prix")); // Utilisation de Float
+                    article.setImage_url(rs.getString("image_url"));
+                    article.setStock(rs.getInt("stock"));
+                    // --- CODE DUPLIQUÉ (FIN) ---
+                    
+                    return article;
                 }
             }
             return null;
@@ -90,7 +100,17 @@ public class ArticleService {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    articles.add(mapResultSetToArticle(rs));
+                    // --- CODE DUPLIQUÉ (DÉBUT) ---
+                    Article article = new Article();
+                    article.setArticle_id(rs.getInt("article_id"));
+                    article.setNom(rs.getString("nom"));
+                    article.setDescription(rs.getString("description"));
+                    article.setPrix(rs.getFloat("prix")); // Utilisation de Float
+                    article.setImage_url(rs.getString("image_url"));
+                    article.setStock(rs.getInt("stock"));
+                    // --- CODE DUPLIQUÉ (FIN) ---
+                    
+                    articles.add(article);
                 }
             }
         } catch (SQLException e) {

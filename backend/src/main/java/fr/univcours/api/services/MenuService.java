@@ -1,14 +1,18 @@
 package fr.univcours.api.services;
 
-import fr.univcours.api.database.DatabaseSetup;
-import fr.univcours.api.models.Article;
-import fr.univcours.api.models.Menu;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fr.univcours.api.database.DatabaseSetup;
+import fr.univcours.api.models.Article;
+import fr.univcours.api.models.Menu;
 
 public class MenuService {
 
@@ -33,12 +37,20 @@ public class MenuService {
                 "JOIN menu_composition mc ON a.article_id = mc.article_id " +
                 "WHERE mc.menu_id = ?";
         try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, menuId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    // Note : Cela fonctionnera car vous avez déjà migré ArticleService vers float
-                    Article article = articleService.mapResultSetToArticle(rs);
+                    // --- CODE DUPLIQUÉ MANUELLEMENT ICI AUSSI ---
+                    Article article = new Article();
+                    article.setArticle_id(rs.getInt("article_id"));
+                    article.setNom(rs.getString("nom"));
+                    article.setDescription(rs.getString("description"));
+                    article.setPrix(rs.getFloat("prix"));
+                    article.setImage_url(rs.getString("image_url"));
+                    article.setStock(rs.getInt("stock"));
+                    // --------------------------------------------
+
                     int quantite = rs.getInt("quantite");
                     Map<String, Object> compositionMap = new HashMap<>();
                     compositionMap.put("article", article);
@@ -56,8 +68,8 @@ public class MenuService {
         List<Menu> menus = new ArrayList<>();
         String sql = "SELECT * FROM menu";
         try (Connection conn = DatabaseSetup.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Menu menu = mapResultSetToMenu(rs);
                 menus.add(menu);
@@ -71,7 +83,7 @@ public class MenuService {
     public Menu getMenuByid(int id) {
         String sql = "SELECT * FROM menu WHERE menu_id =?";
         try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);) {
+                PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
