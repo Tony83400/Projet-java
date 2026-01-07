@@ -40,7 +40,7 @@ public class Main {
             // On enregistre le plugin Swagger
             config.plugins.register(new SwaggerPlugin(swaggerConfig));
 
-        }).start(3000);
+        }).start(7000);
 
         System.out.println("🚀 Serveur démarré sur http://localhost:7000");
 

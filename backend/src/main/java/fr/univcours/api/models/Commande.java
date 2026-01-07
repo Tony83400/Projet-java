@@ -3,7 +3,7 @@ package fr.univcours.api.models;
 public class Commande {
     private int commande_id;
     private int article_id;
-    private int quantity_article;
+    private int quantite_article;
     private int numero_commande;
     private int niveau_epice;
 
@@ -13,7 +13,7 @@ public class Commande {
     public Commande(int commande_id, int article_id, int quantite_article, int numero_commande,int niveau_epice) {
         this.commande_id = commande_id;
         this.article_id = article_id;
-        this.quantity_article = quantite_article;
+        this.quantite_article = quantite_article;
         this.numero_commande = numero_commande;
         this.niveau_epice = niveau_epice;
     }
@@ -35,11 +35,11 @@ public class Commande {
     }
 
     public int getQuantite_article() {
-        return quantity_article;
+        return quantite_article;
     }
 
     public void setQuantite_article(int quantite_article) {
-        this.quantity_article = quantite_article;
+        this.quantite_article = quantite_article;
     }
 
     public int getNumero_commande() {
