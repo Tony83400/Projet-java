@@ -15,6 +15,8 @@ public class HelloController {
     @FXML
     private Label welcomeText;
     @FXML
+    private Label startText;
+    @FXML
     private ImageView flag;
     @FXML
     private Image imgFR;
@@ -27,12 +29,14 @@ public class HelloController {
     @FXML
     private void switch_language(){
         if (language.equals("French")) {
-            welcomeText.setText("Tap to continue");
+            startText.setText("Tap to continue");
+            welcomeText.setText("Master Chen's noodles");
             flag.setImage(imgFR);
             language = "English";
         }
         else {
-            welcomeText.setText("Appuyer pour continuer");
+            startText.setText("Toucher pour continuer");
+            welcomeText.setText("Les nouilles de Maître Chen");
             flag.setImage(imgGB);
             language = "French";
         }
@@ -43,7 +47,7 @@ public class HelloController {
 
         imgFR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/frontend/img/fr.png")));
         imgGB = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/frontend/img/gb.png")));
-        FadeTransition fade = new FadeTransition(Duration.seconds(1.5), welcomeText);
+        FadeTransition fade = new FadeTransition(Duration.seconds(1.5), startText);
 
 
         fade.setFromValue(0.1);

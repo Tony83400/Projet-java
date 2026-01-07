@@ -10,10 +10,19 @@
 <VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #F72D16;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.HelloController">
 
     <children>
-      <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-        <Label fx:id="welcomeText" text="Appuyer pour continuer" textFill="#ffd700">
+      <Label text="陳          師          傅          的          麵          條" textFill="GOLD">
          <font>
-            <Font name="Ubuntu Regular" size="96.0" />
+            <Font name="Noto Sans CJK JP Bold" size="48.0" />
+         </font></Label>
+      <Label fx:id="welcomeText" text="Les nouilles de Maître Chen" textFill="GOLD">
+         <font>
+            <Font name="Noto Sans Bold" size="96.0" />
+         </font>
+      </Label>
+      <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+        <Label fx:id="startText" contentDisplay="CENTER" text="Toucher pour continuer" textAlignment="CENTER" textFill="#ffd700" wrapText="true">
+         <font>
+            <Font name="Noto Sans Bold" size="96.0" />
          </font></Label>
       <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 
