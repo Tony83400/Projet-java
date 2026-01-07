@@ -14,9 +14,8 @@ import fr.univcours.api.models.Categorie;
 
 public class ArticleService {
 
+    // On n'utilise plus ce service pour le mapping, mais on le garde si besoin d'autre chose
     private CategorieService categorieService = new CategorieService();
-
-    // LA MÉTHODE mapResultSetToArticle A ÉTÉ SUPPRIMÉE POUR MODELIO
 
     public List<Categorie> findCategoriesForArticle(int articleId) {
         List<Categorie> categories = new ArrayList<>();
@@ -28,7 +27,15 @@ public class ArticleService {
             stmt.setInt(1, articleId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    categories.add(categorieService.mapResultSetToCategorie(rs));
+                    // --- CORRECTION ICI : DUPLICATION DU MAPPING CATEGORIE ---
+                    // On ne peut plus appeler categorieService.mapResultSetToCategorie(rs)
+                    Categorie categorie = new Categorie();
+                    categorie.setCategorie_id(rs.getInt("categorie_id"));
+                    categorie.setNom(rs.getString("nom"));
+                    categorie.setDescription(rs.getString("description"));
+                    // ---------------------------------------------------------
+                    
+                    categories.add(categorie);
                 }
             }
         } catch (SQLException e) {
@@ -43,7 +50,7 @@ public class ArticleService {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM article");) {
             while (rs.next()) {
-                // --- CODE DUPLIQUÉ (DÉBUT) ---
+                // --- CODE DUPLIQUÉ (ARTICLE) ---
                 Article article = new Article();
                 article.setArticle_id(rs.getInt("article_id"));
                 article.setNom(rs.getString("nom"));
@@ -51,7 +58,7 @@ public class ArticleService {
                 article.setPrix(rs.getFloat("prix")); // Utilisation de Float
                 article.setImage_url(rs.getString("image_url"));
                 article.setStock(rs.getInt("stock"));
-                // --- CODE DUPLIQUÉ (FIN) ---
+                // -------------------------------
                 
                 articles.add(article);
             }
@@ -68,7 +75,7 @@ public class ArticleService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    // --- CODE DUPLIQUÉ (DÉBUT) ---
+                    // --- CODE DUPLIQUÉ (ARTICLE) ---
                     Article article = new Article();
                     article.setArticle_id(rs.getInt("article_id"));
                     article.setNom(rs.getString("nom"));
@@ -76,7 +83,7 @@ public class ArticleService {
                     article.setPrix(rs.getFloat("prix")); // Utilisation de Float
                     article.setImage_url(rs.getString("image_url"));
                     article.setStock(rs.getInt("stock"));
-                    // --- CODE DUPLIQUÉ (FIN) ---
+                    // -------------------------------
                     
                     return article;
                 }
@@ -100,7 +107,7 @@ public class ArticleService {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    // --- CODE DUPLIQUÉ (DÉBUT) ---
+                    // --- CODE DUPLIQUÉ (ARTICLE) ---
                     Article article = new Article();
                     article.setArticle_id(rs.getInt("article_id"));
                     article.setNom(rs.getString("nom"));
@@ -108,7 +115,7 @@ public class ArticleService {
                     article.setPrix(rs.getFloat("prix")); // Utilisation de Float
                     article.setImage_url(rs.getString("image_url"));
                     article.setStock(rs.getInt("stock"));
-                    // --- CODE DUPLIQUÉ (FIN) ---
+                    // -------------------------------
                     
                     articles.add(article);
                 }

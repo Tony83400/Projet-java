@@ -21,13 +21,7 @@ public class CommandeService {
     private final ArticleService articleService = new ArticleService();
     private final MenuService menuService = new MenuService();
 
-    private Commande mapResultSetToCommande(ResultSet rs) throws SQLException {
-        Commande commande = new Commande();
-        commande.setCommande_id(rs.getInt("commande_id"));
-        commande.setStatut(rs.getString("statut"));
-        commande.setNumero_ticket(rs.getInt("numero_ticket"));
-        return commande;
-    }
+    // LA MÉTHODE mapResultSetToCommande A ÉTÉ SUPPRIMÉE POUR MODELIO
 
     public List<LigneCommande> findLignesForCommande(int commandeId) throws SQLException {
         List<LigneCommande> lignes = new ArrayList<>();
@@ -40,7 +34,7 @@ public class CommandeService {
                     LigneCommande ligne = new LigneCommande();
                     ligne.setLigne_id(rs.getInt("ligne_id"));
                     ligne.setQuantite(rs.getInt("quantite"));
-                    // CORRECTION : Utilisation correcte de getFloat
+                    // Utilisation de getFloat
                     ligne.setPrix_unitaire_facture(rs.getFloat("prix_unitaire_facture"));
 
                     int articleId = rs.getInt("article_id");
@@ -58,7 +52,7 @@ public class CommandeService {
         }
         return lignes;
     }
-
+    
     public List<Commande> GetCommandes() {
         List<Commande> commandes = new ArrayList<>();
         String sql = "SELECT * FROM commande";
@@ -66,7 +60,13 @@ public class CommandeService {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Commande commande = mapResultSetToCommande(rs);
+                // --- CODE DUPLIQUÉ (Commande) ---
+                Commande commande = new Commande();
+                commande.setCommande_id(rs.getInt("commande_id"));
+                commande.setStatut(rs.getString("statut"));
+                commande.setNumero_ticket(rs.getInt("numero_ticket"));
+                // --------------------------------
+                
                 commandes.add(commande);
             }
         } catch (SQLException e) {
@@ -82,7 +82,14 @@ public class CommandeService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToCommande(rs);
+                    // --- CODE DUPLIQUÉ (Commande) ---
+                    Commande commande = new Commande();
+                    commande.setCommande_id(rs.getInt("commande_id"));
+                    commande.setStatut(rs.getString("statut"));
+                    commande.setNumero_ticket(rs.getInt("numero_ticket"));
+                    // --------------------------------
+                    
+                    return commande;
                 }
             }
             return null;
@@ -127,14 +134,10 @@ public class CommandeService {
         }
     }
 
-    // CORRECTION MAJEURE ICI
     public float calculateTotalForCommande(int commandeId) throws SQLException {
         List<LigneCommande> lignes = findLignesForCommande(commandeId);
-        // 1. Initialisation primitive
         float total = 0.0f;
-
         for (LigneCommande ligne : lignes) {
-            // 2. Opérations arithmétiques standard (* et +) au lieu de .multiply() et .add()
             float ligneTotal = ligne.getPrix_unitaire_facture() * ligne.getQuantite();
             total += ligneTotal;
         }
@@ -144,9 +147,8 @@ public class CommandeService {
     public LigneCommande addLigneToCommande(int commandeId, CommandeItem item) throws SQLException {
         String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseSetup.getConnection()) {
-
+            
             float price;
-            // Je suppose ici que vos modèles Article et Menu renvoient maintenant des float via getPrix()
             if (item.getArticleId() != null) {
                 Article article = articleService.getArticleByid(item.getArticleId());
                 if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
@@ -162,8 +164,6 @@ public class CommandeService {
             try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne, Statement.RETURN_GENERATED_KEYS)) {
                 stmtLigne.setInt(1, commandeId);
                 stmtLigne.setInt(4, item.getQuantite());
-
-                // CORRECTION : setFloat (CamelCase) au lieu de setfloat
                 stmtLigne.setFloat(5, price);
 
                 if (item.getArticleId() != null) {
@@ -173,13 +173,14 @@ public class CommandeService {
                     stmtLigne.setNull(2, Types.INTEGER);
                     stmtLigne.setInt(3, item.getMenuId());
                 }
-
+                
                 int affectedRows = stmtLigne.executeUpdate();
 
                 if (affectedRows > 0) {
                     try (ResultSet generatedKeys = stmtLigne.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             int newLigneId = generatedKeys.getInt(1);
+                            // Now fetch and return the newly created LigneCommande
                             List<LigneCommande> allLignes = findLignesForCommande(commandeId);
                             return allLignes.stream().filter(l -> l.getLigne_id() == newLigneId).findFirst().orElse(null);
                         }

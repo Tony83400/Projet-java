@@ -16,20 +16,10 @@ import fr.univcours.api.models.Menu;
 
 public class MenuService {
 
-    private ArticleService articleService = new ArticleService();
+    // On garde le service au cas où, mais il n'est plus utilisé pour le mapping ici
+    private ArticleService articleService = new ArticleService(); 
 
-    private Menu mapResultSetToMenu(ResultSet rs) throws SQLException {
-        Menu menu = new Menu();
-        menu.setMenu_id(rs.getInt("menu_id"));
-        menu.setNom(rs.getString("nom"));
-
-        // --- CHANGEMENT ICI : getFloat au lieu de getBigDecimal ---
-        menu.setPrix(rs.getFloat("prix"));
-        // ----------------------------------------------------------
-
-        menu.setImage_url(rs.getString("image_url"));
-        return menu;
-    }
+    // LA MÉTHODE mapResultSetToMenu A ÉTÉ SUPPRIMÉE POUR MODELIO
 
     public List<Map<String, Object>> findCompositionForMenu(int menuId) {
         List<Map<String, Object>> composition = new ArrayList<>();
@@ -41,7 +31,7 @@ public class MenuService {
             stmt.setInt(1, menuId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    // --- CODE DUPLIQUÉ MANUELLEMENT ICI AUSSI ---
+                    // --- CODE DUPLIQUÉ (Article) ---
                     Article article = new Article();
                     article.setArticle_id(rs.getInt("article_id"));
                     article.setNom(rs.getString("nom"));
@@ -49,7 +39,7 @@ public class MenuService {
                     article.setPrix(rs.getFloat("prix"));
                     article.setImage_url(rs.getString("image_url"));
                     article.setStock(rs.getInt("stock"));
-                    // --------------------------------------------
+                    // -------------------------------
 
                     int quantite = rs.getInt("quantite");
                     Map<String, Object> compositionMap = new HashMap<>();
@@ -71,7 +61,14 @@ public class MenuService {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Menu menu = mapResultSetToMenu(rs);
+                // --- CODE DUPLIQUÉ (Menu) ---
+                Menu menu = new Menu();
+                menu.setMenu_id(rs.getInt("menu_id"));
+                menu.setNom(rs.getString("nom"));
+                menu.setPrix(rs.getFloat("prix"));
+                menu.setImage_url(rs.getString("image_url"));
+                // ----------------------------
+                
                 menus.add(menu);
             }
         } catch (SQLException e) {
@@ -87,7 +84,15 @@ public class MenuService {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToMenu(rs);
+                    // --- CODE DUPLIQUÉ (Menu) ---
+                    Menu menu = new Menu();
+                    menu.setMenu_id(rs.getInt("menu_id"));
+                    menu.setNom(rs.getString("nom"));
+                    menu.setPrix(rs.getFloat("prix"));
+                    menu.setImage_url(rs.getString("image_url"));
+                    // ----------------------------
+                    
+                    return menu;
                 }
             }
             return null;
