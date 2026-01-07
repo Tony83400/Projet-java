@@ -14,7 +14,8 @@
 
     <top>
         <StackPane styleClass="header-stack">
-            <ImageView fx:id="headerDragon" fitHeight="100" preserveRatio="true" opacity="0.4" styleClass="dragon-image">
+            <ImageView fx:id="headerDragon" fitHeight="100" preserveRatio="true" opacity="0.4"
+                       styleClass="dragon-image">
             </ImageView>
 
             <HBox alignment="CENTER_LEFT" prefHeight="100" styleClass="header-content">
@@ -55,10 +56,11 @@
                 </HBox>
             </ScrollPane>
 
-            <Separator orientation="VERTICAL" />
+            <Separator orientation="VERTICAL"/>
 
             <VBox alignment="CENTER" prefWidth="280" spacing="10" style="-fx-padding: 15;">
-                <Button fx:id="validateButton" text="COMMANDER" prefWidth="240" prefHeight="60" styleClass="validate-button"/>
+                <Button fx:id="validateButton" text="COMMANDER" prefWidth="240" prefHeight="60"
+                        styleClass="validate-button"/>
 
                 <VBox alignment="CENTER" styleClass="total-box">
                     <Label text="TOTAL A PAYER" styleClass="total-title"/>

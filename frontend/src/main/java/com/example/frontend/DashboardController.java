@@ -1,348 +1,383 @@
 package com.example.frontend;
 
+import fr.univcours.api.models.*;
+import fr.univcours.api.models.Menu;
+import fr.univcours.api.services.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DashboardController {
 
-    @FXML private VBox categoryList;
-    @FXML private GridPane productGrid;
-    @FXML private HBox cartItems;
-    @FXML private Button validateButton;
-    @FXML private ScrollPane cartScrollPane;
+    @FXML
+    private VBox categoryList;
+    @FXML
+    private GridPane productGrid;
+    @FXML
+    private HBox cartItems;
+    @FXML
+    private Button validateButton;
+    @FXML
+    private Label totalLabel;
 
-    // Label pour afficher le coût total sous le bouton commander
-    @FXML private Label totalLabel;
+    private final ArticleService articleService = new ArticleService();
+    private final CategorieService categorieService = new CategorieService();
+    private final MenuService menuService = new MenuService();
+    private final CommandeService commandeService = new CommandeService();
 
-    // Données de l'application
-    private List<CartItem> cart = new ArrayList<>();
-    private String[] categories = {"Entrées", "Plats", "Desserts", "Boissons", "Menus"};
-    private String selectedCategory = "Entrées";
-
-    private String[][] products = {
-            {"Nems", "Rouleaux de printemps", "Soupe miso", "Salade de choux", "Raviolis vapeur", "Edamame"},
-            {"Riz cantonais", "Poulet Kung Pao", "Boeuf sauté", "Canard laqué", "Nouilles sautées", "Porc aigre-doux"},
-            {"Perles de coco", "Mochi", "Beignets banane", "Litchis", "Gâteau thé vert", "Glace sésame"},
-            {"Thé jasmin", "Coca-Cola", "Eau", "Bière Tsingtao", "Jus de mangue", "Sake"},
-            {"Menu A", "Menu B", "Menu C", "Menu Enfant", "Menu Duo", "Menu Famille"}
-    };
-
-    private double[][] prices = {
-            {4.50, 5.00, 3.50, 3.00, 6.00, 4.00},
-            {8.50, 12.00, 13.50, 15.00, 10.00, 11.50},
-            {4.00, 4.50, 3.50, 3.00, 5.00, 4.50},
-            {2.50, 2.50, 1.50, 4.00, 3.00, 6.00},
-            {15.00, 18.00, 22.00, 9.00, 28.00, 45.00}
-    };
+    private final List<CartElement> cart = new ArrayList<>();
 
     @FXML
     public void initialize() {
-        setupCategories();
-        loadProducts(0);
+        loadCategoriesFromDb();
         updateCartDisplay();
-        setupValidateButton();
+        validateButton.setOnAction(e -> validateOrder());
     }
 
-    private void setupCategories() {
+    private void loadCategoriesFromDb() {
         categoryList.getChildren().clear();
-        for (int i = 0; i < categories.length; i++) {
-            final int index = i;
-            Button categoryBtn = new Button(categories[i]);
-            categoryBtn.getStyleClass().add("category-button");
 
-            if (categories[i].equals(selectedCategory)) {
-                categoryBtn.getStyleClass().add("active");
-            }
-
-            categoryBtn.setOnAction(e -> {
-                selectedCategory = categories[index];
-                loadProducts(index);
-                updateCategoryStyles();
-            });
-
-            categoryList.getChildren().add(categoryBtn);
+        Button menuBtn = createCategoryButton("MENUS", null);
+        categoryList.getChildren().add(menuBtn);
+        List<Categorie> dbCategories = categorieService.GetCategories();
+        for (Categorie cat : dbCategories) {
+            categoryList.getChildren().add(createCategoryButton(cat.getNom(), cat));
         }
+        selectCategory(null);
     }
 
-    private void updateCategoryStyles() {
-        for (int i = 0; i < categoryList.getChildren().size(); i++) {
-            Button btn = (Button) categoryList.getChildren().get(i);
-            btn.getStyleClass().remove("active");
-            if (categories[i].equals(selectedCategory)) {
-                btn.getStyleClass().add("active");
-            }
-        }
+    private Button createCategoryButton(String label, Categorie cat) {
+        Button btn = new Button(label.toUpperCase());
+        btn.getStyleClass().add("category-button");
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setOnAction(e -> selectCategory(cat));
+        return btn;
     }
 
-    private void loadProducts(int categoryIndex) {
+    private void selectCategory(Categorie target) {
         productGrid.getChildren().clear();
-        productGrid.setHgap(20);
-        productGrid.setVgap(20);
-        productGrid.setPadding(new Insets(20));
 
-        String[] categoryProducts = products[categoryIndex];
-        double[] categoryPrices = prices[categoryIndex];
-
-        int col = 0;
-        int row = 0;
-
-        for (int i = 0; i < categoryProducts.length; i++) {
-            VBox productCard = createProductCard(categoryProducts[i], categoryPrices[i]);
-            productGrid.add(productCard, col, row);
-
-            col++;
-            if (col >= 3) {
-                col = 0;
-                row++;
+        if (target == null) {
+            List<Menu> menus = menuService.GetMenus();
+            int i = 0;
+            for (Menu m : menus) {
+                productGrid.add(createItemCard(m.getNom(), m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
+                i++;
+            }
+        } else {
+            List<Article> articles = articleService.getArticleForCategorie(target.getCategorie_id());
+            int i = 0;
+            for (Article a : articles) {
+                productGrid.add(createItemCard(a.getNom(), a.getPrix(), a.getImage_url(), a), i % 3, i / 3);
+                i++;
             }
         }
     }
 
-    private VBox createProductCard(String name, double price) {
+    private VBox createItemCard(String name, double price, String imgPath, Object source) {
         VBox card = new VBox(10);
         card.getStyleClass().add("product-card");
-        card.setPrefWidth(220);
-        card.setPrefHeight(240);
+        card.setAlignment(Pos.CENTER);
 
-        Region imagePlaceholder = new Region();
-        imagePlaceholder.setPrefSize(100, 100);
-        imagePlaceholder.getStyleClass().add("product-image-placeholder");
-        imagePlaceholder.setStyle("-fx-background-color: #f4f4f9; -fx-background-radius: 8;");
+        // Chargement de l'image depuis le backend resources
+        ImageView imageView = new ImageView();
+        try {
+            // On cherche l'image dans le dossier images/articles du backend
+            String fullPath = "/images/articles/" + imgPath.substring(imgPath.lastIndexOf("/") + 1);
+            Image img = new Image(getClass().getResourceAsStream(fullPath));
+            imageView.setImage(img);
+        } catch (Exception e) {
+            // Placeholder si image non trouvée
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(80);
+        }
+        imageView.setFitWidth(120);
+        imageView.setPreserveRatio(true);
 
         Label nameLabel = new Label(name);
-        nameLabel.setWrapText(true);
         nameLabel.getStyleClass().add("product-name");
-
         Label priceLabel = new Label(String.format("%.2f €", price));
         priceLabel.getStyleClass().add("product-price-pill");
 
-        card.getChildren().addAll(imagePlaceholder, nameLabel, priceLabel);
-        card.setOnMouseClicked(e -> addToCart(name, price));
-
+        card.getChildren().addAll(imageView, nameLabel, priceLabel);
+        card.setOnMouseClicked(e -> addToCart(source));
         return card;
     }
 
-    private void addToCart(String name, double price) {
-        for (CartItem item : cart) {
-            if (item.name.equals(name)) {
-                item.quantity++;
-                updateCartDisplay();
-                return;
+    private void addToCart(Object item) {
+        boolean found = false;
+        for (CartElement ce : cart) {
+            if (ce.isSameAs(item)) {
+                ce.quantity++;
+                found = true;
+                break;
             }
         }
-        cart.add(new CartItem(name, price, 1));
+        if (!found) {
+            cart.add(new CartElement(item));
+        }
         updateCartDisplay();
     }
 
     private void updateCartDisplay() {
-        cartItems.getChildren().clear();
+        cartItems.getChildren().clear(); // On vide l'affichage actuel
         double total = 0;
 
-        for (CartItem item : cart) {
-            HBox itemBox = createCartItemBox(item);
+        for (CartElement ce : cart) {
+            if (ce.selected) {
+                total += ce.getPrice() * ce.quantity;
+            }
+            VBox itemBox = new VBox(5);
+            itemBox.setAlignment(Pos.CENTER);
+            itemBox.setStyle("-fx-background-color: #333; -fx-padding: 10; -fx-background-radius: 10; -fx-min-width: 120;");
+
+            Label nameLabel = new Label(ce.getName());
+            nameLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+
+            Label qtyLabel = new Label("Qté: " + ce.quantity);
+            qtyLabel.setStyle("-fx-text-fill: #ccc;");
+
+            Label priceLabel = new Label(String.format("%.2f €", ce.getPrice() * ce.quantity));
+            priceLabel.setStyle("-fx-text-fill: #e67e22;");
+
+            itemBox.getChildren().addAll(nameLabel, qtyLabel, priceLabel);
+            itemBox.setOnMouseClicked(e -> showEditPopup(ce));
+
             cartItems.getChildren().add(itemBox);
-            if (item.selected) {
-                total += item.price * item.quantity;
-            }
         }
 
-        if (totalLabel != null) {
-            totalLabel.setText(String.format("%.2f €", total));
-        }
+        totalLabel.setText(String.format("%.2f €", total));
     }
 
-    private HBox createCartItemBox(CartItem item) {
-        HBox box = new HBox(15);
-        box.setAlignment(Pos.CENTER_LEFT);
-        box.setPadding(new Insets(10, 15, 10, 15));
-        box.setMinWidth(250);
-        box.getStyleClass().add("cart-item-box");
-
-        CheckBox checkBox = new CheckBox();
-        checkBox.setSelected(item.selected);
-        checkBox.setStyle("-fx-accent: #d20202;");
-        checkBox.setOnAction(e -> {
-            item.selected = checkBox.isSelected();
-            updateCartDisplay();
-        });
-
-        VBox details = new VBox(2);
-        Label nameLabel = new Label(item.name);
-        nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #1e272e;");
-
-        Label unitPriceLabel = new Label("Qté: " + item.quantity);
-        unitPriceLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
-        details.getChildren().addAll(nameLabel, unitPriceLabel);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Label priceLabel = new Label(String.format("%.2f €", item.price * item.quantity));
-        priceLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #d20202;");
-
-        box.getChildren().addAll(checkBox, details, spacer, priceLabel);
-        box.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 1) {
-                showEditPopup(item);
-            }
-        });
-
-        return box;
-    }
-
-    private void showEditPopup(CartItem item) {
-        Stage popup = new Stage();
-        popup.initModality(Modality.APPLICATION_MODAL);
-        popup.initStyle(StageStyle.TRANSPARENT);
+    private void showEditPopup(CartElement ce) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initStyle(StageStyle.TRANSPARENT); // Pour des coins arrondis si désiré
 
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(30));
-        root.getStyleClass().add("popup-root");
+        root.getStyleClass().add("popup-root"); // Classe CSS
+        root.setPrefSize(400, 300);
 
-        Label titleLabel = new Label("Modifier " + item.name);
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2D3436;");
+        // Titre de l'élément
+        Label title = new Label(ce.getName());
+        title.getStyleClass().add("popup-title");
 
-        HBox quantityBox = new HBox(20);
-        quantityBox.setAlignment(Pos.CENTER);
+        // Contrôle de quantité
+        HBox qtyContainer = new HBox(20);
+        qtyContainer.setAlignment(Pos.CENTER);
 
-        // Bouton moins
-        Button minusBtn = new Button("-");
-        minusBtn.getStyleClass().add("circle-button");
-        minusBtn.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2D3436;");
+        Button btnMinus = new Button("-");
+        btnMinus.getStyleClass().add("qty-btn");
 
-        Label quantityLabel = new Label(String.valueOf(item.quantity));
-        quantityLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        Label qtyLabel = new Label(String.valueOf(ce.quantity));
+        qtyLabel.getStyleClass().add("popup-qty-label");
 
-        // Bouton plus
-        Button plusBtn = new Button("+");
-        plusBtn.getStyleClass().add("circle-button");
-        plusBtn.setStyle("-fx-background-color: #fec938; -fx-text-fill: #2D3436;");
+        Button btnPlus = new Button("+");
+        btnPlus.getStyleClass().add("qty-btn");
 
-        minusBtn.setOnAction(e -> {
-            if (item.quantity > 1) {
-                item.quantity--;
-                quantityLabel.setText(String.valueOf(item.quantity));
+        btnMinus.setOnAction(e -> {
+            if (ce.quantity > 1) {
+                ce.quantity--;
+                qtyLabel.setText(String.valueOf(ce.quantity));
             }
         });
-
-        plusBtn.setOnAction(e -> {
-            item.quantity++;
-            quantityLabel.setText(String.valueOf(item.quantity));
+        btnPlus.setOnAction(e -> {
+            ce.quantity++;
+            qtyLabel.setText(String.valueOf(ce.quantity));
         });
 
-        quantityBox.getChildren().addAll(minusBtn, quantityLabel, plusBtn);
+        qtyContainer.getChildren().addAll(btnMinus, qtyLabel, btnPlus);
 
-        HBox buttonBox = new HBox(15);
-        buttonBox.setAlignment(Pos.CENTER);
+        HBox actionButtons = new HBox(15);
+        actionButtons.setAlignment(Pos.CENTER);
 
-        Button deleteBtn = new Button("Retirer");
-        deleteBtn.setStyle("-fx-background-color: white; -fx-text-fill: #d20202; -fx-border-color: #d20202; -fx-border-radius: 8;");
-
-        Button confirmBtn = new Button("Valider");
-        confirmBtn.setStyle("-fx-background-color: #d20202; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;");
-
-        deleteBtn.setOnAction(e -> {
-            cart.remove(item);
+        Button btnDelete = new Button("Supprimer");
+        btnDelete.getStyleClass().add("delete-btn");
+        btnDelete.setOnAction(e -> {
+            cart.remove(ce);
             updateCartDisplay();
-            popup.close();
+            popupStage.close();
         });
 
-        confirmBtn.setOnAction(e -> {
+        Button btnConfirm = new Button("Valider");
+        btnConfirm.getStyleClass().add("confirm-btn");
+        btnConfirm.setOnAction(e -> {
             updateCartDisplay();
-            popup.close();
+            popupStage.close();
         });
 
-        buttonBox.getChildren().addAll(deleteBtn, confirmBtn);
-        root.getChildren().addAll(titleLabel, quantityBox, buttonBox);
+        actionButtons.getChildren().addAll(btnDelete, btnConfirm);
+        root.getChildren().addAll(title, qtyContainer, actionButtons);
 
         Scene scene = new Scene(root);
         scene.setFill(null);
-        // On charge le CSS aussi pour la popup
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        popup.setScene(scene);
-        popup.showAndWait();
-    }
 
-    private void setupValidateButton() {
-        validateButton.setOnAction(e -> validateOrder());
+        String css = getClass().getResource("styles.css").toExternalForm();
+        scene.getStylesheets().add(css);
+
+        popupStage.setScene(scene);
+        popupStage.show();
     }
 
     private void validateOrder() {
-        double total = 0;
-        StringBuilder orderSummary = new StringBuilder();
+        if (cart.isEmpty()) return;
 
-        for (CartItem item : cart) {
-            if (item.selected) {
-                total += item.price * item.quantity;
-                orderSummary.append("• ").append(item.name).append(" x").append(item.quantity).append("\n");
+        Stage confirmStage = new Stage();
+        confirmStage.initModality(Modality.APPLICATION_MODAL);
+        confirmStage.initStyle(StageStyle.TRANSPARENT);
+
+        VBox root = new VBox(15);
+        root.getStyleClass().add("receipt-popup");
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setPrefWidth(350);
+
+
+        Label title = new Label("RÉCAPITULATIF");
+        title.getStyleClass().add("receipt-title");
+
+        // Liste des articles (Scrollable si commande longue)
+        VBox itemsList = new VBox(8);
+        itemsList.setStyle("-fx-padding: 10 0;");
+        double total = 0;
+
+        for (CartElement ce : cart) {
+            if (ce.selected) {
+                HBox row = new HBox();
+                Label name = new Label(ce.quantity + "x " + ce.getName());
+                Label price = new Label(String.format("%.2f €", ce.getPrice() * ce.quantity));
+
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                name.setStyle("-fx-text-fill: white;");
+                price.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
+
+                row.getChildren().addAll(name, spacer, price);
+                itemsList.getChildren().add(row);
+                total += ce.getPrice() * ce.quantity;
             }
         }
 
-        if (total == 0) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Panier");
-            alert.setHeaderText(null);
-            alert.setContentText("Votre panier est vide ou aucun article n'est sélectionné.");
-            alert.showAndWait();
-            return;
-        }
+        Separator sep = new Separator();
+        sep.setStyle("-fx-opacity: 0.3;");
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation de commande");
-        alert.setHeaderText("Montant total : " + String.format("%.2f €", total));
-        alert.setContentText("Voulez-vous valider les articles suivants ?\n\n" + orderSummary.toString());
+        // Total final
+        HBox totalBox = new HBox();
+        Label totalLabelText = new Label("TOTAL FINAL");
+        Label totalAmount = new Label(String.format("%.2f €", total));
+        totalLabelText.getStyleClass().add("receipt-total-text");
+        totalAmount.getStyleClass().add("receipt-total-amount");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            cart.clear();
-            updateCartDisplay();
+        Region spacer2 = new Region();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+        totalBox.getChildren().addAll(totalLabelText, spacer2, totalAmount);
 
-            Alert success = new Alert(Alert.AlertType.INFORMATION);
-            success.setTitle("Succès");
-            success.setHeaderText(null);
-            success.setContentText("Votre commande a été envoyée en cuisine !");
-            success.showAndWait();
-        }
+        // Boutons
+        HBox buttons = new HBox(15);
+        buttons.setAlignment(Pos.CENTER);
+
+        Button btnCancel = new Button("ANNULER");
+        btnCancel.getStyleClass().add("receipt-btn-cancel");
+        btnCancel.setOnAction(e -> confirmStage.close());
+
+        Button btnConfirm = new Button("PAYER & COMMANDER");
+        btnConfirm.getStyleClass().add("receipt-btn-confirm");
+        btnConfirm.setOnAction(e -> {
+            try {
+                Commande savedCmd = commandeService.createEmptyCommande();
+                for (CartElement ce : cart) {
+                    if (ce.selected) {
+                        CommandeItem item = new CommandeItem();
+                        item.setQuantite(ce.quantity);
+                        if (ce.isArticle()) item.setArticleId(ce.getArticle().getArticle_id());
+                        else item.setMenuId(ce.getMenu().getMenu_id());
+                        commandeService.addLigneToCommande(savedCmd.getCommande_id(), item);
+                    }
+                }
+                cart.clear();
+                updateCartDisplay();
+                confirmStage.close();
+                new Alert(Alert.AlertType.INFORMATION, "C'est prêt ! Votre ticket est le n°" + savedCmd.getNumero_ticket()).show();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        buttons.getChildren().addAll(btnCancel, btnConfirm);
+        root.getChildren().addAll(title, itemsList, sep, totalBox, buttons);
+
+        Scene scene = new Scene(root);
+        scene.setFill(null);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        confirmStage.setScene(scene);
+        confirmStage.show();
     }
 
     @FXML
     private void goBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) categoryList.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
+            validateButton.getScene().setRoot(root);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static class CartItem {
-        String name;
-        double price;
-        int quantity;
-        boolean selected;
+    private static class CartElement {
+        Object content;
+        int quantity = 1;
+        boolean selected = true;
 
-        CartItem(String name, double price, int quantity) {
-            this.name = name;
-            this.price = price;
-            this.quantity = quantity;
-            this.selected = true;
+        CartElement(Object c) {
+            this.content = c;
+        }
+
+        boolean isArticle() {
+            return content instanceof Article;
+        }
+
+        Article getArticle() {
+            return (Article) content;
+        }
+
+        Menu getMenu() {
+            return (Menu) content;
+        }
+
+        String getName() {
+            return isArticle() ? getArticle().getNom() : getMenu().getNom();
+        }
+
+        double getPrice() {
+            return isArticle() ? getArticle().getPrix() : getMenu().getPrix();
+        }
+
+        boolean isSameAs(Object o) {
+            if (isArticle() && o instanceof Article) {
+                Article a = (Article) o;
+                return getArticle().getArticle_id() == a.getArticle_id();
+            }
+            if (!isArticle() && o instanceof Menu) {
+                Menu m = (Menu) o;
+                return getMenu().getMenu_id() == m.getMenu_id();
+            }
+            return false;
         }
     }
 }

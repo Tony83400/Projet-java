@@ -42,7 +42,6 @@ public class HelloController {
         }
     }
 
-    // Méthode appelée quand on clique sur le texte "Appuyer pour continuer"
     @FXML
     private void goToDashboard(MouseEvent event) {
         try {

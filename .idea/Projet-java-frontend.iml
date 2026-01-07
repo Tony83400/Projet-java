@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:23.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:23.0.2" level="project" />
+    <orderEntry type="module" module-name="api-users" />
   </component>
 </module>

@@ -12,13 +12,13 @@ public class DataService {
     private static DataService instance;
 
     public static DataService getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new DataService();
         }
         return instance;
     }
 
-    public  String getHelloWorld(String URL) throws IOException {
+    public String getHelloWorld(String URL) throws IOException {
         URL url = new URL(URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
@@ -38,14 +38,15 @@ public class DataService {
         String data = content.toString();
         return data;
     }
-    public Boolean deleteUser(String URL) throws IOException{
+
+    public Boolean deleteUser(String URL) throws IOException {
         URL url = new URL(URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("DELETE");
         int status = con.getResponseCode();
-        if (status == 204){
+        if (status == 204) {
             return Boolean.TRUE;
         }
-        return  Boolean.FALSE;
+        return Boolean.FALSE;
     }
 }
