@@ -17,6 +17,15 @@ public class DataService {
     private final HttpClient client;
     private final ObjectMapper mapper;
     private final String API_URL = "http://localhost:8080";
+    private String currentLanguageId = "1";
+
+    public String getLanguageId() {
+        return currentLanguageId;
+    }
+
+    public void setLanguageId(String id) {
+        this.currentLanguageId = id;
+    }
 
     private DataService() {
         this.client = HttpClient.newHttpClient();
@@ -29,6 +38,8 @@ public class DataService {
         }
         return instance;
     }
+
+
 
     // --- GET Categories ---
     public List<Categorie> getCategories() throws IOException, InterruptedException {
