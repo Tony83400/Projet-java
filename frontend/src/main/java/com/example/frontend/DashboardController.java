@@ -2,7 +2,10 @@ package com.example.frontend;
 
 import fr.univcours.api.models.*;
 import fr.univcours.api.models.Menu;
-import fr.univcours.api.services.*;
+import fr.univcours.api.services.ArticleService;
+import fr.univcours.api.services.CategorieService;
+import fr.univcours.api.services.CommandeService;
+import fr.univcours.api.services.MenuService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
