@@ -36,6 +36,10 @@ public class DashboardController {
     private Button validateButton;
     @FXML
     private Label totalLabel;
+    @FXML private Label titleLabel;
+    @FXML private Label titleLabelAccent;
+    @FXML private Label totalTitle;
+
 
     private final ArticleService articleService = new ArticleService();
     private final CategorieService categorieService = new CategorieService();
@@ -46,15 +50,41 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+<<<<<<< Updated upstream
         loadCategoriesFromDb();
+=======
+        applyLanguage();
+        loadCategoriesFromApi();
+>>>>>>> Stashed changes
         updateCartDisplay();
         validateButton.setOnAction(e -> validateOrder());
     }
 
+<<<<<<< Updated upstream
     private void loadCategoriesFromDb() {
+=======
+    private void applyLanguage() {
+        boolean isEnglish = dataService.getLanguageId().equals("0");
+
+        if (isEnglish) {
+            titleLabel.setText("KIOSK");
+            titleLabelAccent.setText("ORDER");
+            totalTitle.setText("TOTAL TO PAY");
+            validateButton.setText("ORDER");
+        } else {
+            titleLabel.setText("BORNE");
+            titleLabelAccent.setText("COMMANDE");
+            totalTitle.setText("TOTAL A PAYER");
+            validateButton.setText("COMMANDER");
+        }
+    }
+
+    private void loadCategoriesFromApi() {
+>>>>>>> Stashed changes
         categoryList.getChildren().clear();
 
-        Button menuBtn = createCategoryButton("MENUS", null);
+        String menuLabel = dataService.getLanguageId().equals("0") ? "MENUS" : "MENUS";
+        Button menuBtn = createCategoryButton(menuLabel, null);
         categoryList.getChildren().add(menuBtn);
         List<Categorie> dbCategories = categorieService.GetCategories();
         for (Categorie cat : dbCategories) {
@@ -139,6 +169,7 @@ public class DashboardController {
     private void updateCartDisplay() {
         cartItems.getChildren().clear(); // On vide l'affichage actuel
         double total = 0;
+        String qtyText = dataService.getLanguageId().equals("0") ? "Qty: " : "Qté: ";
 
         for (CartElement ce : cart) {
             if (ce.selected) {
@@ -151,7 +182,7 @@ public class DashboardController {
             Label nameLabel = new Label(ce.getName());
             nameLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
 
-            Label qtyLabel = new Label("Qté: " + ce.quantity);
+            Label qtyLabel = new Label(qtyText + ce.quantity);
             qtyLabel.setStyle("-fx-text-fill: #ccc;");
 
             Label priceLabel = new Label(String.format("%.2f €", ce.getPrice() * ce.quantity));
@@ -240,17 +271,23 @@ public class DashboardController {
     private void validateOrder() {
         if (cart.isEmpty()) return;
 
+
         Stage confirmStage = new Stage();
         confirmStage.initModality(Modality.APPLICATION_MODAL);
         confirmStage.initStyle(StageStyle.TRANSPARENT);
+        boolean isEnglish = dataService.getLanguageId().equals("0");
 
         VBox root = new VBox(15);
         root.getStyleClass().add("receipt-popup");
         root.setAlignment(Pos.TOP_CENTER);
         root.setPrefWidth(350);
 
+<<<<<<< Updated upstream
 
         Label title = new Label("RÉCAPITULATIF");
+=======
+        Label title = new Label(isEnglish ? "SUMMARY" : "RÉCAPITULATIF");
+>>>>>>> Stashed changes
         title.getStyleClass().add("receipt-title");
 
         // Liste des articles (Scrollable si commande longue)
@@ -281,7 +318,7 @@ public class DashboardController {
 
         // Total final
         HBox totalBox = new HBox();
-        Label totalLabelText = new Label("TOTAL FINAL");
+        Label totalLabelText = new Label(isEnglish ? "FINAL TOTAL" : "TOTAL FINAL");
         Label totalAmount = new Label(String.format("%.2f €", total));
         totalLabelText.getStyleClass().add("receipt-total-text");
         totalAmount.getStyleClass().add("receipt-total-amount");
@@ -293,12 +330,16 @@ public class DashboardController {
         // Boutons
         HBox buttons = new HBox(15);
         buttons.setAlignment(Pos.CENTER);
+<<<<<<< Updated upstream
 
         Button btnCancel = new Button("ANNULER");
+=======
+        Button btnCancel = new Button(isEnglish ? "CANCEL" : "ANNULER");
+>>>>>>> Stashed changes
         btnCancel.getStyleClass().add("receipt-btn-cancel");
         btnCancel.setOnAction(e -> confirmStage.close());
 
-        Button btnConfirm = new Button("PAYER & COMMANDER");
+        Button btnConfirm = new Button(isEnglish ? "PAY & ORDER" : "PAYER & COMMANDER");
         btnConfirm.getStyleClass().add("receipt-btn-confirm");
         btnConfirm.setOnAction(e -> {
             try {
