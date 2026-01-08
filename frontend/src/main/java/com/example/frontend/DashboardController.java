@@ -1,5 +1,4 @@
 package com.example.frontend;
-
 import com.example.frontend.models.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,21 +32,44 @@ public class DashboardController {
     private Button validateButton;
     @FXML
     private Label totalLabel;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Label titleLabelAccent;
+    @FXML
+    private Label totalTitle;
 
     private final DataService dataService = DataService.getInstance();
     private final List<CartElement> cart = new ArrayList<>();
 
     @FXML
     public void initialize() {
+        applyLanguage();
         loadCategoriesFromApi();
         updateCartDisplay();
         validateButton.setOnAction(e -> validateOrder());
+    }
+    private void applyLanguage() {
+        boolean isEnglish = dataService.getLanguageId().equals("0");
+
+        if (isEnglish) {
+            titleLabel.setText("KIOSK");
+            titleLabelAccent.setText("ORDER");
+            totalTitle.setText("TOTAL TO PAY");
+            validateButton.setText("ORDER");
+        } else {
+            titleLabel.setText("BORNE");
+            titleLabelAccent.setText("COMMANDE");
+            totalTitle.setText("TOTAL A PAYER");
+            validateButton.setText("COMMANDER");
+        }
     }
 
     private void loadCategoriesFromApi() {
         categoryList.getChildren().clear();
 
-        Button menuBtn = createCategoryButton("MENUS", null);
+        String menuLabel = dataService.getLanguageId().equals("0") ? "MENUS" : "MENUS";
+        Button menuBtn = createCategoryButton(menuLabel, null);
         categoryList.getChildren().add(menuBtn);
 
         try {
@@ -190,6 +212,7 @@ public class DashboardController {
     private void updateCartDisplay() {
         cartItems.getChildren().clear();
         double total = 0;
+        String qtyText = dataService.getLanguageId().equals("0") ? "Qty: " : "Qté: ";
 
         for (CartElement ce : cart) {
             total += ce.getPrice() * ce.quantity;
@@ -200,7 +223,7 @@ public class DashboardController {
             Label nameLabel = new Label(ce.getName());
             nameLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
 
-            Label qtyLabel = new Label("Qté: " + ce.quantity);
+            Label qtyLabel = new Label(qtyText + ce.quantity);
             qtyLabel.setStyle("-fx-text-fill: #ccc;");
 
             Label priceLabel = new Label(String.format("%.2f €", ce.getPrice() * ce.quantity));
@@ -279,7 +302,7 @@ public class DashboardController {
 
     private void validateOrder() {
         if (cart.isEmpty()) return;
-
+        boolean isEnglish = dataService.getLanguageId().equals("0");
         Stage confirmStage = new Stage();
         confirmStage.initModality(Modality.APPLICATION_MODAL);
         confirmStage.initStyle(StageStyle.TRANSPARENT);
@@ -289,7 +312,7 @@ public class DashboardController {
         root.setAlignment(Pos.TOP_CENTER);
         root.setPrefWidth(350);
 
-        Label title = new Label("RÉCAPITULATIF");
+        Label title = new Label(isEnglish ? "SUMMARY" : "RÉCAPITULATIF");
         title.getStyleClass().add("receipt-title");
 
         VBox itemsList = new VBox(8);
@@ -311,7 +334,7 @@ public class DashboardController {
 
         Separator sep = new Separator();
         HBox totalBox = new HBox();
-        Label totalLabelText = new Label("TOTAL FINAL");
+        Label totalLabelText = new Label(isEnglish ? "FINAL TOTAL" : "TOTAL FINAL");
         Label totalAmount = new Label(String.format("%.2f €", total));
         totalLabelText.getStyleClass().add("receipt-total-text");
         totalAmount.getStyleClass().add("receipt-total-amount");
@@ -321,11 +344,11 @@ public class DashboardController {
 
         HBox buttons = new HBox(15);
         buttons.setAlignment(Pos.CENTER);
-        Button btnCancel = new Button("ANNULER");
+        Button btnCancel = new Button(isEnglish ? "CANCEL" : "ANNULER");
         btnCancel.getStyleClass().add("receipt-btn-cancel");
         btnCancel.setOnAction(e -> confirmStage.close());
 
-        Button btnConfirm = new Button("PAYER & COMMANDER");
+        Button btnConfirm = new Button(isEnglish ? "PAY & ORDER" : "PAYER & COMMANDER");
         btnConfirm.getStyleClass().add("receipt-btn-confirm");
         btnConfirm.setOnAction(e -> {
             try {
@@ -369,7 +392,7 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
-    
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
