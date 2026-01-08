@@ -44,7 +44,7 @@ public class DataService {
     // --- GET Categories ---
     public List<Categorie> getCategories() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/categories"))
+                .uri(URI.create(API_URL + "/categories/lang/" + currentLanguageId ))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -55,7 +55,7 @@ public class DataService {
     // --- GET Articles par Catégorie ---
     public List<Article> getArticlesForCategory(int categoryId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/categories/" + categoryId + "/articles"))
+                .uri(URI.create(API_URL + "/categories/" + categoryId + "/articles/lang" + currentLanguageId))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -66,7 +66,7 @@ public class DataService {
     // --- GET Menus ---
     public List<Menu> getMenus() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/menus"))
+                .uri(URI.create(API_URL + "/menus/lang" + currentLanguageId))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
