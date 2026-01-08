@@ -10,21 +10,21 @@
 <VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #F72D16;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.HelloController">
 
     <children>
-      <Label text="陳          師          傅          的          麵          條" textFill="GOLD">
-         <font>
-            <Font name="Noto Sans CJK JP Bold" size="48.0" />
-         </font></Label>
-      <Label fx:id="welcomeText" text="Les nouilles de Maître Chen" textFill="GOLD">
-         <font>
-            <Font name="Noto Sans Bold" size="96.0" />
-         </font>
-      </Label>
-      <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-        <Label fx:id="startText" contentDisplay="CENTER" text="Toucher pour continuer" textAlignment="CENTER" textFill="#ffd700" wrapText="true">
-         <font>
-            <Font name="Noto Sans Bold" size="96.0" />
-         </font></Label>
-      <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+        <Label text="陳          師          傅          的          麵          條" textFill="GOLD">
+            <font>
+                <Font name="Noto Sans CJK JP Bold" size="48.0" />
+            </font></Label>
+        <Label fx:id="welcomeText" text="Les nouilles de Maître Chen" textFill="GOLD">
+            <font>
+                <Font name="Noto Sans Bold" size="96.0" />
+            </font>
+        </Label>
+        <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+        <Label fx:id="startText" contentDisplay="CENTER" text="Toucher pour continuer" textAlignment="CENTER" textFill="#ffd700" wrapText="true" onMouseClicked="#goToDashboard">
+            <font>
+                <Font name="Noto Sans Bold" size="96.0" />
+            </font></Label>
+        <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 
         <HBox alignment="BOTTOM_RIGHT" spacing="30.0">
             <children>
@@ -32,12 +32,12 @@
                     <image>
                         <Image url="@img/gb.png" />
                     </image>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <effect>
-                  <DropShadow />
-               </effect>
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                    <effect>
+                        <DropShadow />
+                    </effect>
                 </ImageView>
             </children>
             <VBox.margin>

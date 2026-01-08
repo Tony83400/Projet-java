@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Alice Dupont",
+    "email": "alice@example.com",
+    "age": 25
+  },
+  {
+    "id": 2,
+    "name": "Bob Martin",
+    "email": "bob@example.com",
+    "age": 30
+  },
+  {
+    "id": 3,
+    "name": "Charlie Bernard",
+    "email": "charlie@example.com",
+    "age": 22
+  },
+  {
+    "id": 4,
+    "name": "Diana Prince",
+    "email": "diana@example.com",
+    "age": 28
+  }
+]
