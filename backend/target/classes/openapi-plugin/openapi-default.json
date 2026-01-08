@@ -611,6 +611,8 @@
           }
         },
         "required": [
+          "articleId",
+          "menuId",
           "quantite"
         ]
       },
