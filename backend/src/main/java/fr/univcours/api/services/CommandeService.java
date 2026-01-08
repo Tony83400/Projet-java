@@ -147,18 +147,19 @@ public class CommandeService {
     public LigneCommande addLigneToCommande(int commandeId, CommandeItem item) throws SQLException {
         String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseSetup.getConnection()) {
-            
+
             float price;
-            if (item.getArticleId() != null) {
+            // CHANGEMENT : on compare à 0 au lieu de null
+            if (item.getArticleId() != 0) {
                 Article article = articleService.getArticleByid(item.getArticleId());
                 if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
                 price = article.getPrix();
-            } else if (item.getMenuId() != null) {
+            } else if (item.getMenuId() != 0) { // CHANGEMENT : on compare à 0
                 Menu menu = menuService.getMenuByid(item.getMenuId());
                 if(menu == null) throw new SQLException("Menu with id " + item.getMenuId() + " not found.");
                 price = menu.getPrix();
             } else {
-                throw new SQLException("Item must have either an articleId or a menuId.");
+                throw new SQLException("Item must have either an articleId or a menuId (cannot be 0).");
             }
 
             try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne, Statement.RETURN_GENERATED_KEYS)) {
@@ -166,21 +167,21 @@ public class CommandeService {
                 stmtLigne.setInt(4, item.getQuantite());
                 stmtLigne.setFloat(5, price);
 
-                if (item.getArticleId() != null) {
+                // CHANGEMENT : Logique pour insérer NULL dans la base de données
+                if (item.getArticleId() != 0) {
                     stmtLigne.setInt(2, item.getArticleId());
-                    stmtLigne.setNull(3, Types.INTEGER);
+                    stmtLigne.setNull(3, Types.INTEGER); // Menu est null
                 } else {
-                    stmtLigne.setNull(2, Types.INTEGER);
+                    stmtLigne.setNull(2, Types.INTEGER); // Article est null
                     stmtLigne.setInt(3, item.getMenuId());
                 }
-                
+
                 int affectedRows = stmtLigne.executeUpdate();
 
                 if (affectedRows > 0) {
                     try (ResultSet generatedKeys = stmtLigne.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             int newLigneId = generatedKeys.getInt(1);
-                            // Now fetch and return the newly created LigneCommande
                             List<LigneCommande> allLignes = findLignesForCommande(commandeId);
                             return allLignes.stream().filter(l -> l.getLigne_id() == newLigneId).findFirst().orElse(null);
                         }

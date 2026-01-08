@@ -1,26 +1,26 @@
 package fr.univcours.api.models;
 
 public class CommandeItem {
-    private Integer articleId;
-    private Integer menuId;
+    private int articleId;
+    private int menuId;
     private int quantite = 1;
 
     public CommandeItem() {
     }
 
-    public Integer getArticleId() {
+    public int getArticleId() {
         return articleId;
     }
 
-    public void setArticleId(Integer articleId) {
+    public void setArticleId(int articleId) {
         this.articleId = articleId;
     }
 
-    public Integer getMenuId() {
+    public int getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Integer menuId) {
+    public void setMenuId(int menuId) {
         this.menuId = menuId;
     }
 

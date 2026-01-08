@@ -76,33 +76,31 @@ public class DashboardController {
 
     // MODIFICATION DE LA SIGNATURE : ajout du paramètre 'activeButton'
     private void selectCategory(Categorie target, Button activeButton) {
-
-        // 1. GESTION VISUELLE : Mettre à jour les boutons
-        // On parcourt tous les enfants de la liste (les boutons)
+        // 1. GESTION VISUELLE
         categoryList.getChildren().forEach(node -> {
-            node.getStyleClass().remove("active"); // On enlève la classe 'active' partout
+            node.getStyleClass().remove("active");
         });
-
-        // On l'ajoute seulement sur le bouton cliqué
         if (activeButton != null) {
             activeButton.getStyleClass().add("active");
         }
 
-        // 2. LOGIQUE MÉTIER (Chargement des produits) - Reste inchangée
+        // 2. LOGIQUE MÉTIER
         productGrid.getChildren().clear();
         try {
-            if (target == null) { // "MENUS" category
+            if (target == null) { // Catégorie "MENUS"
                 List<Menu> menus = dataService.getMenus();
                 int i = 0;
                 for (Menu m : menus) {
-                    productGrid.add(createItemCard(m.getNom(), m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
+                    // MODIFICATION : on passe "" pour la description des menus
+                    productGrid.add(createItemCard(m.getNom(), "", m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
                     i++;
                 }
             } else {
                 List<Article> articles = dataService.getArticlesForCategory(target.getCategorie_id());
                 int i = 0;
                 for (Article a : articles) {
-                    productGrid.add(createItemCard(a.getNom(), a.getPrix(), a.getImage_url(), a), i % 3, i / 3);
+                    // MODIFICATION : on passe a.getDescription()
+                    productGrid.add(createItemCard(a.getNom(), a.getDescription(), a.getPrix(), a.getImage_url(), a), i % 3, i / 3);
                     i++;
                 }
             }
@@ -112,50 +110,65 @@ public class DashboardController {
         }
     }
 
-    private VBox createItemCard(String name, double price, String imgPath, Object source) {
+    // Modifiez la signature pour accepter 'description'
+    private VBox createItemCard(String name, String description, double price, String imgPath, Object source) {
         VBox card = new VBox(10);
         card.getStyleClass().add("product-card");
         card.setAlignment(Pos.CENTER);
 
+        // --- Image (Code existant conservé) ---
         ImageView imageView = new ImageView();
-
-        // --- CORRECTION ICI ---
-        // On définit l'image de remplacement (Placeholder)
         String placeholderUrl = getClass().getResource("/com/example/frontend/img/placeholder.png") != null
                 ? getClass().getResource("/com/example/frontend/img/placeholder.png").toExternalForm()
                 : null;
-
         try {
             if (imgPath != null && !imgPath.isEmpty()) {
                 String imageUrl = "http://localhost:8080/" + imgPath;
-
                 Image img = new Image(imageUrl, true);
-
                 img.errorProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal && placeholderUrl != null) {
-                        imageView.setImage(new Image(placeholderUrl));
-                    }
+                    if (newVal && placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
                 });
-
                 imageView.setImage(img);
             } else {
                 if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
             }
-
         } catch (Exception e) {
             if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
         }
         imageView.setFitWidth(120);
-        imageView.setFitHeight(100); // Hauteur fixe conseillée
+        imageView.setFitHeight(100);
         imageView.setPreserveRatio(true);
 
+        // --- Nom ---
         Label nameLabel = new Label(name);
         nameLabel.getStyleClass().add("product-name");
+        nameLabel.setWrapText(true); // Important pour les noms longs
+        nameLabel.setAlignment(Pos.CENTER);
+
+        // --- NOUVEAU : Description ---
+        // On n'affiche le label que si une description existe
+        if (description != null && !description.isEmpty()) {
+            Label descLabel = new Label(description);
+            descLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10px; -fx-font-style: italic;");
+            descLabel.setWrapText(true);
+            descLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            descLabel.setMaxWidth(120); // Largeur alignée avec l'image
+            descLabel.setMaxHeight(40); // Limite la hauteur (environ 2-3 lignes)
+            card.getChildren().add(imageView);
+            card.getChildren().add(nameLabel);
+            card.getChildren().add(descLabel); // Ajout description
+        } else {
+            card.getChildren().add(imageView);
+            card.getChildren().add(nameLabel);
+        }
+        // -----------------------------
+
         Label priceLabel = new Label(String.format("%.2f €", price));
         priceLabel.getStyleClass().add("product-price-pill");
 
-        card.getChildren().addAll(imageView, nameLabel, priceLabel);
+        card.getChildren().add(priceLabel);
         card.setOnMouseClicked(e -> addToCart(source));
+
         return card;
     }
 

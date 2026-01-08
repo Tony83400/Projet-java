@@ -117,16 +117,18 @@ public class CommandeServiceImpl extends CommandeService {
         String sqlLigne = "INSERT INTO ligne_commande (commande_id, article_id, menu_id, quantite, prix_unitaire_facture) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseSetup.getConnection()) {
             float price;
-            if (item.getArticleId() != null) {
+
+            // CORRECTION 1 : On vérifie si l'ID est différent de 0 au lieu de null
+            if (item.getArticleId() != 0) {
                 Article article = articleService.getArticleByid(item.getArticleId());
                 if(article == null) throw new SQLException("Article not found.");
                 price = article.getPrix();
-            } else if (item.getMenuId() != null) {
+            } else if (item.getMenuId() != 0) {
                 Menu menu = menuService.getMenuByid(item.getMenuId());
                 if(menu == null) throw new SQLException("Menu not found.");
                 price = menu.getPrix();
             } else {
-                throw new SQLException("Item must have either an articleId or a menuId.");
+                throw new SQLException("Item must have either an articleId or a menuId (id cannot be 0).");
             }
 
             try (PreparedStatement stmtLigne = conn.prepareStatement(sqlLigne, Statement.RETURN_GENERATED_KEYS)) {
@@ -134,11 +136,14 @@ public class CommandeServiceImpl extends CommandeService {
                 stmtLigne.setInt(4, item.getQuantite());
                 stmtLigne.setFloat(5, price);
 
-                if (item.getArticleId() != null) {
+                // CORRECTION 2 : Logique pour définir NULL en base de données
+                if (item.getArticleId() != 0) {
+                    // C'est un article
                     stmtLigne.setInt(2, item.getArticleId());
-                    stmtLigne.setNull(3, Types.INTEGER);
+                    stmtLigne.setNull(3, Types.INTEGER); // Le menu est NULL en base
                 } else {
-                    stmtLigne.setNull(2, Types.INTEGER);
+                    // C'est un menu
+                    stmtLigne.setNull(2, Types.INTEGER); // L'article est NULL en base
                     stmtLigne.setInt(3, item.getMenuId());
                 }
 
@@ -147,6 +152,7 @@ public class CommandeServiceImpl extends CommandeService {
                     try (ResultSet generatedKeys = stmtLigne.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             int newLigneId = generatedKeys.getInt(1);
+                            // On retourne l'objet créé
                             return findLignesForCommande(commandeId).stream()
                                     .filter(l -> l.getLigne_id() == newLigneId)
                                     .findFirst().orElse(null);
