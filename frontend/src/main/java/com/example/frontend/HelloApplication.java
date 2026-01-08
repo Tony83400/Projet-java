@@ -18,7 +18,7 @@ public class HelloApplication extends Application {
 
         Image icon = new Image(getClass().getResourceAsStream("/com/example/frontend/img/fr.png"));
         stage.getIcons().add(icon);
-        stage.setTitle("Borne de Commandes");
+        //stage.setTitle("Borne de Commandes");
         stage.setScene(scene);
 
         // --- CORRECTIONS FULLSCREEN ---

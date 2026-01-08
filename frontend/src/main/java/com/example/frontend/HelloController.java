@@ -54,7 +54,7 @@ public class HelloController {
             // On charge bien dashboard-view.fxml et non hello-view.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard-view.fxml"));
             Parent dashboardRoot = loader.load();
-
+            String current_language = language;
             Stage stage = (Stage) welcomeText.getScene().getWindow();
             Scene dashboardScene = new Scene(dashboardRoot);
 

@@ -19,12 +19,36 @@
                 <Font name="Noto Sans Bold" size="96.0" />
             </font>
         </Label>
-        <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-        <Label fx:id="startText" contentDisplay="CENTER" text="Toucher pour continuer" textAlignment="CENTER" textFill="#ffd700" wrapText="true" onMouseClicked="#goToDashboard">
-            <font>
-                <Font name="Noto Sans Bold" size="96.0" />
-            </font></Label>
-        <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+      <StackPane>
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" StackPane.alignment="CENTER">
+               <children>
+                  <ImageView cache="true" cacheHint="SCALE" fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/tonynouille.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets bottom="-200.0" left="-10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <ImageView fitHeight="500.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/Chen-70749.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="-10.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
+              <Label fx:id="startText" contentDisplay="CENTER" onMouseClicked="#goToDashboard" text="Toucher pour continuer" textAlignment="CENTER" textFill="#ffd700" wrapText="true">
+                  <font>
+                      <Font name="Noto Sans Bold" size="96.0" />
+                  </font>
+            </Label>
+         </children>
+      </StackPane>
 
         <HBox alignment="BOTTOM_RIGHT" spacing="30.0">
             <children>

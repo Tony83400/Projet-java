@@ -9,7 +9,6 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.frontend.DashboardController"
-            style="-fx-background-color: #F72D16;"
             stylesheets="@styles.css"
             styleClass="root">
 
