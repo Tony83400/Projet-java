@@ -207,28 +207,6 @@
       }
     },
     "/commandes": {
-      "get": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Récupérer toutes les commandes",
-        "operationId": "getAllCommandes",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des commandes",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Commande"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
       "post": {
         "tags": [
           "Commandes"
@@ -249,6 +227,28 @@
           },
           "400": {
             "description": "Erreur lors de l\u0027initialisation"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
+      "get": {
+        "tags": [
+          "Commandes"
+        ],
+        "summary": "Récupérer toutes les commandes",
+        "operationId": "getAllCommandes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des commandes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Commande"
+                }
+              }
+            }
           }
         },
         "deprecated": false,
