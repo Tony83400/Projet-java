@@ -11,6 +11,10 @@ public class MenuController {
     private static final MenuService menuService = new MenuService();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    // DOIT MATCHER: app.get("/menus", ...)
+>>>>>>> Stashed changes
 =======
     // DOIT MATCHER: app.get("/menus", ...)
 >>>>>>> Stashed changes

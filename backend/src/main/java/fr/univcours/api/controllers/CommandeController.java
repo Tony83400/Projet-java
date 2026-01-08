@@ -20,7 +20,11 @@ public class CommandeController {
             path = "/commandes",
             methods = HttpMethod.GET,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             tags = {"Commandes"},
+=======
+            tags = {"Commandes"}, // Correction ici
+>>>>>>> Stashed changes
 =======
             tags = {"Commandes"}, // Correction ici
 >>>>>>> Stashed changes
@@ -104,6 +108,7 @@ public class CommandeController {
 
     @OpenApi(
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             summary = "Initialiser une nouvelle commande vide",
             operationId = "initCommande",
             path = "/commandes",
@@ -133,6 +138,19 @@ public class CommandeController {
             },
             responses = {
                     @OpenApiResponse(status = "200", description = "Liste des lignes de la commande"),
+=======
+            summary = "Modifie une commande par id",
+            operationId = "updateCommandeById",
+            path = "/commandes/{id}",
+            methods = HttpMethod.PUT,
+            tags = {"Commandes"}, // Correction ici
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
+            },
+            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = Commande.class), required = true, description = "Données de la commande"),
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Commande mise à jour"),
+>>>>>>> Stashed changes
 =======
             summary = "Modifie une commande par id",
             operationId = "updateCommandeById",

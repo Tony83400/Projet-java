@@ -2,8 +2,11 @@ package fr.univcours.api;
 
 import fr.univcours.api.controllers.ArticleController;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import fr.univcours.api.controllers.CategorieController;
 =======
+=======
+>>>>>>> Stashed changes
 import fr.univcours.api.controllers.MenuController;
 //import fr.univcours.api.controllers.CommandeController;
 >>>>>>> Stashed changes
@@ -62,12 +65,18 @@ public class Main {
         app.get("/menus/{id}/composition", MenuController::getCompositionForMenu);
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Catégories
         app.get("/categories", CategorieController::getAllCategorie);
         app.get("/categories/{id}", CategorieController::getCategorieById);
         app.get("/categories/{id}/articles", ArticleController::getArticleForCategorieById);
 
         // Commandes
+=======
+        app.get("/articles", ArticleController::getAllArticle);
+        app.get("/articles/{id}", ArticleController::getArticleById);
+
+>>>>>>> Stashed changes
 =======
         app.get("/articles", ArticleController::getAllArticle);
         app.get("/articles/{id}", ArticleController::getArticleById);

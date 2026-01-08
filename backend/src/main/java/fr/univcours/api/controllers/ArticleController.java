@@ -2,13 +2,17 @@ package fr.univcours.api.controllers;
 
 import fr.univcours.api.models.Article;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import fr.univcours.api.models.Menu;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 import io.javalin.http.Context;
 import io.javalin.openapi.*;
 import fr.univcours.api.services.ArticleService;
 import java.sql.SQLException;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 import java.util.List;private static final ArticleService articleService=new ArticleService();
 
@@ -20,6 +24,8 @@ import java.util.List;private static final ArticleService articleService=new Art
 
 @OpenApi(summary="Récupérer les catégories d'un article",operationId="getCategoriesForArticle",path="/articles/{id}/categories",methods=HttpMethod.GET,tags={"Article"},pathParams={@OpenApiParam(name="id",type=Integer.class,description="ID de l'article",required=true)},responses={@OpenApiResponse(status="200",description="Liste des catégories de l'article"),@OpenApiResponse(status="404",description="Article introuvable")})public static void getCategoriesForArticle(Context ctx)throws SQLException{int id=Integer.parseInt(ctx.pathParam("id"));if(articleService.getArticleByid(id)==null){ctx.status(404).json("Article introuvable");return;}ctx.json(articleService.findCategoriesForArticle(id));}}
 =======
+=======
+>>>>>>> Stashed changes
 
 public class ArticleController {
 
@@ -60,5 +66,9 @@ public class ArticleController {
             ctx.status(200).json(rep);
         }
     }
+<<<<<<< Updated upstream
+}
+>>>>>>> Stashed changes
+=======
 }
 >>>>>>> Stashed changes
