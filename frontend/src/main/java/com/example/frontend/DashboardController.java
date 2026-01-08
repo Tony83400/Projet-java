@@ -101,17 +101,35 @@ public class DashboardController {
         card.setAlignment(Pos.CENTER);
 
         ImageView imageView = new ImageView();
+
+        // --- CORRECTION ICI ---
+        // On définit l'image de remplacement (Placeholder)
+        String placeholderUrl = getClass().getResource("/com/example/frontend/img/placeholder.png") != null
+                ? getClass().getResource("/com/example/frontend/img/placeholder.png").toExternalForm()
+                : null;
+
         try {
-            // Assuming images are served from a static path on the backend
-            String imageUrl = "http://localhost:8080/images/articles/" + imgPath;
-            Image img = new Image(imageUrl, true); // true for background loading
-            imageView.setImage(img);
+            if (imgPath != null && !imgPath.isEmpty()) {
+                String imageUrl = "http://localhost:8080/" + imgPath;
+
+                Image img = new Image(imageUrl, true);
+
+                img.errorProperty().addListener((obs, oldVal, newVal) -> {
+                    if (newVal && placeholderUrl != null) {
+                        imageView.setImage(new Image(placeholderUrl));
+                    }
+                });
+
+                imageView.setImage(img);
+            } else {
+                if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
+            }
+
         } catch (Exception e) {
-            // Placeholder can be set here if needed
-            imageView.setFitWidth(100);
-            imageView.setFitHeight(80);
+            if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
         }
         imageView.setFitWidth(120);
+        imageView.setFitHeight(100); // Hauteur fixe conseillée
         imageView.setPreserveRatio(true);
 
         Label nameLabel = new Label(name);
