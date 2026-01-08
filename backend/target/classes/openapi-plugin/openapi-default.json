@@ -348,15 +348,7 @@
           }
         ],
         "requestBody": {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           "description": "Article ou menu à ajouter",
-=======
-          "description": "Données de la commande",
->>>>>>> Stashed changes
-=======
-          "description": "Données de la commande",
->>>>>>> Stashed changes
           "content": {
             "application/json": {
               "schema": {
@@ -367,8 +359,6 @@
           "required": true
         },
         "responses": {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
           "201": {
             "description": "Article ajouté avec succès",
             "content": {
@@ -378,10 +368,6 @@
                 }
               }
             }
-=======
-          "200": {
-            "description": "Commande mise à jour"
->>>>>>> Stashed changes
           },
           "400": {
             "description": "Données invalides"
@@ -426,10 +412,6 @@
                 }
               }
             }
-=======
-          "200": {
-            "description": "Commande mise à jour"
->>>>>>> Stashed changes
           },
           "404": {
             "description": "Commande introuvable"

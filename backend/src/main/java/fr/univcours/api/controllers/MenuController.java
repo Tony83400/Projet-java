@@ -10,18 +10,11 @@ public class MenuController {
 
     private static final MenuService menuService = new MenuService();
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-    // DOIT MATCHER: app.get("/menus", ...)
->>>>>>> Stashed changes
-=======
-    // DOIT MATCHER: app.get("/menus", ...)
->>>>>>> Stashed changes
+
     @OpenApi(
             summary = "Récupérer tous les menus",
             operationId = "getAllMenu",
-            path = "/menus",                // <--- Doit être strictement identique au Main
+            path = "/menus", // <--- ICI C'ÉTAIT "/menu"
             methods = HttpMethod.GET,
             tags = {"Menus"},
             responses = {
@@ -31,11 +24,11 @@ public class MenuController {
         ctx.json(menuService.GetMenus());
     }
 
-    // DOIT MATCHER: app.get("/menus/{id}", ...)
+    // CORRECTION : path = "/menus/{id}"
     @OpenApi(
             summary = "Trouve un menu par id",
             operationId = "getMenuById",
-            path = "/menus/{id}",           // <--- Doit être strictement identique au Main
+            path = "/menus/{id}", // <--- ICI C'ÉTAIT "/menu/{id}"
             methods = HttpMethod.GET,
             tags = {"Menus"},
             pathParams = {
@@ -51,7 +44,7 @@ public class MenuController {
         if (rep == null) {
             ctx.status(404).json("Menu introuvable");
         } else {
-            ctx.status(200).json(rep);
+            ctx.status(200).json(rep); // J'ai mis 200 au lieu de 201 (201 c'est pour la création)
         }
     }
 

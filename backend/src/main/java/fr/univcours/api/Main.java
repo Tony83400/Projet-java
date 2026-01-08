@@ -1,19 +1,10 @@
 package fr.univcours.api;
 
 import fr.univcours.api.controllers.ArticleController;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import fr.univcours.api.controllers.CategorieController;
-=======
-=======
->>>>>>> Stashed changes
-import fr.univcours.api.controllers.MenuController;
-//import fr.univcours.api.controllers.CommandeController;
->>>>>>> Stashed changes
 import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.controllers.MenuController;
 import fr.univcours.api.database.DatabaseSetup;
-import fr.univcours.api.models.Article;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location; // Import nécessaire pour les images
 import io.javalin.openapi.plugin.OpenApiPlugin;
@@ -64,24 +55,12 @@ public class Main {
         app.get("/menus/{id}", MenuController::getMenuById);
         app.get("/menus/{id}/composition", MenuController::getCompositionForMenu);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         // Catégories
         app.get("/categories", CategorieController::getAllCategorie);
         app.get("/categories/{id}", CategorieController::getCategorieById);
         app.get("/categories/{id}/articles", ArticleController::getArticleForCategorieById);
 
         // Commandes
-=======
-        app.get("/articles", ArticleController::getAllArticle);
-        app.get("/articles/{id}", ArticleController::getArticleById);
-
->>>>>>> Stashed changes
-=======
-        app.get("/articles", ArticleController::getAllArticle);
-        app.get("/articles/{id}", ArticleController::getArticleById);
-
->>>>>>> Stashed changes
         app.get("/commandes", CommandeController::getAll);
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);

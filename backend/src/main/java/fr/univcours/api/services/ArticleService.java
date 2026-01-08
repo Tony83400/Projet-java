@@ -1,7 +1,5 @@
 package fr.univcours.api.services;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,28 +44,10 @@ public class ArticleService {
         return categories;
     }
 
-=======
-=======
->>>>>>> Stashed changes
-import fr.univcours.api.database.DatabaseSetup;
-import fr.univcours.api.models.Article;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ArticleService {
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     public List<Article> GetArticles() {
         List<Article> articles = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection();
              Statement stmt = conn.createStatement();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
              ResultSet rs = stmt.executeQuery("SELECT * FROM article");) {
             while (rs.next()) {
                 // --- CODE DUPLIQUÉ (ARTICLE) ---
@@ -80,20 +60,6 @@ public class ArticleService {
                 article.setStock(rs.getInt("stock"));
                 // -------------------------------
                 
-=======
-=======
->>>>>>> Stashed changes
-             ResultSet rs = stmt.executeQuery("SELECT * FROM article")) {
-            while (rs.next()) {
-                Article article = new Article();
-                article.setArticle_id(rs.getInt("article_id"));
-                article.setDescription(rs.getString("description"));
-                article.setPrix(rs.getInt("prix"));
-                article.setStock(rs.getInt("stock"));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -103,21 +69,11 @@ public class ArticleService {
     }
 
     public Article getArticleByid(int id) {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         String sql = "SELECT * FROM article WHERE article_id =?";
-=======
-        String sql = "SELECT * FROM article WHERE id =?";
->>>>>>> Stashed changes
-=======
-        String sql = "SELECT * FROM article WHERE id =?";
->>>>>>> Stashed changes
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                 if (rs.next()) {
                     // --- CODE DUPLIQUÉ (ARTICLE) ---
                     Article article = new Article();
@@ -129,20 +85,6 @@ public class ArticleService {
                     article.setStock(rs.getInt("stock"));
                     // -------------------------------
                     
-=======
-=======
->>>>>>> Stashed changes
-
-                if (rs.next()) {
-                    Article article = new Article();
-                    article.setArticle_id(rs.getInt("article_id"));
-                    article.setDescription(rs.getString("description"));
-                    article.setPrix(rs.getInt("prix"));
-                    article.setStock(rs.getInt("stock"));
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                     return article;
                 }
             }
@@ -151,8 +93,6 @@ public class ArticleService {
             throw new RuntimeException(e);
         }
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
     public List<Article> getArticleForCategorie(int categorie_id) {
         List<Article> articles = new ArrayList<>();
@@ -186,8 +126,4 @@ public class ArticleService {
         }
         return articles;
     }
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }
