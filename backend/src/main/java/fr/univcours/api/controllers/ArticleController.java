@@ -1,5 +1,6 @@
 package fr.univcours.api.controllers;
 
+import fr.univcours.api.impl.ArticleServiceImpl;
 import fr.univcours.api.models.Article;
 import fr.univcours.api.models.Menu;
 import io.javalin.http.Context;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class ArticleController {
 
-    private static final ArticleService articleService = new ArticleService();
+    private static final ArticleServiceImpl articleService = new ArticleServiceImpl();
 
     @OpenApi(
             summary = "Récupérer toutes les articles",

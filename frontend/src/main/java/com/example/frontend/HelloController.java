@@ -52,7 +52,7 @@ public class HelloController {
         try {
             // --- CORRECTION DU FICHIER CIBLE ---
             // On charge bien dashboard-view.fxml et non hello-view.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard-view.fxml"));
             Parent dashboardRoot = loader.load();
 
             Stage stage = (Stage) welcomeText.getScene().getWindow();

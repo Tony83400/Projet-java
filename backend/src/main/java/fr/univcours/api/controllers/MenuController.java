@@ -1,5 +1,6 @@
 package fr.univcours.api.controllers;
 
+import fr.univcours.api.impl.MenuServiceImpl;
 import fr.univcours.api.models.Menu;
 import io.javalin.http.Context;
 import io.javalin.openapi.*;
@@ -8,7 +9,7 @@ import java.sql.SQLException;
 
 public class MenuController {
 
-    private static final MenuService menuService = new MenuService();
+    private static final MenuServiceImpl menuService = new MenuServiceImpl();
 
 
     @OpenApi(

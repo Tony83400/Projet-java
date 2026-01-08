@@ -1,5 +1,6 @@
 package fr.univcours.api.controllers;
 
+import fr.univcours.api.impl.CommandeServiceImpl;
 import fr.univcours.api.models.Commande;
 import io.javalin.http.Context;
 import io.javalin.openapi.*;
@@ -12,7 +13,7 @@ import fr.univcours.api.models.LigneCommande;
 
 public class CommandeController {
 
-    private static final CommandeService commandeService = new CommandeService();
+    private static final CommandeServiceImpl commandeService = new CommandeServiceImpl();
 
     @OpenApi(
             summary = "Récupérer toutes les commandes",

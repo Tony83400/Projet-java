@@ -1,5 +1,6 @@
 package fr.univcours.api.controllers;
 
+import fr.univcours.api.impl.CategorieServiceImpl;
 import fr.univcours.api.models.Categorie;
 import fr.univcours.api.models.Menu;
 import io.javalin.http.Context;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 public class CategorieController {
 
 
-    private static final CategorieService categorieService = new CategorieService();
+    private static final CategorieServiceImpl categorieService = new CategorieServiceImpl();
 
     @OpenApi(
             summary = "Récupérer toutes les categories",
