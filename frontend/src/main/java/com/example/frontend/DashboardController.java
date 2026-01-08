@@ -103,7 +103,7 @@ public class DashboardController {
         ImageView imageView = new ImageView();
         try {
             // Assuming images are served from a static path on the backend
-            String imageUrl = "http://localhost:7000/images/articles/" + imgPath;
+            String imageUrl = "http://localhost:8080/images/articles/" + imgPath;
             Image img = new Image(imageUrl, true); // true for background loading
             imageView.setImage(img);
         } catch (Exception e) {

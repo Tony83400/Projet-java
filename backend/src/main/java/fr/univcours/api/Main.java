@@ -6,8 +6,9 @@ import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.controllers.MenuController;
 import fr.univcours.api.database.DatabaseSetup;
 import io.javalin.Javalin;
-import io.javalin.openapi.plugin.OpenApiConfiguration;
+import io.javalin.http.staticfiles.Location; // Import nécessaire pour les images
 import io.javalin.openapi.plugin.OpenApiPlugin;
+import io.javalin.openapi.plugin.OpenApiPluginConfiguration; // Attention aux imports OpenAPI qui changent souvent
 import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 import io.javalin.plugin.bundled.CorsPluginConfig;
@@ -15,42 +16,51 @@ import io.javalin.plugin.bundled.CorsPluginConfig;
 public class Main {
 
     public static void main(String[] args) {
+        // Démarrage de la base de données
+        DatabaseSetup.start(); //
 
         Javalin app = Javalin.create(config -> {
-            // Configuration de la Db
 
-            DatabaseSetup.start();
-            // 1. Configuration CORS
+            // 1. Configuration des fichiers statiques (IMAGES)
+            // Cela permet d'accéder à http://localhost:8080/images/articles/nom_image.jpg
+            config.staticFiles.add("/", Location.CLASSPATH);
+
+            // 2. Configuration CORS (Nouvelle syntaxe pour Javalin 5.x)
             config.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
 
-            // 2. Configuration OpenAPI
-            OpenApiConfiguration openApiConfig = new OpenApiConfiguration();
-            openApiConfig.getInfo().setTitle("API Commandes");
-            openApiConfig.getInfo().setVersion("1.0.0");
-            openApiConfig.getInfo().setDescription("Documentation de l'API");
+            // 3. Configuration OpenAPI (Documentation)
+            config.plugins.register(new OpenApiPlugin(
+                    new OpenApiPluginConfiguration()
+                            .withDocumentationPath("/openapi")
+                            .withDefinitionConfiguration((version, definition) -> definition
+                                    .withOpenApiInfo((openApiInfo) -> {
+                                        openApiInfo.setTitle("API Restaurant");
+                                        openApiInfo.setVersion("1.0.0");
+                                    })
+                            )
+            ));
 
-            // On enregistre le plugin avec la config qu'on vient de créer
-            config.plugins.register(new OpenApiPlugin(openApiConfig));
-
-            // 3. Configuration Swagger UI (Visuel)
+            // 4. Configuration Swagger UI
             SwaggerConfiguration swaggerConfig = new SwaggerConfiguration();
-            swaggerConfig.setUiPath("/"); // L'URL pour accéder à la doc
-
-            // On enregistre le plugin Swagger
+            swaggerConfig.setUiPath("/"); // Doc accessible à la racine
             config.plugins.register(new SwaggerPlugin(swaggerConfig));
 
-        }).start(7000);
+        }).start(8080);
+        System.out.println("🚀 Serveur démarré sur http://localhost:8080");
 
-        System.out.println("🚀 Serveur démarré sur http://localhost:7000");
+        // --- ROUTES ---
 
-        // Routes
+        // Menus
         app.get("/menus", MenuController::getAllMenu);
         app.get("/menus/{id}", MenuController::getMenuById);
         app.get("/menus/{id}/composition", MenuController::getCompositionForMenu);
 
+        // Catégories
         app.get("/categories", CategorieController::getAllCategorie);
         app.get("/categories/{id}", CategorieController::getCategorieById);
+        app.get("/categories/{id}/articles", ArticleController::getArticleForCategorieById);
 
+        // Commandes
         app.get("/commandes", CommandeController::getAll);
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);
@@ -58,10 +68,9 @@ public class Main {
         app.post("/commandes/{id}/lignes", CommandeController::addLigneToCommande);
         app.get("/commandes/{id}/total", CommandeController::getTotalForCommande);
 
+        // Articles
         app.get("/articles", ArticleController::getAllArticle);
-        app.get("/articles/{id}",ArticleController::getArticleById);
+        app.get("/articles/{id}", ArticleController::getArticleById);
         app.get("/articles/{id}/categories", ArticleController::getCategoriesForArticle);
-        app.get("/categories/{id}/articles",ArticleController::getArticleForCategorieById);
-
     }
 }

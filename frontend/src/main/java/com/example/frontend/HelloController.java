@@ -33,11 +33,11 @@ public class HelloController {
     private void switch_language() {
         if (language.equals("French")) {
             welcomeText.setText("Tap to continue");
-            flag.setImage(imgFR);
+            flag.setImage(imgGB);
             language = "English";
         } else {
             welcomeText.setText("Appuyer pour continuer");
-            flag.setImage(imgGB);
+            flag.setImage(imgFR);
             language = "French";
         }
     }
@@ -45,6 +45,8 @@ public class HelloController {
     @FXML
     private void goToDashboard(MouseEvent event) {
         try {
+            // --- CORRECTION DU FICHIER CIBLE ---
+            // On charge bien dashboard-view.fxml et non hello-view.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard-view.fxml"));
             Parent dashboardRoot = loader.load();
 
@@ -52,16 +54,22 @@ public class HelloController {
             Scene dashboardScene = new Scene(dashboardRoot);
 
             stage.setScene(dashboardScene);
-            stage.setMaximized(true);
+
+            // On réapplique le plein écran car changer de scène peut parfois le faire sauter
             stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Erreur: Impossible de trouver dashboard-view.fxml !");
         }
     }
 
     public void initialize() {
         imgFR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/frontend/img/fr.png")));
         imgGB = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/frontend/img/gb.png")));
+
+        flag.setImage(imgFR);
 
         FadeTransition fade = new FadeTransition(Duration.seconds(1.5), welcomeText);
         fade.setFromValue(0.1);

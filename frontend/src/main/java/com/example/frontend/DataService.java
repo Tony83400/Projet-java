@@ -16,8 +16,7 @@ public class DataService {
     private static DataService instance;
     private final HttpClient client;
     private final ObjectMapper mapper;
-    // ATTENTION : Vérifiez le port (8080 par défaut pour Javalin, vous aviez mis 7000 dans votre code image)
-    private final String API_URL = "http://localhost:7000"; 
+    private final String API_URL = "http://localhost:8080";
 
     private DataService() {
         this.client = HttpClient.newHttpClient();
