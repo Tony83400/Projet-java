@@ -32,7 +32,7 @@ public class CommandeController {
             operationId = "getCommandeById",
             path = "/commandes/{id}",
             methods = HttpMethod.GET,
-            tags = {"Commandes"},
+            tags = {"Commandes"}, // Correction ici
             pathParams = {
                     @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
             },

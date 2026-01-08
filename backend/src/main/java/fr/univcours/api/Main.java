@@ -5,6 +5,7 @@ import fr.univcours.api.controllers.CategorieController;
 import fr.univcours.api.controllers.CommandeController;
 import fr.univcours.api.controllers.MenuController;
 import fr.univcours.api.database.DatabaseSetup;
+import fr.univcours.api.models.Article;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location; // Import nécessaire pour les images
 import io.javalin.openapi.plugin.OpenApiPlugin;
