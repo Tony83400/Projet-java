@@ -4,7 +4,6 @@ import fr.univcours.api.impl.MenuServiceImpl;
 import fr.univcours.api.models.Menu;
 import io.javalin.http.Context;
 import io.javalin.openapi.*;
-import fr.univcours.api.services.MenuService;
 import java.sql.SQLException;
 
 public class MenuController {
@@ -13,27 +12,31 @@ public class MenuController {
 
 
     @OpenApi(
-            summary = "Récupérer tous les menus",
+            summary = "Récupérer tous les menus dans une langue donnée",
             operationId = "getAllMenu",
-            path = "/menus", // <--- ICI C'ÉTAIT "/menu"
+            path = "/menus/lang/{langue_id}", // Nouveau chemin avec langue
             methods = HttpMethod.GET,
             tags = {"Menus"},
+            pathParams = {
+                    @OpenApiParam(name = "langue_id", type = Integer.class, description = "ID langue (1=FR, 2=EN)", required = true)
+            },
             responses = {
                     @OpenApiResponse(status = "200", description = "Liste des menus", content = @OpenApiContent(from = Menu.class))
             })
     public static void getAllMenu(Context ctx) {
-        ctx.json(menuService.GetMenus());
+        int langueId = Integer.parseInt(ctx.pathParam("langue_id"));
+        ctx.json(menuService.GetMenus(langueId));
     }
 
-    // CORRECTION : path = "/menus/{id}"
     @OpenApi(
-            summary = "Trouve un menu par id",
+            summary = "Trouve un menu par id et langue",
             operationId = "getMenuById",
-            path = "/menus/{id}", // <--- ICI C'ÉTAIT "/menu/{id}"
+            path = "/menus/{id}/lang/{langue_id}", // Nouveau chemin combiné
             methods = HttpMethod.GET,
             tags = {"Menus"},
             pathParams = {
-                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du menu", required = true)
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du menu", required = true),
+                    @OpenApiParam(name = "langue_id", type = Integer.class, description = "ID langue (1=FR, 2=EN)", required = true)
             },
             responses = {
                     @OpenApiResponse(status = "200", description = "Menu trouvé", content = @OpenApiContent(from = Menu.class)),
@@ -41,22 +44,25 @@ public class MenuController {
             })
     public static void getMenuById(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
-        Menu rep = menuService.getMenuByid(id);
+        int langueId = Integer.parseInt(ctx.pathParam("langue_id"));
+
+        Menu rep = menuService.getMenuByid(id, langueId);
         if (rep == null) {
             ctx.status(404).json("Menu introuvable");
         } else {
-            ctx.status(200).json(rep); // J'ai mis 200 au lieu de 201 (201 c'est pour la création)
+            ctx.status(200).json(rep);
         }
     }
 
     @OpenApi(
-            summary = "Récupérer la composition d'un menu",
+            summary = "Récupérer la composition d'un menu avec langue",
             operationId = "getCompositionForMenu",
-            path = "/menus/{id}/composition",
+            path = "/menus/{id}/composition/lang/{langue_id}",
             methods = HttpMethod.GET,
             tags = {"Menus"},
             pathParams = {
-                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du menu", required = true)
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID du menu", required = true),
+                    @OpenApiParam(name = "langue_id", type = Integer.class, description = "ID langue (1=FR, 2=EN)", required = true)
             },
             responses = {
                     @OpenApiResponse(status = "200", description = "Composition du menu"),
@@ -64,10 +70,13 @@ public class MenuController {
             })
     public static void getCompositionForMenu(Context ctx) throws SQLException {
         int id = Integer.parseInt(ctx.pathParam("id"));
-        if (menuService.getMenuByid(id) == null) {
+        int langueId = Integer.parseInt(ctx.pathParam("langue_id"));
+
+        // On vérifie d'abord si le menu existe
+        if (menuService.getMenuByid(id, langueId) == null) {
             ctx.status(404).json("Menu introuvable");
             return;
         }
-        ctx.json(menuService.findCompositionForMenu(id));
+        ctx.json(menuService.findCompositionForMenu(id, langueId));
     }
 }

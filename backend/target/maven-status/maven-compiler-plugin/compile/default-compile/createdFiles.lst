@@ -1,6 +1,8 @@
 fr\univcours\api\models\Categorie.class
 fr\univcours\api\models\Commande.class
+fr\univcours\api\impl\CategorieServiceImpl.class
 fr\univcours\api\controllers\MenuController.class
+fr\univcours\api\impl\CommandeServiceImpl.class
 fr\univcours\api\services\CategorieService.class
 fr\univcours\api\models\CommandeItem.class
 fr\univcours\api\services\CommandeService.class
@@ -12,9 +14,11 @@ fr\univcours\api\models\Article.class
 fr\univcours\api\controllers\ArticleController.class
 openapi-plugin\.index
 fr\univcours\api\models\LigneCommande.class
+fr\univcours\api\impl\ArticleServiceImpl.class
 fr\univcours\api\controllers\CommandeController.class
 fr\univcours\api\services\MenuService.class
 fr\univcours\api\database\DatabaseSetup.class
 json-schemes\index
 openapi-plugin\openapi-default.json
+fr\univcours\api\impl\MenuServiceImpl.class
 fr\univcours\api\models\MenuArticle.class
