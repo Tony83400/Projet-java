@@ -10,6 +10,10 @@ public class MenuController {
 
     private static final MenuService menuService = new MenuService();
 
+<<<<<<< Updated upstream
+=======
+    // DOIT MATCHER: app.get("/menus", ...)
+>>>>>>> Stashed changes
     @OpenApi(
             summary = "Récupérer tous les menus",
             operationId = "getAllMenu",

@@ -19,7 +19,11 @@ public class CommandeController {
             operationId = "getAllCommandes",
             path = "/commandes",
             methods = HttpMethod.GET,
+<<<<<<< Updated upstream
             tags = {"Commandes"},
+=======
+            tags = {"Commandes"}, // Correction ici
+>>>>>>> Stashed changes
             responses = {
                     @OpenApiResponse(status = "200", description = "Liste des commandes", content = @OpenApiContent(from = Commande.class))
             })
@@ -28,6 +32,54 @@ public class CommandeController {
     }
 
     @OpenApi(
+<<<<<<< Updated upstream
+=======
+            summary = "Supprimer une commande",
+            operationId = "deleteCommande",
+            path = "/commandes/{id}",
+            methods = HttpMethod.DELETE,
+            tags = {"Commandes"}, // Correction ici
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
+            },
+            responses = {
+                    @OpenApiResponse(status = "204", description = "Commande supprimée"),
+                    @OpenApiResponse(status = "404", description = "Commande introuvable")
+            })
+    public static void delete(Context ctx) throws SQLException {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        boolean estSupprime = commandeService.deleteCommande(id);
+
+        if (estSupprime) {
+            ctx.status(204);
+        } else {
+            ctx.status(404).json("Commande introuvable");
+        }
+    }
+
+    @OpenApi(
+            summary = "Ajouter une nouvelle commande",
+            operationId = "addCommande",
+            path = "/commandes",
+            methods = HttpMethod.POST,
+            tags = {"Commandes"}, // Correction ici
+            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = Commande.class), required = true, description = "Données de la commande"),
+            responses = {
+                    @OpenApiResponse(status = "201", description = "Commande créée avec succès"),
+                    @OpenApiResponse(status = "400", description = "Données invalides")
+            })
+    public static void add(Context ctx) throws SQLException {
+        Commande newCommande = ctx.bodyAsClass(Commande.class);
+        Commande commandeRep = commandeService.addCommande(newCommande);
+        if (commandeRep == null) {
+            ctx.status(400).json("Impossible d'ajouter la commande");
+        } else {
+            ctx.status(201).json(commandeRep);
+        }
+    }
+
+    @OpenApi(
+>>>>>>> Stashed changes
             summary = "Trouve une commande par id",
             operationId = "getCommandeById",
             path = "/commandes/{id}",
@@ -51,6 +103,7 @@ public class CommandeController {
     }
 
     @OpenApi(
+<<<<<<< Updated upstream
             summary = "Initialiser une nouvelle commande vide",
             operationId = "initCommande",
             path = "/commandes",
@@ -80,6 +133,19 @@ public class CommandeController {
             },
             responses = {
                     @OpenApiResponse(status = "200", description = "Liste des lignes de la commande"),
+=======
+            summary = "Modifie une commande par id",
+            operationId = "updateCommandeById",
+            path = "/commandes/{id}",
+            methods = HttpMethod.PUT,
+            tags = {"Commandes"}, // Correction ici
+            pathParams = {
+                    @OpenApiParam(name = "id", type = Integer.class, description = "ID de la commande", required = true)
+            },
+            requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = Commande.class), required = true, description = "Données de la commande"),
+            responses = {
+                    @OpenApiResponse(status = "200", description = "Commande mise à jour"),
+>>>>>>> Stashed changes
                     @OpenApiResponse(status = "404", description = "Commande introuvable")
             })
     public static void getLignesForCommande(Context ctx) throws SQLException {
