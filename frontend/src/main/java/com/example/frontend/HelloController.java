@@ -28,7 +28,7 @@ public class HelloController {
     @FXML
     private void switch_language() {
         if (dataService.getLanguageId().equals("1")) {
-            dataService.setLanguageId("0");
+            dataService.setLanguageId("2");
         } else {
             dataService.setLanguageId("1");
         }
@@ -36,7 +36,7 @@ public class HelloController {
     }
 
     private void applyLanguage() {
-        if (dataService.getLanguageId().equals("0")) { // English
+        if (dataService.getLanguageId().equals("2")) { // English
             startText.setText("Tap to continue");
             welcomeText.setText("Master Chen's noodles");
             flag.setImage(imgFR); // Montre le drapeau FR pour changer vers FR

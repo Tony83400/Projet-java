@@ -50,7 +50,7 @@ public class DashboardController {
         validateButton.setOnAction(e -> validateOrder());
     }
     private void applyLanguage() {
-        boolean isEnglish = dataService.getLanguageId().equals("0");
+        boolean isEnglish = dataService.getLanguageId().equals("2");
 
         if (isEnglish) {
             titleLabel.setText("KIOSK");
@@ -68,7 +68,7 @@ public class DashboardController {
     private void loadCategoriesFromApi() {
         categoryList.getChildren().clear();
 
-        String menuLabel = dataService.getLanguageId().equals("0") ? "MENUS" : "MENUS";
+        String menuLabel = dataService.getLanguageId().equals("2") ? "MENUS" : "MENUS";
         Button menuBtn = createCategoryButton(menuLabel, null);
         categoryList.getChildren().add(menuBtn);
 
@@ -212,7 +212,7 @@ public class DashboardController {
     private void updateCartDisplay() {
         cartItems.getChildren().clear();
         double total = 0;
-        String qtyText = dataService.getLanguageId().equals("0") ? "Qty: " : "Qté: ";
+        String qtyText = dataService.getLanguageId().equals("2") ? "Qty: " : "Qté: ";
 
         for (CartElement ce : cart) {
             total += ce.getPrice() * ce.quantity;
@@ -302,7 +302,7 @@ public class DashboardController {
 
     private void validateOrder() {
         if (cart.isEmpty()) return;
-        boolean isEnglish = dataService.getLanguageId().equals("0");
+        boolean isEnglish = dataService.getLanguageId().equals("2");
         Stage confirmStage = new Stage();
         confirmStage.initModality(Modality.APPLICATION_MODAL);
         confirmStage.initStyle(StageStyle.TRANSPARENT);
