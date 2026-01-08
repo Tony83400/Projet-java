@@ -207,6 +207,28 @@
       }
     },
     "/commandes": {
+      "get": {
+        "tags": [
+          "Commandes"
+        ],
+        "summary": "Récupérer toutes les commandes",
+        "operationId": "getAllCommandes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des commandes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Commande"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
       "post": {
         "tags": [
           "Commandes"
@@ -227,28 +249,6 @@
           },
           "400": {
             "description": "Erreur lors de l\u0027initialisation"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      },
-      "get": {
-        "tags": [
-          "Commandes"
-        ],
-        "summary": "Récupérer toutes les commandes",
-        "operationId": "getAllCommandes",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Liste des commandes",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Commande"
-                }
-              }
-            }
           }
         },
         "deprecated": false,
@@ -525,6 +525,13 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "article_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
           "prix": {
             "type": "number",
             "format": "float"
@@ -533,38 +540,31 @@
             "type": "integer",
             "format": "int32"
           },
-          "description": {
+          "nom": {
             "type": "string"
-          },
-          "article_id": {
-            "type": "integer",
-            "format": "int32"
           },
           "image_url": {
-            "type": "string"
-          },
-          "nom": {
             "type": "string"
           }
         },
         "required": [
+          "article_id",
           "prix",
-          "stock",
-          "article_id"
+          "stock"
         ]
       },
       "Categorie": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "description": {
-            "type": "string"
-          },
           "categorie_id": {
             "type": "integer",
             "format": "int32"
           },
           "nom": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           }
         },
@@ -576,12 +576,12 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "statut": {
-            "type": "string"
-          },
           "commande_id": {
             "type": "integer",
             "format": "int32"
+          },
+          "statut": {
+            "type": "string"
           },
           "numero_ticket": {
             "type": "integer",
@@ -597,15 +597,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "articleId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "menuId": {
             "type": "integer",
             "format": "int32"
           },
           "quantite": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "articleId": {
             "type": "integer",
             "format": "int32"
           }
@@ -618,9 +618,6 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "article": {
-            "$ref": "#/components/schemas/Article"
-          },
           "ligne_id": {
             "type": "integer",
             "format": "int32"
@@ -629,12 +626,15 @@
             "type": "integer",
             "format": "int32"
           },
-          "menu": {
-            "$ref": "#/components/schemas/Menu"
-          },
           "prix_unitaire_facture": {
             "type": "number",
             "format": "float"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          },
+          "menu": {
+            "$ref": "#/components/schemas/Menu"
           }
         },
         "required": [
@@ -647,24 +647,24 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "prix": {
-            "type": "number",
-            "format": "float"
-          },
-          "image_url": {
-            "type": "string"
-          },
           "menu_id": {
             "type": "integer",
             "format": "int32"
           },
           "nom": {
             "type": "string"
+          },
+          "prix": {
+            "type": "number",
+            "format": "float"
+          },
+          "image_url": {
+            "type": "string"
           }
         },
         "required": [
-          "prix",
-          "menu_id"
+          "menu_id",
+          "prix"
         ]
       }
     }

@@ -60,18 +60,35 @@ public class DashboardController {
             showAlert("Error", "Failed to load categories from the server.");
         }
 
-        selectCategory(null);
+        // MODIFICATION : On simule un clic sur le premier bouton (MENUS) pour l'activer visuellement dès le début
+        selectCategory(null, menuBtn);
     }
 
     private Button createCategoryButton(String label, Categorie cat) {
         Button btn = new Button(label.toUpperCase());
         btn.getStyleClass().add("category-button");
         btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setOnAction(e -> selectCategory(cat));
+
+        btn.setOnAction(e -> selectCategory(cat, btn));
+
         return btn;
     }
 
-    private void selectCategory(Categorie target) {
+    // MODIFICATION DE LA SIGNATURE : ajout du paramètre 'activeButton'
+    private void selectCategory(Categorie target, Button activeButton) {
+
+        // 1. GESTION VISUELLE : Mettre à jour les boutons
+        // On parcourt tous les enfants de la liste (les boutons)
+        categoryList.getChildren().forEach(node -> {
+            node.getStyleClass().remove("active"); // On enlève la classe 'active' partout
+        });
+
+        // On l'ajoute seulement sur le bouton cliqué
+        if (activeButton != null) {
+            activeButton.getStyleClass().add("active");
+        }
+
+        // 2. LOGIQUE MÉTIER (Chargement des produits) - Reste inchangée
         productGrid.getChildren().clear();
         try {
             if (target == null) { // "MENUS" category
