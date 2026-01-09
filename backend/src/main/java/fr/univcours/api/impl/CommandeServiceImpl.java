@@ -33,7 +33,7 @@ public class CommandeServiceImpl extends CommandeService {
                     int menuId = rs.getInt("menu_id");
 
                     if (!articleWasNull) {
-                        ligne.setArticle(articleService.getArticleByid(articleId));
+                        ligne.setArticle(articleService.getArticleByid(articleId,1));
                     } else {
                         ligne.setMenu(menuService.getMenuByid(menuId,1));
                     }
@@ -120,7 +120,7 @@ public class CommandeServiceImpl extends CommandeService {
 
             // CORRECTION 1 : On vérifie si l'ID est différent de 0 au lieu de null
             if (item.getArticleId() != 0) {
-                Article article = articleService.getArticleByid(item.getArticleId());
+                Article article = articleService.getArticleByid(item.getArticleId(),1);
                 if(article == null) throw new SQLException("Article not found.");
                 price = article.getPrix();
             } else if (item.getMenuId() != 0) {
