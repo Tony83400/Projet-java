@@ -11,6 +11,7 @@
             stylesheets="@styles.css"
             styleClass="root">
 
+<<<<<<< Updated upstream
     <top>
         <StackPane styleClass="header-stack">
             <ImageView fx:id="headerDragon" fitHeight="100" preserveRatio="true" opacity="0.4" styleClass="dragon-image"/>
@@ -21,9 +22,65 @@
                 <VBox alignment="CENTER_LEFT">
                     <Label fx:id="titleLabel" text="BORNE" styleClass="title-label"/>
                     <Label fx:id="titleLabelAccent" text="COMMANDE" styleClass="title-label-accent"/>
+=======
+    <BorderPane fx:id="mainLayout" styleClass="root">
+        <top>
+            <StackPane styleClass="header-stack">
+                <ImageView fx:id="headerDragon" fitHeight="150" preserveRatio="true"
+                           styleClass="dragon-image" StackPane.alignment="CENTER_RIGHT"/>
+
+                <HBox alignment="CENTER_LEFT" prefHeight="110" styleClass="header-content" spacing="30">
+                    <Button text="←" onAction="#goBack" styleClass="back-button"/>
+
+                    <VBox alignment="CENTER_LEFT" spacing="2">
+                        <Label fx:id="titleLabel" text="RESTO DRAGON" styleClass="title-label"/>
+                        <Label fx:id="titleLabelAccent" text="MENU DIGITAL" styleClass="title-label-accent"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </StackPane>
+        </top>
+
+        <center>
+            <HBox spacing="0">
+                <VBox fx:id="categoryList" prefWidth="280" alignment="TOP_CENTER" styleClass="category-sidebar"/>
+
+                <ScrollPane fitToWidth="true" fitToHeight="true" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: transparent; -fx-background: transparent;"
+                            hbarPolicy="NEVER">
+                    <GridPane fx:id="productGrid" alignment="TOP_CENTER" hgap="30" vgap="30">
+                        <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+                    </GridPane>
+                </ScrollPane>
+            </HBox>
+        </center>
+
+        <bottom>
+            <HBox prefHeight="160" spacing="0" alignment="CENTER" styleClass="cart-section">
+                <ScrollPane fx:id="cartScrollPane" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED"
+                            HBox.hgrow="ALWAYS" fitToHeight="true"
+                            style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <HBox fx:id="cartItems" spacing="25" alignment="CENTER_LEFT">
+                        <padding><Insets left="30" right="30"/></padding>
+                    </HBox>
+                </ScrollPane>
+
+                <Region prefWidth="2" style="-fx-background-color: -color-accent-gold; -fx-opacity: 0.3;">
+                    <HBox.margin><Insets top="40" bottom="40"/></HBox.margin>
+                </Region>
+
+                <VBox alignment="CENTER" prefWidth="350" spacing="15">
+                    <VBox alignment="CENTER" spacing="0">
+                        <Label fx:id="totalTitle" text="TOTAL COMMANDE" styleClass="total-title"/>
+                        <Label fx:id="totalLabel" text="0.00 €" styleClass="total-amount"/>
+                    </VBox>
+                    <Button fx:id="validateButton" text="PAYER MAINTENANT"
+                            prefWidth="280" prefHeight="60" styleClass="validate-button"/>
+>>>>>>> Stashed changes
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
             </HBox>
+<<<<<<< Updated upstream
         </StackPane>
     </top>
 
@@ -37,6 +94,10 @@
             </ScrollPane>
         </HBox>
     </center>
+=======
+        </bottom>
+    </BorderPane>
+>>>>>>> Stashed changes
 
     <bottom>
         <HBox prefHeight="160" spacing="0" alignment="CENTER" styleClass="cart-section">
