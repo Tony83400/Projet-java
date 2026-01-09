@@ -282,26 +282,35 @@ public class DashboardController {
     }
 
     private void showEditPopup(CartElement ce) {
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.initStyle(StageStyle.TRANSPARENT);
-
+        // --- 1. Construction de l'Overlay ---
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
+
+        // Style cohérent (Gris foncé, arrondi, ombre)
         root.getStyleClass().add("popup-root");
+        root.setStyle("-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0); -fx-padding: 20;");
         root.setPrefSize(400, 300);
 
+        // Titre
         Label title = new Label(ce.getName());
         title.getStyleClass().add("popup-title");
+        title.setStyle("-fx-font-size: 18px; -fx-text-fill: #e67e22; -fx-font-weight: bold;");
 
+        // Contrôles Quantité (- 1 +)
         HBox qtyContainer = new HBox(20);
         qtyContainer.setAlignment(Pos.CENTER);
+
         Button btnMinus = new Button("-");
-        btnMinus.getStyleClass().add("qty-btn");
+        btnMinus.getStyleClass().add("qty-btn"); // Assurez-vous d'avoir ce style ou utilisez un style standard
+        btnMinus.setStyle("-fx-font-size: 18px; -fx-min-width: 40px;");
+
         Label qtyLabel = new Label(String.valueOf(ce.quantity));
         qtyLabel.getStyleClass().add("popup-qty-label");
+        qtyLabel.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+
         Button btnPlus = new Button("+");
         btnPlus.getStyleClass().add("qty-btn");
+        btnPlus.setStyle("-fx-font-size: 18px; -fx-min-width: 40px;");
 
         btnMinus.setOnAction(e -> {
             if (ce.quantity > 1) {
@@ -316,31 +325,31 @@ public class DashboardController {
 
         qtyContainer.getChildren().addAll(btnMinus, qtyLabel, btnPlus);
 
+        // Boutons d'action (Supprimer / Valider)
         HBox actionButtons = new HBox(15);
         actionButtons.setAlignment(Pos.CENTER);
+
         Button btnDelete = new Button("Supprimer");
-        btnDelete.getStyleClass().add("delete-btn");
+        btnDelete.getStyleClass().add("delete-btn"); // Style rouge
+        btnDelete.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
         btnDelete.setOnAction(e -> {
             cart.remove(ce);
             updateCartDisplay();
-            popupStage.close();
+            closeOverlay(root); // <--- Fermeture
         });
 
         Button btnConfirm = new Button("Valider");
-        btnConfirm.getStyleClass().add("confirm-btn");
+        btnConfirm.getStyleClass().add("confirm-btn"); // Style vert/orange
         btnConfirm.setOnAction(e -> {
             updateCartDisplay();
-            popupStage.close();
+            closeOverlay(root); // <--- Fermeture
         });
 
         actionButtons.getChildren().addAll(btnDelete, btnConfirm);
         root.getChildren().addAll(title, qtyContainer, actionButtons);
 
-        Scene scene = new Scene(root);
-        scene.setFill(null);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        popupStage.setScene(scene);
-        popupStage.show();
+        // --- 2. Affichage ---
+        openOverlay(root);
     }
 
     private void validateOrder() {
@@ -433,8 +442,15 @@ public class DashboardController {
                 }
                 cart.clear();
                 updateCartDisplay();
-                closeOverlay(root); // <--- Fermeture Overlay après succès
-                showAlert("Success", "C'est prêt ! Votre ticket est le n°" + savedCmd.getNumero_ticket());
+                closeOverlay(root); // Ferme le résumé de commande
+
+                // --- MODIFICATION ICI ---
+                // On affiche le succès ET on dit de revenir à l'accueil (goBack) quand on clique sur OK
+                showAlert("Success",
+                        "C'est prêt ! Votre ticket est le n°" + savedCmd.getNumero_ticket(),
+                        () -> goBack()); // <--- L'action magique est ici
+                // ------------------------
+
             } catch (IOException | InterruptedException ex) {
                 ex.printStackTrace();
                 showAlert("Error", "Failed to validate the order.");
@@ -459,12 +475,39 @@ public class DashboardController {
         }
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.show();
+    // Nouvelle version qui accepte une action après le clic sur OK
+    private void showAlert(String titleText, String messageText, Runnable onOkAction) {
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.CENTER);
+        root.setStyle("-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-border-color: #e67e22; -fx-border-width: 2; -fx-padding: 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);");
+        root.setMaxWidth(400);
+
+        Label title = new Label(titleText);
+        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e67e22;");
+
+        Label message = new Label(messageText);
+        message.setWrapText(true);
+        message.setStyle("-fx-font-size: 14px; -fx-text-fill: white;");
+        message.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        Button btnOk = new Button("OK");
+        btnOk.setStyle("-fx-background-color: #e67e22; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 5;");
+
+        // --- C'est ici que ça change ---
+        btnOk.setOnAction(e -> {
+            closeOverlay(root); // 1. On ferme le popup
+            if (onOkAction != null) {
+                onOkAction.run(); // 2. On exécute l'action demandée (ex: retour accueil)
+            }
+        });
+
+        root.getChildren().addAll(title, message, btnOk);
+        openOverlay(root);
+    }
+
+    // Surcharge pour les messages simples (Erreurs...) -> pas d'action spéciale
+    private void showAlert(String titleText, String messageText) {
+        showAlert(titleText, messageText, null);
     }
     private void showMenuCompositionPopup(Menu menu) {
         // --- 1. Construction du contenu du Popup (VBox) ---
