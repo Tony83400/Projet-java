@@ -96,4 +96,24 @@ public class DataService {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 201) throw new IOException("Erreur ajout ligne: " + response.statusCode());
     }
+    public static class MenuComposition {
+        private Article article;
+        private int quantite;
+
+        public Article getArticle() { return article; }
+        public void setArticle(Article article) { this.article = article; }
+        public int getQuantite() { return quantite; }
+        public void setQuantite(int quantite) { this.quantite = quantite; }
+    }
+
+    // --- NOUVEAU : Récupérer la composition d'un menu ---
+    public List<MenuComposition> getMenuComposition(int menuId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + "/menus/" + menuId + "/composition/lang/" + currentLanguageId))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) throw new IOException("Erreur API Composition Menu: " + response.statusCode());
+        return mapper.readValue(response.body(), new TypeReference<List<MenuComposition>>(){});
+    }
 }

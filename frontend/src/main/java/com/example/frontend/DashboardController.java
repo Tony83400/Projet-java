@@ -3,6 +3,7 @@ import com.example.frontend.models.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -38,6 +39,8 @@ public class DashboardController {
     private Label titleLabelAccent;
     @FXML
     private Label totalTitle;
+    @FXML
+    private StackPane rootStackPane;
 
     private final DataService dataService = DataService.getInstance();
     private final List<CartElement> cart = new ArrayList<>();
@@ -64,7 +67,35 @@ public class DashboardController {
             validateButton.setText("COMMANDER");
         }
     }
+    // Affiche un noeud (le popup) par dessus tout le reste avec un fond grisé
+    private void openOverlay(javafx.scene.Node content) {
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);"); // Fond semi-transparent
+        overlay.getChildren().add(content);
+        overlay.setAlignment(Pos.CENTER);
 
+        // Optionnel : Fermer si on clique en dehors du popup (sur le gris)
+        overlay.setOnMouseClicked(e -> {
+            // On vérifie que le clic est bien sur le fond gris et pas sur le contenu
+            if (e.getTarget() == overlay) {
+                rootStackPane.getChildren().remove(overlay);
+            }
+        });
+
+        rootStackPane.getChildren().add(overlay);
+    }
+
+    // Ferme l'overlay contenant le noeud spécifié
+    // Version compatible Java 11
+    private void closeOverlay(javafx.scene.Node content) {
+        // 1. On vérifie le type
+        if (content.getParent() instanceof StackPane) {
+            // 2. On fait le cast explicite (conversion)
+            StackPane overlay = (StackPane) content.getParent();
+            // 3. On supprime
+            rootStackPane.getChildren().remove(overlay);
+        }
+    }
     private void loadCategoriesFromApi() {
         categoryList.getChildren().clear();
 
@@ -113,8 +144,15 @@ public class DashboardController {
                 List<Menu> menus = dataService.getMenus();
                 int i = 0;
                 for (Menu m : menus) {
-                    // MODIFICATION : on passe "" pour la description des menus
-                    productGrid.add(createItemCard(m.getNom(), m.getDescription(), m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
+                    // Création de la carte (avec description, voir étape précédente)
+                    VBox card = createItemCard(m.getNom(), m.getDescription(), m.getPrix(), m.getImage_url(), m);
+
+                    // --- MODIFICATION IMPORTANTE ---
+                    // Au lieu d'ajouter au panier directement, on ouvre le popup de détails
+                    card.setOnMouseClicked(e -> showMenuCompositionPopup(m));
+                    // -------------------------------
+
+                    productGrid.add(card, i % 3, i / 3);
                     i++;
                 }
             } else {
@@ -308,18 +346,23 @@ public class DashboardController {
     private void validateOrder() {
         if (cart.isEmpty()) return;
         boolean isEnglish = dataService.getLanguageId().equals("2");
-        Stage confirmStage = new Stage();
-        confirmStage.initModality(Modality.APPLICATION_MODAL);
-        confirmStage.initStyle(StageStyle.TRANSPARENT);
 
+        // --- 1. Construction du conteneur (Overlay) ---
         VBox root = new VBox(15);
-        root.getStyleClass().add("receipt-popup");
         root.setAlignment(Pos.TOP_CENTER);
-        root.setPrefWidth(350);
 
+        // Style identique au popup Menu (Gris foncé, ombré, arrondi)
+        root.getStyleClass().add("popup-root");
+        root.setStyle("-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0); -fx-padding: 20;");
+        root.setPrefWidth(380);
+        root.setMaxHeight(600);
+
+        // Titre
         Label title = new Label(isEnglish ? "SUMMARY" : "RÉCAPITULATIF");
-        title.getStyleClass().add("receipt-title");
+        title.getStyleClass().add("receipt-title"); // Assurez-vous que ce style existe ou utilisez le style du titre menu
+        title.setStyle("-fx-font-size: 18px; -fx-text-fill: #e67e22; -fx-font-weight: bold;");
 
+        // Liste des articles (dans un ScrollPane si la liste est longue)
         VBox itemsList = new VBox(8);
         itemsList.setStyle("-fx-padding: 10 0;");
         double total = 0;
@@ -328,33 +371,53 @@ public class DashboardController {
             HBox row = new HBox();
             Label name = new Label(ce.quantity + "x " + ce.getName());
             Label price = new Label(String.format("%.2f €", ce.getPrice() * ce.quantity));
+
+            // Spacer pour pousser le prix à droite
             Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            name.setStyle("-fx-text-fill: white;");
+            HBox.setHgrow(spacer, Priority.ALWAYS); // <--- Vérifiez l'import de Priority
+
+            name.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
             price.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
+
             row.getChildren().addAll(name, spacer, price);
             itemsList.getChildren().add(row);
             total += ce.getPrice() * ce.quantity;
         }
 
+        // Ajout d'un ScrollPane pour la liste des items (confort visuel si longue commande)
+        ScrollPane scrollItems = new ScrollPane(itemsList);
+        scrollItems.setFitToWidth(true);
+        scrollItems.setMaxHeight(300);
+        scrollItems.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
         Separator sep = new Separator();
+
+        // Total
         HBox totalBox = new HBox();
         Label totalLabelText = new Label(isEnglish ? "FINAL TOTAL" : "TOTAL FINAL");
         Label totalAmount = new Label(String.format("%.2f €", total));
-        totalLabelText.getStyleClass().add("receipt-total-text");
-        totalAmount.getStyleClass().add("receipt-total-amount");
+
+        totalLabelText.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        totalAmount.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold; -fx-font-size: 18px;");
+
         Region spacer2 = new Region();
         HBox.setHgrow(spacer2, Priority.ALWAYS);
         totalBox.getChildren().addAll(totalLabelText, spacer2, totalAmount);
 
+        // Boutons d'action
         HBox buttons = new HBox(15);
         buttons.setAlignment(Pos.CENTER);
+
+        // Bouton ANNULER
         Button btnCancel = new Button(isEnglish ? "CANCEL" : "ANNULER");
         btnCancel.getStyleClass().add("receipt-btn-cancel");
-        btnCancel.setOnAction(e -> confirmStage.close());
+        btnCancel.setOnAction(e -> closeOverlay(root)); // <--- Fermeture Overlay
 
+        // Bouton PAYER
         Button btnConfirm = new Button(isEnglish ? "PAY & ORDER" : "PAYER & COMMANDER");
-        btnConfirm.getStyleClass().add("receipt-btn-confirm");
+        btnConfirm.getStyleClass().add("receipt-btn-confirm"); // Ou "confirm-btn"
+        btnConfirm.setStyle("-fx-font-size: 14px; -fx-padding: 10 20; -fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+
         btnConfirm.setOnAction(e -> {
             try {
                 Commande savedCmd = dataService.createEmptyCommande();
@@ -370,7 +433,7 @@ public class DashboardController {
                 }
                 cart.clear();
                 updateCartDisplay();
-                confirmStage.close();
+                closeOverlay(root); // <--- Fermeture Overlay après succès
                 showAlert("Success", "C'est prêt ! Votre ticket est le n°" + savedCmd.getNumero_ticket());
             } catch (IOException | InterruptedException ex) {
                 ex.printStackTrace();
@@ -379,15 +442,13 @@ public class DashboardController {
         });
 
         buttons.getChildren().addAll(btnCancel, btnConfirm);
-        root.getChildren().addAll(title, itemsList, sep, totalBox, buttons);
 
-        Scene scene = new Scene(root);
-        scene.setFill(null);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        confirmStage.setScene(scene);
-        confirmStage.show();
+        // Assemblage final
+        root.getChildren().addAll(title, scrollItems, sep, totalBox, buttons);
+
+        // --- 2. Affichage via l'Overlay ---
+        openOverlay(root);
     }
-
     @FXML
     private void goBack() {
         try {
@@ -404,6 +465,101 @@ public class DashboardController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();
+    }
+    private void showMenuCompositionPopup(Menu menu) {
+        // --- 1. Construction du contenu du Popup (VBox) ---
+        VBox root = new VBox(15);
+        root.setAlignment(Pos.CENTER);
+        root.getStyleClass().add("popup-root"); // Fond gris foncé/arrondi (défini dans CSS)
+
+        // Style spécifique pour l'overlay : limite la hauteur et ajoute une ombre
+        root.setPrefWidth(380);
+        root.setMaxHeight(600);
+        root.setPadding(new javafx.geometry.Insets(20));
+        root.setStyle("-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);");
+
+        // Titre
+        Label title = new Label(menu.getNom().toUpperCase());
+        title.getStyleClass().add("popup-title");
+        title.setStyle("-fx-font-size: 18px; -fx-text-fill: #e67e22; -fx-font-weight: bold;");
+
+        // Sous-titre
+        Label subTitle = new Label(dataService.getLanguageId().equals("2") ? "Contains:" : "Composition :");
+        subTitle.setStyle("-fx-text-fill: #aaa; -fx-font-style: italic;");
+
+        // Liste des articles
+        VBox itemsBox = new VBox(10);
+        itemsBox.setAlignment(Pos.TOP_CENTER);
+
+        try {
+            // Récupération des données
+            List<DataService.MenuComposition> composition = dataService.getMenuComposition(menu.getMenu_id());
+
+            for (DataService.MenuComposition item : composition) {
+                HBox row = new HBox(15);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-padding: 8; -fx-background-radius: 5;");
+
+                // Image
+                ImageView img = new ImageView();
+                String imgPath = item.getArticle().getImage_url();
+                try {
+                    img.setImage(new Image("http://localhost:8080/" + imgPath, true));
+                } catch (Exception e) { /* Ignorer */ }
+                img.setFitWidth(40);
+                img.setFitHeight(40);
+                img.setPreserveRatio(true);
+
+                // Texte (Nom + Quantité)
+                VBox textBox = new VBox(2);
+                Label nameLbl = new Label(item.getArticle().getNom());
+                nameLbl.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+
+                String qtyTxt = dataService.getLanguageId().equals("2") ? "Qty: " : "Qté : ";
+                Label qtyLbl = new Label(qtyTxt + item.getQuantite());
+                qtyLbl.setStyle("-fx-text-fill: #aaa; -fx-font-size: 11px;");
+
+                textBox.getChildren().addAll(nameLbl, qtyLbl);
+                row.getChildren().addAll(img, textBox);
+                itemsBox.getChildren().add(row);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            itemsBox.getChildren().add(new Label("Erreur chargement composition..."));
+        }
+
+        // ScrollPane pour la liste
+        ScrollPane scroll = new ScrollPane(itemsBox);
+        scroll.setFitToWidth(true);
+        scroll.setPrefHeight(200);
+        scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+        // Boutons d'action
+        HBox actions = new HBox(15);
+        actions.setAlignment(Pos.CENTER);
+
+        // Bouton ANNULER
+        Button btnCancel = new Button(dataService.getLanguageId().equals("2") ? "Cancel" : "Annuler");
+        btnCancel.getStyleClass().add("receipt-btn-cancel");
+        // ACTION : Fermer l'overlay
+        btnCancel.setOnAction(e -> closeOverlay(root));
+
+        // Bouton AJOUTER
+        String priceTxt = String.format("%.2f €", menu.getPrix());
+        Button btnAdd = new Button((dataService.getLanguageId().equals("2") ? "Add " : "Ajouter ") + priceTxt);
+        btnAdd.getStyleClass().add("confirm-btn");
+        btnAdd.setStyle("-fx-font-size: 14px; -fx-padding: 8 20;");
+        // ACTION : Ajouter au panier PUIS fermer l'overlay
+        btnAdd.setOnAction(e -> {
+            addToCart(menu);
+            closeOverlay(root);
+        });
+
+        actions.getChildren().addAll(btnCancel, btnAdd);
+        root.getChildren().addAll(title, subTitle, scroll, actions);
+
+        // --- 2. Affichage via la méthode utilitaire ---
+        openOverlay(root);
     }
 
     private static class CartElement {
@@ -443,5 +599,6 @@ public class DashboardController {
             }
             return false;
         }
+
     }
 }
