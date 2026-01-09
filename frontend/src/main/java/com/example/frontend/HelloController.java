@@ -52,11 +52,14 @@ public class HelloController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard-view.fxml"));
             Parent dashboardRoot = loader.load();
-            Stage stage = (Stage) welcomeText.getScene().getWindow();
-            Scene dashboardScene = new Scene(dashboardRoot);
-            stage.setScene(dashboardScene);
-            stage.setFullScreen(true);
-            stage.setFullScreenExitHint("");
+
+            // --- MODIFICATION ---
+            // Au lieu de créer une nouvelle Scene et de refaire setFullScreen :
+            // On récupère la scène actuelle et on remplace juste son contenu.
+            welcomeText.getScene().setRoot(dashboardRoot);
+
+            // Plus besoin de toucher au Stage, il reste en FullScreen !
+
         } catch (IOException e) {
             e.printStackTrace();
         }

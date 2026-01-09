@@ -469,6 +469,7 @@ public class DashboardController {
     private void goBack() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
+            // Utiliser validateButton (ou n'importe quel élément de l'interface) pour avoir la scène
             validateButton.getScene().setRoot(root);
         } catch (IOException e) {
             e.printStackTrace();
