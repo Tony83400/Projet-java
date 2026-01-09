@@ -13,14 +13,25 @@ import java.util.Map;
 public class MenuServiceImpl extends MenuService {
 
     @Override
-    public List<Map<String, Object>> findCompositionForMenu(int menuId) {
+    public List<Map<String, Object>> findCompositionForMenu(int menuId, int langueId) {
         List<Map<String, Object>> composition = new ArrayList<>();
-        String sql = "SELECT a.*, mc.quantite FROM article a " +
+
+        // SQL inchangé pour la composition (il récupérait déjà la description des articles)
+        String sql = "SELECT " +
+                "a.article_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(a.nom_en, a.nom) ELSE a.nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(a.description_en, a.description) ELSE a.description END AS description, " +
+                "a.prix, a.image_url, a.stock, mc.quantite " +
+                "FROM article a " +
                 "JOIN menu_composition mc ON a.article_id = mc.article_id " +
                 "WHERE mc.menu_id = ?";
+
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, menuId);
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId);
+            stmt.setInt(3, menuId);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Article article = new Article();
@@ -45,14 +56,24 @@ public class MenuServiceImpl extends MenuService {
     }
 
     @Override
-    public List<Menu> GetMenus() {
+    public List<Menu> GetMenus(int langueId) {
         List<Menu> menus = new ArrayList<>();
-        String sql = "SELECT * FROM menu";
+        // MODIFICATION ICI : Ajout de la description dans le SELECT
+        String sql = "SELECT menu_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " + // <-- AJOUTÉ
+                "prix, image_url FROM menu";
+
         try (Connection conn = DatabaseSetup.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                menus.add(mapResultSetToMenu(rs));
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId); // <-- AJOUTÉ (2ème paramètre pour le CASE description)
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    menus.add(mapResultSetToMenu(rs));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -61,11 +82,20 @@ public class MenuServiceImpl extends MenuService {
     }
 
     @Override
-    public Menu getMenuByid(int id) {
-        String sql = "SELECT * FROM menu WHERE menu_id =?";
+    public Menu getMenuByid(int id, int langueId) {
+        // MODIFICATION ICI : Ajout de la description dans le SELECT
+        String sql = "SELECT menu_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " + // <-- AJOUTÉ
+                "prix, image_url FROM menu WHERE menu_id = ?";
+
         try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);) {
-            stmt.setInt(1, id);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId); // <-- AJOUTÉ
+            stmt.setInt(3, id);       // <-- DÉCALÉ (3ème position)
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToMenu(rs);
@@ -77,10 +107,12 @@ public class MenuServiceImpl extends MenuService {
         }
     }
 
+    // MODIFICATION ICI : Mapping de la description
     private Menu mapResultSetToMenu(ResultSet rs) throws SQLException {
         Menu menu = new Menu();
         menu.setMenu_id(rs.getInt("menu_id"));
         menu.setNom(rs.getString("nom"));
+        menu.setDescription(rs.getString("description")); // <-- C'est cette ligne qui manquait !
         menu.setPrix(rs.getFloat("prix"));
         menu.setImage_url(rs.getString("image_url"));
         return menu;

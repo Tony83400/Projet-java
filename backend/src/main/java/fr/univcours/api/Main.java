@@ -49,28 +49,29 @@ public class Main {
         System.out.println("🚀 Serveur démarré sur http://localhost:8080");
 
         // --- ROUTES ---
+// --- MENUS (Traduits) ---
+        app.get("/menus/lang/{langue_id}", MenuController::getAllMenu);
+        app.get("/menus/{id}/lang/{langue_id}", MenuController::getMenuById);
+        app.get("/menus/{id}/composition/lang/{langue_id}", MenuController::getCompositionForMenu);
 
-        // Menus
-        app.get("/menus", MenuController::getAllMenu);
-        app.get("/menus/{id}", MenuController::getMenuById);
-        app.get("/menus/{id}/composition", MenuController::getCompositionForMenu);
+// --- CATÉGORIES (Traduites) ---
+        app.get("/categories/lang/{langue_id}", CategorieController::getAllCategorie);
+        app.get("/categories/{id}/lang/{langue_id}", CategorieController::getCategorieById);
+// Récupérer les articles d'une catégorie (via ArticleController)
+        app.get("/categories/{id}/articles/lang/{langue_id}", ArticleController::getArticleForCategorieById);
 
-        // Catégories
-        app.get("/categories", CategorieController::getAllCategorie);
-        app.get("/categories/{id}", CategorieController::getCategorieById);
-        app.get("/categories/{id}/articles", ArticleController::getArticleForCategorieById);
+// --- ARTICLES (Traduits) ---
+        app.get("/articles/lang/{langue_id}", ArticleController::getAllArticle);
+        app.get("/articles/{id}/lang/{langue_id}", ArticleController::getArticleById);
+// Récupérer les catégories d'un article
+        app.get("/articles/{id}/categories/lang/{langue_id}", ArticleController::getCategoriesForArticle);
 
-        // Commandes
+// --- COMMANDES (Standard - Pas de changement de langue appliqué) ---
         app.get("/commandes", CommandeController::getAll);
         app.post("/commandes", CommandeController::add);
         app.get("/commandes/{id}", CommandeController::getById);
         app.get("/commandes/{id}/lignes", CommandeController::getLignesForCommande);
         app.post("/commandes/{id}/lignes", CommandeController::addLigneToCommande);
         app.get("/commandes/{id}/total", CommandeController::getTotalForCommande);
-
-        // Articles
-        app.get("/articles", ArticleController::getAllArticle);
-        app.get("/articles/{id}", ArticleController::getArticleById);
-        app.get("/articles/{id}/categories", ArticleController::getCategoriesForArticle);
     }
 }

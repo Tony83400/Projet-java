@@ -5,14 +5,27 @@
     "version": ""
   },
   "paths": {
-    "/articles": {
+    "/articles/lang/{langue_id}": {
       "get": {
         "tags": [
           "Article"
         ],
-        "summary": "Récupérer toutes les articles",
+        "summary": "Récupérer toutes les articles avec langue",
         "operationId": "getAllArticle",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Liste des articles",
@@ -29,18 +42,75 @@
         "security": []
       }
     },
-    "/articles/{id}": {
+    "/articles/{id}/categories/lang/{langue_id}": {
       "get": {
         "tags": [
           "Article"
         ],
-        "summary": "Trouve un article par id",
+        "summary": "Récupérer les catégories d\u0027un article avec langue",
+        "operationId": "getCategoriesForArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de l\u0027article",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des catégories de l\u0027article"
+          },
+          "404": {
+            "description": "Article introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/articles/{id}/lang/{langue_id}": {
+      "get": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "Trouve un article par id et langue",
         "operationId": "getArticleById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID du article",
+            "description": "ID de l\u0027article",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -69,18 +139,18 @@
         "security": []
       }
     },
-    "/articles/{id}/categories": {
+    "/categories/lang/{langue_id}": {
       "get": {
         "tags": [
-          "Article"
+          "Categorie"
         ],
-        "summary": "Récupérer les catégories d\u0027un article",
-        "operationId": "getCategoriesForArticle",
+        "summary": "Récupérer toutes les categories dans une langue",
+        "operationId": "getAllCategorie",
         "parameters": [
           {
-            "name": "id",
+            "name": "langue_id",
             "in": "path",
-            "description": "ID de l\u0027article",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -90,26 +160,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Liste des catégories de l\u0027article"
-          },
-          "404": {
-            "description": "Article introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Récupérer toutes les categories",
-        "operationId": "getAllCategorie",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Liste des categories",
@@ -126,18 +176,30 @@
         "security": []
       }
     },
-    "/categories/{id}": {
+    "/categories/{id}/articles/lang/{langue_id}": {
       "get": {
         "tags": [
           "Categorie"
         ],
-        "summary": "Trouve un categorie par id",
-        "operationId": "getCategorieById",
+        "summary": "Trouve les articles pour une categorie par id et langue",
+        "operationId": "getArticleForCategorieById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID du categorie",
+            "description": "ID de la catégorie",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -149,7 +211,59 @@
         ],
         "responses": {
           "200": {
-            "description": "Categorie trouvé",
+            "description": "Articles trouvés",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Catégorie introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/categories/{id}/lang/{langue_id}": {
+      "get": {
+        "tags": [
+          "Categorie"
+        ],
+        "summary": "Trouve une categorie par id et langue",
+        "operationId": "getCategorieById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la categorie",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categorie trouvée",
             "content": {
               "application/json": {
                 "schema": {
@@ -160,46 +274,6 @@
           },
           "404": {
             "description": "Categorie introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/categories/{id}/articles": {
-      "get": {
-        "tags": [
-          "Categorie"
-        ],
-        "summary": "Trouve les articles pour une categorie par id",
-        "operationId": "getArticleForCategorieById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du article",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Articles trouvé",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Articles introuvable"
           }
         },
         "deprecated": false,
@@ -421,14 +495,27 @@
         "security": []
       }
     },
-    "/menus": {
+    "/menus/lang/{langue_id}": {
       "get": {
         "tags": [
           "Menus"
         ],
-        "summary": "Récupérer tous les menus",
+        "summary": "Récupérer tous les menus dans une langue donnée",
         "operationId": "getAllMenu",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Liste des menus",
@@ -445,18 +532,75 @@
         "security": []
       }
     },
-    "/menus/{id}": {
+    "/menus/{id}/composition/lang/{langue_id}": {
       "get": {
         "tags": [
           "Menus"
         ],
-        "summary": "Trouve un menu par id",
+        "summary": "Récupérer la composition d\u0027un menu avec langue",
+        "operationId": "getCompositionForMenu",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du menu",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Composition du menu"
+          },
+          "404": {
+            "description": "Menu introuvable"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/menus/{id}/lang/{langue_id}": {
+      "get": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Trouve un menu par id et langue",
         "operationId": "getMenuById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "description": "ID du menu",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "langue_id",
+            "in": "path",
+            "description": "ID langue (1\u003dFR, 2\u003dEN)",
             "required": true,
             "deprecated": false,
             "allowEmptyValue": false,
@@ -476,39 +620,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Menu introuvable"
-          }
-        },
-        "deprecated": false,
-        "security": []
-      }
-    },
-    "/menus/{id}/composition": {
-      "get": {
-        "tags": [
-          "Menus"
-        ],
-        "summary": "Récupérer la composition d\u0027un menu",
-        "operationId": "getCompositionForMenu",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID du menu",
-            "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Composition du menu"
           },
           "404": {
             "description": "Menu introuvable"
@@ -611,6 +722,8 @@
           }
         },
         "required": [
+          "articleId",
+          "menuId",
           "quantite"
         ]
       },

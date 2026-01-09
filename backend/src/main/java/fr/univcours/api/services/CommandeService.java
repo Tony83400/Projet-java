@@ -44,7 +44,7 @@ public class CommandeService {
                     if (!articleWasNull) {
                         ligne.setArticle(articleService.getArticleByid(articleId));
                     } else {
-                        ligne.setMenu(menuService.getMenuByid(menuId));
+                        ligne.setMenu(menuService.getMenuByid(menuId,1));
                     }
                     lignes.add(ligne);
                 }
@@ -155,7 +155,7 @@ public class CommandeService {
                 if(article == null) throw new SQLException("Article with id " + item.getArticleId() + " not found.");
                 price = article.getPrix();
             } else if (item.getMenuId() != 0) { // CHANGEMENT : on compare à 0
-                Menu menu = menuService.getMenuByid(item.getMenuId());
+                Menu menu = menuService.getMenuByid(item.getMenuId(),1);
                 if(menu == null) throw new SQLException("Menu with id " + item.getMenuId() + " not found.");
                 price = menu.getPrix();
             } else {

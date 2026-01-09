@@ -17,6 +17,15 @@ public class DataService {
     private final HttpClient client;
     private final ObjectMapper mapper;
     private final String API_URL = "http://localhost:8080";
+    private String currentLanguageId = "1";
+
+    public String getLanguageId() {
+        return currentLanguageId;
+    }
+
+    public void setLanguageId(String id) {
+        this.currentLanguageId = id;
+    }
 
     private DataService() {
         this.client = HttpClient.newHttpClient();
@@ -30,10 +39,12 @@ public class DataService {
         return instance;
     }
 
+
+
     // --- GET Categories ---
     public List<Categorie> getCategories() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/categories"))
+                .uri(URI.create(API_URL + "/categories/lang/" + currentLanguageId ))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -44,7 +55,7 @@ public class DataService {
     // --- GET Articles par Catégorie ---
     public List<Article> getArticlesForCategory(int categoryId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/categories/" + categoryId + "/articles"))
+                .uri(URI.create(API_URL + "/categories/" + categoryId + "/articles/lang/" + currentLanguageId))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -55,7 +66,7 @@ public class DataService {
     // --- GET Menus ---
     public List<Menu> getMenus() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + "/menus"))
+                .uri(URI.create(API_URL + "/menus/lang/" + currentLanguageId))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -84,5 +95,25 @@ public class DataService {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 201) throw new IOException("Erreur ajout ligne: " + response.statusCode());
+    }
+    public static class MenuComposition {
+        private Article article;
+        private int quantite;
+
+        public Article getArticle() { return article; }
+        public void setArticle(Article article) { this.article = article; }
+        public int getQuantite() { return quantite; }
+        public void setQuantite(int quantite) { this.quantite = quantite; }
+    }
+
+    // --- NOUVEAU : Récupérer la composition d'un menu ---
+    public List<MenuComposition> getMenuComposition(int menuId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + "/menus/" + menuId + "/composition/lang/" + currentLanguageId))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) throw new IOException("Erreur API Composition Menu: " + response.statusCode());
+        return mapper.readValue(response.body(), new TypeReference<List<MenuComposition>>(){});
     }
 }
