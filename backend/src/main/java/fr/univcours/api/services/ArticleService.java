@@ -1,129 +1,34 @@
 package fr.univcours.api.services;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
-
-import fr.univcours.api.database.DatabaseSetup;
+import java.util.Map;
+import com.modeliosoft.modelio.javadesigner.annotations.objid;
 import fr.univcours.api.models.Article;
-import fr.univcours.api.models.Categorie;
 
+@objid ("37eddc6a-7c29-49dc-aead-bb48177fbc02")
 public class ArticleService {
-
-    // On n'utilise plus ce service pour le mapping, mais on le garde si besoin d'autre chose
-    private CategorieService categorieService = new CategorieService();
-
-    public List<Categorie> findCategoriesForArticle(int articleId) {
-        List<Categorie> categories = new ArrayList<>();
-        String sql = "SELECT c.categorie_id, c.nom, c.description FROM categorie c " +
-                "JOIN article_categorie ac ON c.categorie_id = ac.categorie_id " +
-                "WHERE ac.article_id = ?";
-        try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, articleId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    // --- CORRECTION ICI : DUPLICATION DU MAPPING CATEGORIE ---
-                    // On ne peut plus appeler categorieService.mapResultSetToCategorie(rs)
-                    Categorie categorie = new Categorie();
-                    categorie.setCategorie_id(rs.getInt("categorie_id"));
-                    categorie.setNom(rs.getString("nom"));
-                    categorie.setDescription(rs.getString("description"));
-                    // ---------------------------------------------------------
-                    
-                    categories.add(categorie);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error finding categories for article", e);
-        }
-        return categories;
+    @objid ("ae6daab8-4419-4bf3-86e9-49dcba7b36e1")
+    public List<Article> GetArticles(int langueId) {
+        // TODO Auto-generated return
+        return null;
     }
 
-    public List<Article> GetArticles() {
-        List<Article> articles = new ArrayList<>();
-        try (Connection conn = DatabaseSetup.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM article");) {
-            while (rs.next()) {
-                // --- CODE DUPLIQUÉ (ARTICLE) ---
-                Article article = new Article();
-                article.setArticle_id(rs.getInt("article_id"));
-                article.setNom(rs.getString("nom"));
-                article.setDescription(rs.getString("description"));
-                article.setPrix(rs.getFloat("prix")); // Utilisation de Float
-                article.setImage_url(rs.getString("image_url"));
-                article.setStock(rs.getInt("stock"));
-                // -------------------------------
-                
-                articles.add(article);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return articles;
+    @objid ("856c268d-9874-4b6f-9d36-c543b3ff52ac")
+    public Article getArticleByid(int id, int langueId) {
+        // TODO Auto-generated return
+        return null;
     }
 
-    public Article getArticleByid(int id) {
-        String sql = "SELECT * FROM article WHERE article_id =?";
-        try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // --- CODE DUPLIQUÉ (ARTICLE) ---
-                    Article article = new Article();
-                    article.setArticle_id(rs.getInt("article_id"));
-                    article.setNom(rs.getString("nom"));
-                    article.setDescription(rs.getString("description"));
-                    article.setPrix(rs.getFloat("prix")); // Utilisation de Float
-                    article.setImage_url(rs.getString("image_url"));
-                    article.setStock(rs.getInt("stock"));
-                    // -------------------------------
-                    
-                    return article;
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @objid ("3c5324ad-e2ce-462c-94fd-ade898766c7b")
+    public List<Article> getArticleForCategorie(int categorie_id, int langueId) {
+        // TODO Auto-generated return
+        return null;
     }
 
-    public List<Article> getArticleForCategorie(int categorie_id) {
-        List<Article> articles = new ArrayList<>();
-        String sql = "SELECT a.* FROM article a " +
-                "JOIN article_categorie ac ON a.article_id = ac.article_id " +
-                "WHERE ac.categorie_id = ?";
-
-        try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, categorie_id);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    // --- CODE DUPLIQUÉ (ARTICLE) ---
-                    Article article = new Article();
-                    article.setArticle_id(rs.getInt("article_id"));
-                    article.setNom(rs.getString("nom"));
-                    article.setDescription(rs.getString("description"));
-                    article.setPrix(rs.getFloat("prix")); // Utilisation de Float
-                    article.setImage_url(rs.getString("image_url"));
-                    article.setStock(rs.getInt("stock"));
-                    // -------------------------------
-                    
-                    articles.add(article);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erreur lors de la récupération des articles pour la catégorie " + categorie_id, e);
-        }
-        return articles;
+    @objid ("6efe93cb-6f15-4e36-9490-36f7f709a048")
+    public List<Map<String, Object>> findCategoriesForArticle(int articleId, int langueId) {
+        // TODO Auto-generated return
+        return null;
     }
+
 }
