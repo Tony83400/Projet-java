@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #F72D16;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.HelloController">
+<VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #0f1113;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.frontend.HelloController">
 
     <children>
         <Label text="陳          師          傅          的          麵          條" textFill="GOLD">

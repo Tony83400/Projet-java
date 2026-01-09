@@ -1,215 +1,141 @@
-/* --- PALETTE & CONFIGURATION GLOBALE --- */
 * {
-    /* Couleurs principales */
-    -color-brick: #d20202;    /* Rouge impérial (Fond) */
-    -color-pollen: #fec938;   /* Or impérial (Articles) */
-    -color-apricot: #fbd18d;  /* Parchemin / Texte clair */
-    -color-ghost: #b00202;    /* Rouge sombre (remplace le blanc) */
-    -color-charcoal: #2D3436; /* Encre grise */
-    -color-ink: #1e272e;      /* Noir profond pour contrastes */
+    /* Palette plus profonde et moderne */
+    -color-bg-main: #0f1113;
+    -color-bg-secondary: #1a1d21;
+    -color-bg-card: #252a30;
+
+    -color-accent-red: #e74c3c;
+    -color-accent-gold: #ffcc00;
+
+    -color-text-primary: #ffffff;
+    -color-text-secondary: #a0aec0;
+    -color-text-muted: #718096;
 }
 
 .root {
-    -fx-background-color: -color-brick;
-    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-background-color: -color-bg-main;
+    -fx-font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* --- HEADER --- */
+/* HEADER - Look Verre Dépoli */
 .header-stack {
-    -fx-background-color: -color-ink;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 4);
+    -fx-background-color: linear-gradient(to bottom, #1c1f24, -color-bg-main);
+    -fx-border-color: transparent transparent -color-accent-red transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 5);
 }
 
 .header-content {
-    -fx-padding: 10 30 10 30;
-    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
+    -fx-padding: 20 40;
 }
 
 .dragon-image {
-    -fx-effect: dropshadow(gaussian, #000000, 10, 0.5, 0, 0);
+    -fx-opacity: 0.08;
 }
 
+/* TITRES */
 .title-label {
-    -fx-font-size: 24px;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-pollen;
-    -fx-font-family: 'Segoe UI Light';
+    -fx-text-fill: -color-text-muted;
+    -fx-letter-spacing: 3px;
 }
 
 .title-label-accent {
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -color-pollen;
-    -fx-padding: -5 0 0 0;
-    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.6), 0, 0, 0, 2);
+    -fx-font-size: 38px;
+    -fx-font-weight: 900;
+    -fx-text-fill: linear-gradient(to bottom right, white, -color-accent-gold);
 }
 
-.stamp-seal {
-    -fx-text-fill: -color-ink;
-    -fx-background-color: -color-pollen;
-    -fx-padding: 5 10;
-    -fx-background-radius: 4;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-border-color: rgba(0,0,0,0.2);
-    -fx-border-width: 1;
-    -fx-rotate: 5;
+/* BOUTONS NAVIGATION */
+.back-button {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-background-radius: 50%;
+    -fx-min-width: 50;
+    -fx-min-height: 50;
+    -fx-cursor: hand;
+    -fx-transition: 0.3s;
 }
 
-/* --- SIDEBAR (CATÉGORIES) --- */
+.back-button:hover {
+    -fx-background-color: -color-accent-red;
+    -fx-effect: dropshadow(three-pass-box, -color-accent-red, 10, 0, 0, 0);
+}
+
+/* SIDEBAR - Boutons plus larges et arrondis */
 .category-sidebar {
-    -fx-background-color: -color-brick;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 2, 0);
-    -fx-spacing: 15;
-    -fx-padding: 20 10 20 10;
-    -fx-border-color: transparent -color-pollen transparent transparent;
-    -fx-border-width: 0 1 0 0;
+    -fx-background-color: -color-bg-secondary;
+    -fx-padding: 30 15;
+    -fx-spacing: 12;
 }
 
 .category-button {
     -fx-background-color: transparent;
-    -fx-text-fill: -color-apricot;
-    -fx-font-size: 16px;
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-pref-width: 180;
-    -fx-pref-height: 55;
+    -fx-text-fill: -color-text-secondary;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-pref-height: 50;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 0 0 20;
+    -fx-padding: 0 20;
 }
 
 .category-button:hover {
-    -fx-background-color: -color-ghost;
-    -fx-text-fill: -color-pollen;
-    -fx-border-color: -color-pollen;
-    -fx-border-width: 0 0 0 3;
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: white;
 }
 
 .category-button.active {
-    -fx-background-color: -color-pollen;
-    -fx-text-fill: -color-brick;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 4);
-    -fx-border-color: -color-ink;
-    -fx-border-width: 0 0 0 4;
+    -fx-background-color: -color-accent-red;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.4), 12, 0, 0, 0);
 }
 
-/* --- GRILLE DE PRODUITS --- */
-.product-grid-area {
-    -fx-background-color: -color-brick;
-    -fx-background: -color-brick;
-}
-
+/* PRODUITS - Cartes flottantes */
 .product-card {
-    -fx-background-color: -color-pollen; /* Cases Jaune Impérial */
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0, 0, 4);
-    -fx-cursor: hand;
-    -fx-alignment: center;
-    -fx-padding: 15;
-    -fx-border-width: 1;
-    -fx-border-color: -color-ink;
+    -fx-background-color: -color-bg-card;
+    -fx-background-radius: 18;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 10);
 }
 
 .product-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 5);
-    -fx-translate-y: -3;
-    -fx-border-color: -color-ink;
-    -fx-border-width: 2;
+    -fx-background-color: #2d343c;
+    -fx-translate-y: -5;
+    -fx-border-color: -color-accent-gold;
+    -fx-border-radius: 18;
+    -fx-border-width: 1.5;
 }
 
-/* --- PANIER --- */
+/* PANIER - Section basse */
 .cart-section {
-    -fx-background-color: -color-ink;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 0, -5, 10, 0);
-    -fx-border-color: -color-pollen transparent transparent transparent;
-    -fx-border-width: 2 0 0 0;
-}
-
-.validate-button {
-    -fx-background-color: -color-brick;
-    -fx-text-fill: -color-pollen;
-    -fx-font-size: 22px;
-    -fx-font-family: 'Segoe UI Black';
-    -fx-background-radius: 5;
-    -fx-border-color: -color-pollen;
-    -fx-border-width: 2;
-    -fx-cursor: hand;
-}
-
-.validate-button:hover {
-    -fx-background-color: #b00202;
-    -fx-effect: dropshadow(three-pass-box, rgba(210, 2, 2, 0.4), 10, 0, 0, 3);
-}
-
-.total-box {
-    -fx-padding: 5;
-}
-
-.total-title {
-    -fx-font-size: 12px;
-    -fx-text-fill: -color-apricot;
-    -fx-font-weight: bold;
-    -fx-letter-spacing: 1px;
+    -fx-background-color: #0a0c0e;
+    -fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 30;
 }
 
 .total-amount {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -color-pollen;
-    -fx-font-family: 'Segoe UI Black';
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -color-accent-gold;
 }
 
-/* --- POPUPS & MODALS --- */
-.popup-root {
-    -fx-background-color: -color-ink;
-    -fx-border-color: -color-pollen;
-    -fx-border-width: 2;
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-padding: 30;
-}
-
-.popup-title {
-    -fx-text-fill: -color-pollen;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-}
-
-.popup-qty-label {
-    -fx-text-fill: -color-pollen;
-    -fx-font-size: 24px;
-    -fx-min-width: 40;
-    -fx-alignment: center;
-}
-
-.qty-btn {
-    -fx-background-color: -color-brick;
-    -fx-text-fill: -color-pollen;
+/* ACTION - Bouton Premium */
+.validate-button {
+    -fx-background-color: linear-gradient(to bottom right, #e74c3c, #c0392b);
+    -fx-text-fill: white;
     -fx-font-size: 18px;
-    -fx-background-radius: 50;
-    -fx-min-width: 45;
-    -fx-min-height: 45;
-    -fx-cursor: hand;
-}
-
-.receipt-popup {
-    -fx-background-color: -color-ink;
-    -fx-border-color: -color-pollen;
-    -fx-border-width: 3;
+    -fx-font-weight: 900;
     -fx-background-radius: 15;
-    -fx-border-radius: 15;
-    -fx-padding: 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(192, 57, 43, 0.4), 15, 0, 0, 5);
 }
 
-.receipt-title {
-    -fx-text-fill: -color-pollen;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-}
-
-.receipt-total-amount {
-    -fx-text-fill: -color-pollen;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
+.validate-button:hover {
+    -fx-background-color: linear-gradient(to bottom right, #ff5e4d, #e74c3c);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
