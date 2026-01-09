@@ -65,6 +65,7 @@ public class DataService {
 
     // --- GET Menus ---
     public List<Menu> getMenus() throws IOException, InterruptedException {
+        System.out.println(API_URL + "/menus/lang/" + currentLanguageId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL + "/menus/lang/" + currentLanguageId))
                 .GET()
@@ -108,6 +109,7 @@ public class DataService {
 
     // --- NOUVEAU : Récupérer la composition d'un menu ---
     public List<MenuComposition> getMenuComposition(int menuId) throws IOException, InterruptedException {
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL + "/menus/" + menuId + "/composition/lang/" + currentLanguageId))
                 .GET()
