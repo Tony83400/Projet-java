@@ -73,13 +73,17 @@ public class DatabaseSetup {
 
             // --- TABLE MENU ---
             // Ajout de nom_en
+            // Dans la méthode start(), section TABLE MENU
             String sql_menu = "CREATE TABLE IF NOT EXISTS `menu` (" +
                     "`menu_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "`nom` VARCHAR(255) NOT NULL," +
-                    "`nom_en` VARCHAR(255) NULL," + // Traduction Nom
+                    "`nom_en` VARCHAR(255) NULL," +
+                    "`description` TEXT NULL," +
+                    "`description_en` TEXT NULL," +
                     "`prix` FLOAT NOT NULL," +
                     "`image_url` VARCHAR(500) NOT NULL" +
                     ") ENGINE=InnoDB;";
+            stmt.executeUpdate(sql_menu);
             stmt.executeUpdate(sql_menu);
             System.out.println("✅ Table 'menu' OK.");
 
@@ -188,11 +192,11 @@ public class DatabaseSetup {
         stmt.executeUpdate(insertPivot);
 
         // 4. Insertion des MENUS (FR + EN)
-        String insertMenus = "INSERT INTO menu (nom, nom_en, prix, image_url) VALUES " +
-                "('Menu Déjeuner', 'Lunch Menu', 16.00, 'images/menus/menu_dejeuner.jpg'), " +
-                "('Menu Bento', 'Bento Menu', 22.50, 'images/menus/menu_bento.jpg'), " +
-                "('Menu Yakitori', 'Yakitori Menu', 19.00, 'images/menus/menu_yakitori.jpg'), " +
-                "('Menu Végétarien', 'Vegetarian Menu', 18.00, 'images/menus/menu_vegetarien.jpg');";
+        String insertMenus = "INSERT INTO menu (nom, nom_en, description, description_en, prix, image_url) VALUES " +
+                "('Menu Déjeuner', 'Lunch Menu', 'Un repas complet pour votre pause midi.', 'A complete meal for your lunch break.', 16.00, 'images/menus/menu_dejeuner.jpg'), " +
+                "('Menu Bento', 'Bento Menu', 'La boîte traditionnelle japonaise variée.', 'The traditional varied Japanese box.', 22.50, 'images/menus/menu_bento.jpg'), " +
+                "('Menu Yakitori', 'Yakitori Menu', 'Assortiment de brochettes grillées.', 'Assortment of grilled skewers.', 19.00, 'images/menus/menu_yakitori.jpg'), " +
+                "('Menu Végétarien', 'Vegetarian Menu', 'Une sélection saine sans viande.', 'A healthy selection without meat.', 18.00, 'images/menus/menu_vegetarien.jpg');";
         stmt.executeUpdate(insertMenus);
 
         // 5. Insertion de la COMPOSITION des MENUS - Identique

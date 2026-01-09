@@ -6,15 +6,16 @@ public class Menu {
     private String nom;
     private float prix;
     private String image_url;
-
+    private String description;
     public Menu() {
     }
 
-    public Menu(int menu_id, String nom, float prix, String imageUrl) {
+    public Menu(int menu_id, String nom, float prix, String imageUrl, String description) {
         this.menu_id = menu_id;
         this.nom = nom;
         this.prix = prix;
         this.image_url = imageUrl;
+        this.description = description;
     }
 
     public int getMenu_id() {
@@ -47,5 +48,13 @@ public class Menu {
 
     public void setImage_url(String image_url) {
         this.image_url = image_url;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

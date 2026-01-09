@@ -114,7 +114,7 @@ public class DashboardController {
                 int i = 0;
                 for (Menu m : menus) {
                     // MODIFICATION : on passe "" pour la description des menus
-                    productGrid.add(createItemCard(m.getNom(), "", m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
+                    productGrid.add(createItemCard(m.getNom(), m.getDescription(), m.getPrix(), m.getImage_url(), m), i % 3, i / 3);
                     i++;
                 }
             } else {

@@ -17,29 +17,40 @@ import fr.univcours.api.models.Menu;
 public class MenuService {
 
     // On garde le service au cas où, mais il n'est plus utilisé pour le mapping ici
-    private ArticleService articleService = new ArticleService(); 
+    private ArticleService articleService = new ArticleService();
 
-    // LA MÉTHODE mapResultSetToMenu A ÉTÉ SUPPRIMÉE POUR MODELIO
-
-    public List<Map<String, Object>> findCompositionForMenu(int menuId) {
+    // J'ai ajouté 'int langueId' pour que cela fonctionne avec votre MenuController
+    public List<Map<String, Object>> findCompositionForMenu(int menuId, int langueId) {
         List<Map<String, Object>> composition = new ArrayList<>();
-        String sql = "SELECT a.*, mc.quantite FROM article a " +
+
+        // SQL adapté : on sélectionne les champs traduits via CASE WHEN
+        String sql = "SELECT " +
+                "a.article_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(a.nom_en, a.nom) ELSE a.nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(a.description_en, a.description) ELSE a.description END AS description, " +
+                "a.prix, a.image_url, a.stock, mc.quantite " +
+                "FROM article a " +
                 "JOIN menu_composition mc ON a.article_id = mc.article_id " +
                 "WHERE mc.menu_id = ?";
+
         try (Connection conn = DatabaseSetup.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, menuId);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Paramètres : Langue (x2 pour nom et desc) puis ID du menu
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId);
+            stmt.setInt(3, menuId);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    // --- CODE DUPLIQUÉ (Article) ---
                     Article article = new Article();
                     article.setArticle_id(rs.getInt("article_id"));
+                    // Grâce au SQL, "nom" et "description" contiennent déjà la bonne langue
                     article.setNom(rs.getString("nom"));
                     article.setDescription(rs.getString("description"));
                     article.setPrix(rs.getFloat("prix"));
                     article.setImage_url(rs.getString("image_url"));
                     article.setStock(rs.getInt("stock"));
-                    // -------------------------------
 
                     int quantite = rs.getInt("quantite");
                     Map<String, Object> compositionMap = new HashMap<>();
@@ -54,22 +65,34 @@ public class MenuService {
         return composition;
     }
 
-    public List<Menu> GetMenus() {
+    // Ajout de langueId pour respecter votre Controller
+    public List<Menu> GetMenus(int langueId) {
         List<Menu> menus = new ArrayList<>();
-        String sql = "SELECT * FROM menu";
+
+        // SQL adapté pour récupérer le menu avec traduction
+        String sql = "SELECT menu_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " +
+                "prix, image_url FROM menu";
+
         try (Connection conn = DatabaseSetup.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                // --- CODE DUPLIQUÉ (Menu) ---
-                Menu menu = new Menu();
-                menu.setMenu_id(rs.getInt("menu_id"));
-                menu.setNom(rs.getString("nom"));
-                menu.setPrix(rs.getFloat("prix"));
-                menu.setImage_url(rs.getString("image_url"));
-                // ----------------------------
-                
-                menus.add(menu);
+             PreparedStatement stmt = conn.prepareStatement(sql)) { // Changement en PreparedStatement pour le paramètre
+
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Menu menu = new Menu();
+                    menu.setMenu_id(rs.getInt("menu_id"));
+                    // Récupère la description (traduite ou non selon la requête SQL)
+                    menu.setDescription(rs.getString("description"));
+                    menu.setNom(rs.getString("nom"));
+                    menu.setPrix(rs.getFloat("prix"));
+                    menu.setImage_url(rs.getString("image_url"));
+
+                    menus.add(menu);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -77,21 +100,29 @@ public class MenuService {
         return menus;
     }
 
-    public Menu getMenuByid(int id) {
-        String sql = "SELECT * FROM menu WHERE menu_id =?";
+    public Menu getMenuByid(int id, int langueId) {
+        // SQL identique à GetMenus mais avec un filtre WHERE
+        String sql = "SELECT menu_id, " +
+                "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " +
+                "prix, image_url FROM menu WHERE menu_id = ?";
+
         try (Connection conn = DatabaseSetup.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);) {
-            stmt.setInt(1, id);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId);
+            stmt.setInt(3, id); // L'ID passe en 3ème position
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    // --- CODE DUPLIQUÉ (Menu) ---
                     Menu menu = new Menu();
                     menu.setMenu_id(rs.getInt("menu_id"));
+                    menu.setDescription(rs.getString("description"));
                     menu.setNom(rs.getString("nom"));
                     menu.setPrix(rs.getFloat("prix"));
                     menu.setImage_url(rs.getString("image_url"));
-                    // ----------------------------
-                    
+
                     return menu;
                 }
             }

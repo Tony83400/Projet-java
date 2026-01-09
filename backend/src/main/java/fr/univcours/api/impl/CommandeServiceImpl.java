@@ -35,7 +35,7 @@ public class CommandeServiceImpl extends CommandeService {
                     if (!articleWasNull) {
                         ligne.setArticle(articleService.getArticleByid(articleId));
                     } else {
-                        ligne.setMenu(menuService.getMenuByid(menuId));
+                        ligne.setMenu(menuService.getMenuByid(menuId,1));
                     }
                     lignes.add(ligne);
                 }
@@ -124,7 +124,7 @@ public class CommandeServiceImpl extends CommandeService {
                 if(article == null) throw new SQLException("Article not found.");
                 price = article.getPrix();
             } else if (item.getMenuId() != 0) {
-                Menu menu = menuService.getMenuByid(item.getMenuId());
+                Menu menu = menuService.getMenuByid(item.getMenuId(),1);
                 if(menu == null) throw new SQLException("Menu not found.");
                 price = menu.getPrix();
             } else {

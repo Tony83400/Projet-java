@@ -5,6 +5,7 @@ public class Menu {
     private String nom;
     private float prix;
     private String image_url;
+    private  String description;
 
     public int getMenu_id() {
         return menu_id;
@@ -36,5 +37,13 @@ public class Menu {
 
     public void setImage_url(String image_url) {
         this.image_url = image_url;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

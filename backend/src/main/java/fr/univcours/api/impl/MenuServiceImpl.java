@@ -12,14 +12,11 @@ import java.util.Map;
 
 public class MenuServiceImpl extends MenuService {
 
-    // Méthode adaptée pour prendre en compte la langue dans la requête SQL des articles du menu
-    // Attention: MenuService (classe parent) doit aussi être mise à jour si elle définit ces méthodes abstraites.
-    // Si MenuService est une classe abstraite, changez les signatures là-bas aussi.
-
+    @Override
     public List<Map<String, Object>> findCompositionForMenu(int menuId, int langueId) {
         List<Map<String, Object>> composition = new ArrayList<>();
 
-        // SQL Dynamique : Si langueId=2, on prend _en, sinon le français par défaut.
+        // SQL inchangé pour la composition (il récupérait déjà la description des articles)
         String sql = "SELECT " +
                 "a.article_id, " +
                 "CASE WHEN ? = 2 THEN IFNULL(a.nom_en, a.nom) ELSE a.nom END AS nom, " +
@@ -39,7 +36,6 @@ public class MenuServiceImpl extends MenuService {
                 while (rs.next()) {
                     Article article = new Article();
                     article.setArticle_id(rs.getInt("article_id"));
-                    // Grâce à l'alias SQL, rs.getString("nom") contient déjà la bonne langue
                     article.setNom(rs.getString("nom"));
                     article.setDescription(rs.getString("description"));
                     article.setPrix(rs.getFloat("prix"));
@@ -59,17 +55,20 @@ public class MenuServiceImpl extends MenuService {
         return composition;
     }
 
+    @Override
     public List<Menu> GetMenus(int langueId) {
         List<Menu> menus = new ArrayList<>();
-        // Sélection conditionnelle du nom selon la langue
+        // MODIFICATION ICI : Ajout de la description dans le SELECT
         String sql = "SELECT menu_id, " +
                 "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " + // <-- AJOUTÉ
                 "prix, image_url FROM menu";
 
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, langueId); // Paramètre pour le CASE
+            stmt.setInt(1, langueId);
+            stmt.setInt(2, langueId); // <-- AJOUTÉ (2ème paramètre pour le CASE description)
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -82,16 +81,20 @@ public class MenuServiceImpl extends MenuService {
         return menus;
     }
 
+    @Override
     public Menu getMenuByid(int id, int langueId) {
+        // MODIFICATION ICI : Ajout de la description dans le SELECT
         String sql = "SELECT menu_id, " +
                 "CASE WHEN ? = 2 THEN IFNULL(nom_en, nom) ELSE nom END AS nom, " +
+                "CASE WHEN ? = 2 THEN IFNULL(description_en, description) ELSE description END AS description, " + // <-- AJOUTÉ
                 "prix, image_url FROM menu WHERE menu_id = ?";
 
         try (Connection conn = DatabaseSetup.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, langueId);
-            stmt.setInt(2, id);
+            stmt.setInt(2, langueId); // <-- AJOUTÉ
+            stmt.setInt(3, id);       // <-- DÉCALÉ (3ème position)
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -104,17 +107,14 @@ public class MenuServiceImpl extends MenuService {
         }
     }
 
-    // Le mapper reste simple car SQL a déjà fait le travail de renommage
+    // MODIFICATION ICI : Mapping de la description
     private Menu mapResultSetToMenu(ResultSet rs) throws SQLException {
         Menu menu = new Menu();
         menu.setMenu_id(rs.getInt("menu_id"));
-        menu.setNom(rs.getString("nom")); // Contient anglais ou français selon la requête
+        menu.setNom(rs.getString("nom"));
+        menu.setDescription(rs.getString("description")); // <-- C'est cette ligne qui manquait !
         menu.setPrix(rs.getFloat("prix"));
         menu.setImage_url(rs.getString("image_url"));
         return menu;
     }
-
-    // Méthodes Override obligatoires de la classe mère (si la signature ne change pas là-bas)
-    // Idéalement, mettez à jour MenuService pour inclure ces nouvelles signatures
-    // ou surchargez-les ici. Pour ce code, je pars du principe qu'on utilise les nouvelles méthodes.
 }
