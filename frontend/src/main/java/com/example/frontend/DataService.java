@@ -54,7 +54,6 @@ public class DataService {
 
     // --- GET Articles par Catégorie ---
     public List<Article> getArticlesForCategory(int categoryId) throws IOException, InterruptedException {
-        System.out.println(API_URL + "/categories/" + categoryId + "/articles/lang" + currentLanguageId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL + "/categories/" + categoryId + "/articles/lang/" + currentLanguageId))
                 .GET()

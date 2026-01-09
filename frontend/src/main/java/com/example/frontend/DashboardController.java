@@ -148,11 +148,16 @@ public class DashboardController {
                 String imageUrl = "http://localhost:8080/" + imgPath;
                 Image img = new Image(imageUrl, true);
                 img.errorProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal && placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
+                    if (newVal && placeholderUrl != null) {
+                        //System.err.println(imageUrl);
+                        imageView.setImage(new Image(placeholderUrl));
+                    };
                 });
                 imageView.setImage(img);
             } else {
-                if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
+                if (placeholderUrl != null){
+                    imageView.setImage(new Image(placeholderUrl));
+                };
             }
         } catch (Exception e) {
             if (placeholderUrl != null) imageView.setImage(new Image(placeholderUrl));
