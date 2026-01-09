@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
 
 <StackPane fx:id="rootStackPane"
            xmlns="http://javafx.com/javafx"
@@ -12,17 +13,17 @@
            stylesheets="@styles.css">
 
     <BorderPane fx:id="mainLayout" styleClass="root">
-
         <top>
             <StackPane styleClass="header-stack">
-                <ImageView fx:id="headerDragon" fitHeight="100" preserveRatio="true" opacity="0.4" styleClass="dragon-image"/>
+                <ImageView fx:id="headerDragon" fitHeight="150" preserveRatio="true"
+                           styleClass="dragon-image" StackPane.alignment="CENTER_RIGHT"/>
 
-                <HBox alignment="CENTER_LEFT" prefHeight="100" styleClass="header-content">
+                <HBox alignment="CENTER_LEFT" prefHeight="110" styleClass="header-content" spacing="30">
                     <Button text="←" onAction="#goBack" styleClass="back-button"/>
-                    <Region prefWidth="30"/>
-                    <VBox alignment="CENTER_LEFT">
-                        <Label fx:id="titleLabel" text="BORNE" styleClass="title-label"/>
-                        <Label fx:id="titleLabelAccent" text="COMMANDE" styleClass="title-label-accent"/>
+
+                    <VBox alignment="CENTER_LEFT" spacing="2">
+                        <Label fx:id="titleLabel" text="RESTO DRAGON" styleClass="title-label"/>
+                        <Label fx:id="titleLabelAccent" text="MENU DIGITAL" styleClass="title-label-accent"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
                 </HBox>
@@ -31,10 +32,13 @@
 
         <center>
             <HBox spacing="0">
-                <VBox fx:id="categoryList" prefWidth="240" alignment="TOP_CENTER" styleClass="category-sidebar"/>
-                <ScrollPane fitToWidth="true" fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="product-grid-area">
-                    <GridPane fx:id="productGrid" alignment="TOP_CENTER" hgap="20" vgap="20">
-                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                <VBox fx:id="categoryList" prefWidth="280" alignment="TOP_CENTER" styleClass="category-sidebar"/>
+
+                <ScrollPane fitToWidth="true" fitToHeight="true" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: transparent; -fx-background: transparent;"
+                            hbarPolicy="NEVER">
+                    <GridPane fx:id="productGrid" alignment="TOP_CENTER" hgap="30" vgap="30">
+                        <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
                     </GridPane>
                 </ScrollPane>
             </HBox>
@@ -42,25 +46,28 @@
 
         <bottom>
             <HBox prefHeight="160" spacing="0" alignment="CENTER" styleClass="cart-section">
-                <ScrollPane fx:id="cartScrollPane" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" HBox.hgrow="ALWAYS"
+                <ScrollPane fx:id="cartScrollPane" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED"
+                            HBox.hgrow="ALWAYS" fitToHeight="true"
                             style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox fx:id="cartItems" spacing="15" alignment="CENTER_LEFT" prefHeight="140">
-                        <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+                    <HBox fx:id="cartItems" spacing="25" alignment="CENTER_LEFT">
+                        <padding><Insets left="30" right="30"/></padding>
                     </HBox>
                 </ScrollPane>
 
-                <Separator orientation="VERTICAL"/>
+                <Region prefWidth="2" style="-fx-background-color: -color-accent-gold; -fx-opacity: 0.3;">
+                    <HBox.margin><Insets top="40" bottom="40"/></HBox.margin>
+                </Region>
 
-                <VBox alignment="CENTER" prefWidth="280" spacing="10" style="-fx-padding: 15;">
-                    <Button fx:id="validateButton" text="COMMANDER" prefWidth="240" prefHeight="60" styleClass="validate-button"/>
-                    <VBox alignment="CENTER" styleClass="total-box">
-                        <Label fx:id="totalTitle" text="TOTAL A PAYER" styleClass="total-title"/>
+                <VBox alignment="CENTER" prefWidth="350" spacing="15">
+                    <VBox alignment="CENTER" spacing="0">
+                        <Label fx:id="totalTitle" text="TOTAL COMMANDE" styleClass="total-title"/>
                         <Label fx:id="totalLabel" text="0.00 €" styleClass="total-amount"/>
                     </VBox>
+                    <Button fx:id="validateButton" text="PAYER MAINTENANT"
+                            prefWidth="280" prefHeight="60" styleClass="validate-button"/>
                 </VBox>
             </HBox>
         </bottom>
-
     </BorderPane>
 
 </StackPane>
